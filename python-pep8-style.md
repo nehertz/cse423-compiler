@@ -14,7 +14,10 @@ For our project, we'll follow the PEP 8 style guide, which offers conventions th
     - Prefer block comments to inline comments
 - Docstrings (syntax: ```""" This is a docstring """```):
     - Write docstrings for all public modules, functions, classes, and methods
-    
+- Naming conventions:
+    - Package and module names should have short, all-lowercase names. Underscores may be used if it increases readability
+    - Class names should use CapWords convention
+    - Function and variable names should use lowercase with underscores to separate words as necessary for readability
 
 ## Conventions that we can choose whether or not to follow
 - Max line length:
