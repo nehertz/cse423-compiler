@@ -59,9 +59,39 @@
 
 * Relational
 
+| Operator | Description              |
+|----------|--------------------------|
+| ==       | Is equal to              |
+| !=       | Is not equal to          |
+| >        | Greater than             |
+| <        | Less than                |
+| >=       | Greater than or equal to |
+| <=       | Less than or equal to    |
 
 * Logical
+
+| Operator | Description |
+|----------|-------------|
+| &&       | AND         |
+| \|\|     | OR          |
+| !        | NOT         |
+
 * Assignment
+
+| Operator | Description                     |
+|----------|---------------------------------|
+| =        | Assign                          |
+| +=       | Increments then assign          |
+| -=       | Decrements then assign          |
+| *=       | Multiplies then assign          |
+| /=       | Divides then assign             |
+| %=       | Modulus then assign             |
+| <<=      | Left shift and assign           |
+| >>=      | Right shift and assign          |
+| &=       | Bitwise AND assign              |
+| ^=       | Bitwise exclusive OR and assign |
+| \|=       | Bitwise inclusive OR and assign |
+
 * Increment and Decrement
 
 | Operator  | Description     |
@@ -69,7 +99,38 @@
 | ++        |  Increment      |
 | --        |  Decrement      |
 
-
 * Conditional
+
+| Operator | Description            |
+|----------|------------------------|
+| ?:       | Conditional Expression |
+
 * Bitwise
-* Special
+
+| Operators | Description                     |
+|-----------|---------------------------------|
+| <<        | Binary Left Shift Operator      |
+| >>        | Binary Right Shift Operator     |
+| ~         | Binary Ones Complement Operator |
+| &         | Binary AND Operator             |
+| ^         | Binary XOR Operator             |
+| \|         | Binary OR Operator              |
+
+* Special 
+
+| Operator | Description                       |
+|----------|-----------------------------------|
+| sizeof() | Return Size of a memory location  |
+| &        | return address of memory location |
+
+# Special Symbols -
+
+| Symbols | Description                            |
+|---------|----------------------------------------|
+| [ ]     | Array element reference                |
+| ( )     | Function calls and function parameters |
+| < >     | ...                                    |
+| { }     | start and end of a block of code       |
+| ,       | separate more than one statements      |
+| ;       | end of a statement                     |
+| *       | Pointer                                |
