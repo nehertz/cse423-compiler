@@ -25,20 +25,19 @@ Due date: April 2X, 2020? Don't know exact date.
 
 # Design Discussion
 - Command line user input (in main):
-    - Using getopt to collect command-line options (check number of arguments and assign flag by or-ing with bit representation of option)
-    - Take filename from command line input (not an option)
-    - Default option outputs tokens and labels
-    - Read from file
-    - Assign file contents to string
-    - Use conditional statements to determine option(s) selected
+    - [x] Using getopt to collect command-line options (check number of arguments and assign flag by or-ing with bit representation of option)
+    - [x] Take filename from command line input (not an option)
+    - [x] Default option outputs tokens and labels
+    - [x] Read from file
+    - [x] Assign file contents to string
+    - [x] Use conditional statements to determine option(s) selected
 
 - Scanner(string input):
     - Notes:
         - Assume file is in UNIX format
-        - Initially remove trailing whitespace (not \n) and leading whitespace (\t)
-        - Split string by \n
-        - Assign useful regex sequences to variables
-        - Loop through list of lines
+        - [x] Initially remove trailing whitespace and leading whitespace
+        - [x] Assign useful regex sequences to variables
+        - [x] Loop through list of lines
         1. Loop through line character-by-character:
             - Advantages: Simple, maybe, kinda brute force
             - Disadvantages: Slow and annoying
@@ -51,24 +50,24 @@ Due date: April 2X, 2020? Don't know exact date.
                 - Keyword
                 - Identifier
             - Regex determines if token is sequence of numeric characters:
-                1. **whole number**
+                1. [x] **whole number**
                 2. decimal number
                 3. bin, hex, etc. representation
             - Else:
-                1. Equals sign
-                2. Binary operator
-                3. Unary operator
-                4. Comparison operators (do not include < and >)
-                5. Bitwise operators
-                6. Semicolons
-                7. Lparen
-                8. Rparen
-                9. Lbracket
-                10. Rbracket
-                11. Lcurly
-                12. Rcurly
-                13. Langle
-                14. Rangle
+                1. [x] Equals sign
+                2. [x] Binary operator
+                3. [x] Unary operator
+                4. [x] Comparison operators (do not include < and >)
+                5. [x] Bitwise operators
+                6. [x] Semicolons
+                7. [x] Lparen
+                8. [x] Rparen
+                9. [x] Lbracket
+                10. [x] Rbracket
+                11. [x] Lcurly
+                12. [x] Rcurly
+                13. [x] Langle
+                14. [x] Rangle
 
         - Output list of tuples
 
