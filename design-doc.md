@@ -41,9 +41,14 @@ Due date: April 2X, 2020? Don't know exact date.
         1. Loop through line character-by-character:
             - Advantages: Simple, maybe, kinda brute force
             - Disadvantages: Slow and annoying
-        2. Check line with regexes to determine if its a string, number, or special character:
-            - Pros: elegant, most likely faster
-            - Cons: more regexes :(
+        2. Check line with regexes:
+            - Regexes for each possible syntax case
+            - Order of operations:
+                - Binary ops before unary ops
+
+            - Multi-character operators
+            - Strings
+            - Comments
         - Now we have list of tokens
         - Assign each token its label within a list of tuples:
             - Regex determines if token is sequence of alphanumeric characters:
