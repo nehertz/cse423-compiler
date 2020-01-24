@@ -41,6 +41,22 @@ Due date: April 2X, 2020? Don't know exact date.
         1. Loop through line character-by-character:
             - Advantages: Simple, maybe, kinda brute force
             - Disadvantages: Slow and annoying
+
+            - Read a character, determine what character it is using regex
+            - Based on what character is read, keep reading until a certain condition is met:
+                - If a character is found, keep reading until a non-appropriate character is found, save full word as a token
+                    - Check word against list of keywords
+                - If a number is found, keep reading until a non-number character is found, save full number as token
+                - If a special character is found
+                    - If the special character could be a multi-character operator
+                        - Check if it's a 3-character operator, if it is assign to a token
+                        - Check if it's a 2-character operator, if it is assign to a token
+                        - Assign as 1-character operator
+                    - If not, simply assign single special character as a token
+                - If "//" is found, keep reading until "\n" is found and assign entire line as token
+                - If "/*" is found, keep reading until "*/" is found and assign entire section as token
+                - If '"' is found, keep reading until '"' is found again and assign entire section as token
+                - if "'" is found, keep reading until "'" is found again and assign entire section as token
         2. Check line with regexes:
             - Regexes for each possible syntax case
             - Order of operations:

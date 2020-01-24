@@ -73,7 +73,7 @@
 | Operator | Description |
 |----------|-------------|
 | &&       | AND         |
-| \|\|     | OR          |
+| ||       | OR          |
 | !        | NOT         |
 
 * Assignment
@@ -90,7 +90,7 @@
 | >>=      | Right shift and assign          |
 | &=       | Bitwise AND assign              |
 | ^=       | Bitwise exclusive OR and assign |
-| \|=       | Bitwise inclusive OR and assign |
+| |=       | Bitwise inclusive OR and assign |
 
 * Increment and Decrement
 
@@ -114,7 +114,7 @@
 | ~         | Binary Ones Complement Operator |
 | &         | Binary AND Operator             |
 | ^         | Binary XOR Operator             |
-| \|         | Binary OR Operator              |
+| |         | Binary OR Operator              |
 
 * Special 
 
