@@ -44,9 +44,10 @@ def scanner(fileString):
     # Stolen from https://stackoverflow.com/questions/171480/regex-grabbing-values-between-quotation-marks
     re_string = r"([\"'])(?:(?=(\\?))\2.)*?\1"
     # Stoeln from https://stackoverflow.com/questions/16160190/regular-expression-to-find-c-style-block-comments
-    re_bloc_comments = r"\/\*(\*(?!\/)|[^*])*\*\/"
+    #re_bloc_comments = r"\/\*(\*(?!\/)|[^*])*\*\/"
+    re_bloc_comments = r"(\/\*)([\S\s]*)(\*\/)"
     # Not copied :)
-    line_comments = r"\/\/(.)*"
+    re_line_comments = r"(\/\/)([\S \f\t\r]*)(\n)"
 
     # Regex to find arithmetic operators
     # re_arith = re.compile("+\-\*\/\%")
@@ -73,23 +74,33 @@ def scanner(fileString):
     # re_rangle = re.compile("[>]")
 
 
-    magical_regex = re.compile(r"[^a-zA-Z0-9\s]|[a-zA-Z0-9_]*")
+    magical_regex = re.compile(
+        r"[^a-zA-Z0-9\s]"
+        r"|[a-zA-Z0-9_]*"
+        r"(\/\*)([\S\s]*)(\*\/)"
+
+        )
+
+    
 
     # TODO: Make a more magical regex to implement order of operations for strings/comments/multi-char ops
     
     # print(fileString)
     # Remove trailing and leading whitespace for each line
-    for lineNum, line in enumerate(fileString):
-        fileString[lineNum] = line.strip()
-        # fileString[lineNum] = line.strip('\t',' ')  # use this if we want to preserve newlines
+    # for lineNum, line in enumerate(fileString):
+    #     fileString[lineNum] = line.strip()
+    #     # fileString[lineNum] = line.strip('\t',' ')  # use this if we want to preserve newlines
 
-        if fileString[lineNum]:  # only executes on non-empty strings
-            # pattern matching can go here
-            tokenlist = re.findall(magical_regex, fileString[lineNum])
+    #     if fileString[lineNum]:  # only executes on non-empty strings
+    #         # pattern matching can go here
+    #         tokenlist = re.findall(magical_regex, fileString[lineNum])
 
-            tokenlist = list(filter(None, tokenlist))
-            print(tokenlist)
-
+    #         tokenlist = list(filter(None, tokenlist))
+    #         print(tokenlist)
+    tokenlist = re.findall(magical_regex, fileString[lineNum])
+    tokenlist = list(filter(None, tokenlist))
+    print(tokenlist)
+    
 
     print("in scanner")
 
