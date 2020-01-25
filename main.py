@@ -22,6 +22,12 @@ if __name__ == "__main__":
     listArgs = cmdArgument[1:]
     flag = 0  # flag that tells us which options are enabled
 
+    # Check that the user has supplied enough arguments
+    if not len(listArgs):
+        print("Please include a filename.")
+        printHelp()
+        sys.exit()
+
     # Check that the user has supplied a valid input file (as last arg)
     inputFile = listArgs[-1]
     if (not path.exists(inputFile)):

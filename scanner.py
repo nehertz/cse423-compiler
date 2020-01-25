@@ -1,11 +1,103 @@
 import re
+from TokenName import TokenName
 
+"""
+Creates a dictionary with fixed-value tokens as the key
+and their token definition as the value
+"""
+def create_token_defs():
+    tokens_dict = {}
+
+    # Create dict entries for type specifiers
+    tokens_dict['auto'] = TokenName.TypeSpecifier
+    tokens_dict['union'] = TokenName.TypeSpecifier
+    tokens_dict['short'] = TokenName.TypeSpecifier
+    tokens_dict['double'] = TokenName.TypeSpecifier
+    tokens_dict['long'] = TokenName.TypeSpecifier
+    tokens_dict['unsigned'] = TokenName.TypeSpecifier
+    tokens_dict['int'] = TokenName.TypeSpecifier
+    tokens_dict['char'] = TokenName.TypeSpecifier
+    tokens_dict['static'] = TokenName.TypeSpecifier
+    tokens_dict['volatile'] = TokenName.TypeSpecifier
+    tokens_dict['struct'] = TokenName.TypeSpecifier
+    tokens_dict['extern'] = TokenName.TypeSpecifier
+    tokens_dict['signed'] = TokenName.TypeSpecifier
+    tokens_dict['const'] = TokenName.TypeSpecifier
+    tokens_dict['enum'] = TokenName.TypeSpecifier
+    tokens_dict['void'] = TokenName.TypeSpecifier
+    tokens_dict['float'] = TokenName.TypeSpecifier
+    
+    # Create dict entries for keywords
+    tokens_dict['else'] = TokenName.Keyword
+    tokens_dict['register'] = TokenName.Keyword
+    tokens_dict['do'] = TokenName.Keyword
+    tokens_dict['goto'] = TokenName.Keyword
+    tokens_dict['continue'] = TokenName.Keyword
+    tokens_dict['if'] = TokenName.Keyword
+    tokens_dict['sizeof'] = TokenName.Keyword
+    tokens_dict['switch'] = TokenName.Keyword
+    tokens_dict['for'] = TokenName.Keyword
+    tokens_dict['case'] = TokenName.Keyword
+    tokens_dict['while'] = TokenName.Keyword
+    tokens_dict['break'] = TokenName.Keyword
+    tokens_dict['return'] = TokenName.Keyword
+    tokens_dict['default'] = TokenName.Keyword
+
+    # Create dict entries for operators
+    # Arithmetic
+    tokens_dict['+'] = TokenName.ArithmeticOperator
+    tokens_dict['-'] = TokenName.ArithmeticOperator
+    tokens_dict['*'] = TokenName.ArithmeticOperator
+    tokens_dict['/'] = TokenName.ArithmeticOperator
+    tokens_dict['%'] = TokenName.ArithmeticOperator
+    # Comparison
+    tokens_dict['=='] = TokenName.ComparisonOperator
+    tokens_dict['!='] = TokenName.ComparisonOperator
+    tokens_dict['>'] = TokenName.ComparisonOperator
+    tokens_dict['<'] = TokenName.ComparisonOperator
+    tokens_dict['>='] = TokenName.ComparisonOperator
+    tokens_dict['<='] = TokenName.ComparisonOperator
+    # Logical
+    tokens_dict['&&'] = TokenName.LogicalOperator
+    tokens_dict['||'] = TokenName.LogicalOperator
+    tokens_dict['!'] = TokenName.LogicalOperator
+    # Assignment
+    tokens_dict['='] = TokenName.AssignmentOperator
+    tokens_dict['+='] = TokenName.AssignmentOperator
+    tokens_dict['-='] = TokenName.AssignmentOperator
+    tokens_dict['*='] = TokenName.AssignmentOperator
+    tokens_dict['/='] = TokenName.AssignmentOperator
+    tokens_dict['%='] = TokenName.AssignmentOperator
+    tokens_dict['<<='] = TokenName.AssignmentOperator
+    tokens_dict['>>='] = TokenName.AssignmentOperator
+    tokens_dict['&='] = TokenName.AssignmentOperator
+    tokens_dict['^='] = TokenName.AssignmentOperator
+    tokens_dict['|='] = TokenName.AssignmentOperator
+    
+    # TODO: Add rest of fixed-value tokens
+    
+    
+
+    
+    
+
+"""
+Takes in a token and assigns it a token definition
+"""
+def tokenize(tokens):
+    token_defs = create_token_defs()
+    re_word = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+    
+    """
+    TODO: Check if token is directly indexable in the dict
+    If not, check for strings, identifiers, numbers, and anything else
+    that doesn't have a fixed value
+    """
+
+"""
+Scans through a file and splits it into tokens
+"""
 def scan(fileString):
-    keywords = ['auto', 'else', 'register', 'union', 'do', 'goto', 'short', 'double',
-                'long', 'typedef', 'continue', 'if', 'sizeof', 'unsigned', 'int', 'switch', 'char',
-                'for', 'static', 'volatile', 'struct', 'case', 'extern', 'signed', 'while', 'const',
-                'break', 'enum', 'return', 'void', 'default', 'float']
-                
     # Regex to find valid C word
     re_id_first = re.compile(r"[a-zA-Z_]")
     re_id_after = re.compile(r"[a-zA-Z0-9_]")
@@ -28,9 +120,13 @@ def scan(fileString):
     # Regexes to find arithmetic operators
     re_arith = re.compile("[\+\-\*\/\%]")
 
+    # Regex for whitespace
+    re_whtspace = re.compile("[\s]")
+
     three_char_ops = [['<', '<', "="], ['>', '>', '=']]
     two_char_ops = [['=', '='], ['!', '='], ['>', '='], ['>', '='], ['&', '&'], ['|', '|'], ['+', '='], ['-', '='], ['*', '='], ['/', '='], ['%', '='], ['&', '='], ['^', '='], ['|', '='], ['+', '+'], ['-', '-'], ['<', '<'], ['>', '>']]
-
+    one_char_ops = ['+', '-', '*', '/', '%', '=', '~', '&', '^', '|', ',', ';', '\"', '\'']
+    token_dict = {}
     tokens = []
     comments = []    
     lineNum = 1
@@ -71,7 +167,7 @@ def scan(fileString):
             # The character is a number
             curr_token += c
             
-            while (fileString[index].isnumeric() or fileString[index] == '.'):
+            while (fileString[index + 1].isnumeric() or fileString[index + 1] == '.'):
                 # Keep checking for more digits or decimal point in the number
                 index += 1
                 curr_token += fileString[index]
@@ -84,50 +180,153 @@ def scan(fileString):
 
         elif(re.search(re_spec, c) != None):
             # The character is a special character
-
             curr_token += c
             index += 1
-            
-            if (re.search(re_spec, fileString[index] != None):
+            if (re.search(re_spec, fileString[index]) != None):
                 curr_token += fileString[index]
                 index += 1
                 if (re.search(re_spec, fileString[index]) != None):
-                    # three character operator
+                    # Check for three-character operator
+                    curr_token += fileString[index]
+                    index += 1
+                    i = 0
+                    while True:
+                        # Going through the loop on three_char_ops 
+                        # and finding which operator matches the current token
+                        # if matched then break and work with the corresponding 
+                        # i. Else continue
+                        try:
+                            if (curr_token == ''.join(three_char_ops[i])):
+                                
+                                break
+                        except StopIteration:
+                            print("In special char, three_char_spec Not found ")
+                            break
+                        except:
+                            print("Error occurred three_char_ops")
+                            print(sys.exec_info()[0])
+                            break
+                        i += 1
                     
+                    # We need a mapping of operators to Name. 
+                    continue
                 else:
-                    
                     # two character operator 
+                    # curr_token += fileString[index]
+                    # index += 1
+                    i = 0
+                    if (curr_token == '//'):
+                        # Single line comments
+                        while (fileString[index] not '\n'):
+                            index += 1
+                            curr_token += fileString[index]
+                        comments.append(curr_token)
+
+                    while True:
+                        
+                        if (fileString[index] == '\\'and fileString[index + 1] == '\''):
+                            index += 1
+                        elif (fileString[index] not '\''):
+                            curr_token += fileString[index]
+                            index += 1
+                        
+                        curr_token = ''
+                        continue
                     
+                    elif (curr_token == '/*'):
+                        # Multi-line comments
+                        end_tracker = fileString[index]
+                        while True:
+                            if (end_tracker == '*'):
+                                curr_token += fileString[index]
+                                index += 1
+                                if (fileString[index] == '/'):
+                                    index += 1
+                                    curr_token += fileString[index]
+
+                                    break
+                            else:
+                                if (fileString[index] == ''):
+                                    # EOF reached
+                                    break
+
+                                curr_token += fileString[index]
+                                if (fileString[index] == '\n'):
+                                    linenum += 1
+                                index += 1
+                                end_tracker = fileString[index]
+
+                        # index += 1
+                        comments.append(curr_token)
+                        curr_token = ''
+                        continue
+                    else:
+                        pass
+                    while True:
+                        # Going thru the loop on two_char_ops
+                        # and finding which operator matches the current_token
+                        # if matched then break and work with the corresponding i
+                        # else continue
+                        # if i goes beyond the size of two_char_ops printout error message
+                        try:
+                            if (curr_token == ''.join(two_char_ops[i])):
+                                break
+                        except StopIteration:
+                            print("In Special Char, Two_char_spec Not found")
+                            break
+                        except:
+                            print("error occurred two_char_spec")
+                            print(sys.exec_info()[0])
+                            break
+                        i += 1
+                    # We need a mapping of operators to their name
+                    continue
+                        
             else:
                 # one character operator
-            
-        elif(c == "/")
-            if fileString[index + 1] == "/":
-                while (fileString[index] != "\n"):
-                    index += 1
-                    curr_token += fileString[index]
-                comments.append(curr_token)
 
-            elif fileString[index + 1].isnumeric():
-                index += 1
-                
-            elif fileString[index + 1] == "*":
-                while (fileString[index] != "*" and fileString[index + 1] != "/"):
-                    index += 1
-                    curr_token += fileString[index]
+                # Check for quotation first 
+                if (curr_token == '\"'):
+                    while (fileString[index] not '\"'):
+                        # We do not yet take care of Escape character strings
+                        curr_token += fileString[index]
+                        index += 1
                     
+                    # Send strings to the tokenizer 
+                    tokens.append(curr_token)
+                    index += 1
+                    curr_toke = ''
+                    continue
                     
-                comments.append(curr_token)    
-            index += 1
-            curr_token = ''
-            continue
-
-             
+                elif (curr_token == '\''):
+                    while (fileString[index] not '\''):
+                        # We do not yet take care of Escape character strings
+                        curr_token += fileString[index]
+                        index += 1
+                    tokens.append(curr_token)
+                    index += 1
+                    curr_token = ''
+                    continue
+                else:
+                    pass
+                while True:
+                    # Going thru the loop on one_char_ops
+                    # and finding which operator matches the current_token
+                    # if matched then break and work with the corresponding i 
+                    # else continue 
+                    # if i goes beyond the size of one_char_ops printout an error msg
+                    i = 0
+                    try:
+                        if (curr_token == one_char_ops[i]):
+                            break
+                    except StopIteration:
+                        print("In special char, one_char_ops Not found")
+                        print(sys.exec_info()[0])
+                        break
+                    except:
+                        print("error occurred one_char_ops")
+                        break
+                    i += 1
+                continue
             
-        
-        
-            # Check if character is / (comment)
-            
-            # Check if character is three-char op
-
-            index = index + 1
+        index = index + 1

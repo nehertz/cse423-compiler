@@ -1,6 +1,6 @@
 from enum import Enum
 
-class KeywordName(Enum):
+class TokenName(Enum):
         # data-types
         TypeSpecifier = 1
         String = 2 
@@ -20,4 +20,6 @@ class KeywordName(Enum):
         LAngle = 16
         RAngle = 17
         ArithmeticOperator = 18
-        
+        Keyword = 19
+        LogcalOperator = 20
+        AssignmentOperator = 21
