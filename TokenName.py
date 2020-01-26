@@ -21,5 +21,10 @@ class TokenName(Enum):
         RAngle = 17
         ArithmeticOperator = 18
         Keyword = 19
-        LogcalOperator = 20
+        LogicalOperator = 20
         AssignmentOperator = 21
+        comma = 22
+        single_quot = 23
+        double_quot = 24
+        increment = 25
+        decrement = 26

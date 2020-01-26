@@ -4,7 +4,7 @@ import re
 from os import path
 import time
 from io import BytesIO
-from scanner import scan
+from scanner import *
 
 
 def printHelp():
@@ -66,7 +66,8 @@ if __name__ == "__main__":
 
     if (flag & 1 or flag == 0):
         # goes to scanner and prints the tokens
-        scan(fileString)
-    if (flag & 10):
+        tokens = scan(fileString)
+        tokenize(tokens)
+    #if (flag & 10):
         # goes to parser
         # parse(fileString)
