@@ -1,6 +1,7 @@
 import re
 from TokenName import TokenName
 import sys
+
 """
 Creates a dictionary with fixed-value tokens as the key
 and their token definition as the value
@@ -26,7 +27,7 @@ def create_token_defs():
     tokens_dict['enum'] = TokenName.TypeSpecifier
     tokens_dict['void'] = TokenName.TypeSpecifier
     tokens_dict['float'] = TokenName.TypeSpecifier
-    
+
     # Create dict entries for keywords
     tokens_dict['else'] = TokenName.Keyword
     tokens_dict['register'] = TokenName.Keyword
@@ -50,11 +51,10 @@ def create_token_defs():
     tokens_dict['*'] = TokenName.ArithmeticOperator
     tokens_dict['/'] = TokenName.ArithmeticOperator
     tokens_dict['%'] = TokenName.ArithmeticOperator
-
-    # Increment 
-    tokens_dict['++'] = TokenName.increment
-    # Decrement 
-    tokens_dict['--'] = TokenName.decrement
+    # Increment
+    tokens_dict['++'] = TokenName.Increment
+    # Decrement
+    tokens_dict['--'] = TokenName.Decrement
     # Comparison
     tokens_dict['=='] = TokenName.ComparisonOperator
     tokens_dict['!='] = TokenName.ComparisonOperator
@@ -78,17 +78,15 @@ def create_token_defs():
     tokens_dict['&='] = TokenName.AssignmentOperator
     tokens_dict['^='] = TokenName.AssignmentOperator
     tokens_dict['|='] = TokenName.AssignmentOperator
-    
     # SpecialCharacter
 
     # BitwiseOperator
     tokens_dict['>>'] = TokenName.BitwiseOperator
     tokens_dict['<<'] = TokenName.BitwiseOperator
-    tokens_dict['~'] = TokenName.BitwiseOperator 
+    tokens_dict['~'] = TokenName.BitwiseOperator
     tokens_dict['&'] = TokenName.BitwiseOperator
     tokens_dict['^'] = TokenName.BitwiseOperator
     tokens_dict['|'] = TokenName.BitwiseOperator
-
     # LParen
     tokens_dict['('] = TokenName.LParen
     # RParaen
@@ -97,9 +95,9 @@ def create_token_defs():
     tokens_dict['{'] = TokenName.LBracket
     # RBracket
     tokens_dict['}'] = TokenName.RParen
-    # LCurly 
+    # LCurly
     tokens_dict['['] = TokenName.LCurly
-    # RCurly 
+    # RCurly
     tokens_dict[']'] = TokenName.RCurly
     # LAngle
     tokens_dict['<'] = TokenName.LAngle
@@ -107,20 +105,19 @@ def create_token_defs():
     tokens_dict['>'] = TokenName.RAngle
     # Semicolon
     tokens_dict[';'] = TokenName.Semicolon
-    # comma
-    tokens_dict[','] = TokenName.comma
-    # single_quot
-    tokens_dict['\''] = TokenName.single_quot
-    # double_quot
-    tokens_dict['\"'] = TokenName.double_quot
+    # Colon
+    tokens_dict[':'] = TokenName.Colon
+    # Comma
+    tokens_dict[','] = TokenName.Comma
+    # Single quote
+    tokens_dict['\''] = TokenName.SingleQuot
+    # Souble quote
+    tokens_dict['\"'] = TokenName.DoubleQuot
 
     # TODO: Add rest of fixed-value tokens
-    
-    return tokens_dict
-    
 
-    
-    
+    return tokens_dict
+
 
 """
 Takes in a token and assigns it a token definition
@@ -133,23 +130,25 @@ def tokenize(tokens):
     re_id = re.compile("[a-zA-Z_]*|[a-zA-Z0-9_]*")
     re_string = re.compile("((\")|(\'))[\w\d]((\")|(\'))")
     for token in tokens:
-            if (token in tokens_dict):
-                n = tokens_dict[token]
-                print("< " + token + " , " + TokenName(n).name + " >")
-            elif (re_id.match(token)):
-                print("< " + token + " , " + "Identifier >")
-            elif (re_string.match(token)):
-                print("< " + token + " , " + "String >")      
-            else:
-                pass
+        if (token in tokens_dict):
+            n = tokens_dict[token]
+            print("< " + token + " , " + TokenName(n).name + " >")
+        elif (re_id.match(token)):
+            print("< " + token + " , " + "Identifier >")
+        elif (re_string.match(token)):
+            print("< " + token + " , " + "String >")
+        else:
+            pass
     """
     TODO: Check if token is directly indexable in the dict
     If not, check for strings, identifiers, numbers, and anything else
     that doesn't have a fixed value
     """
 
+
 """
 Scans through a file and splits it into tokens
+FIXME: Not currently picking up right parens
 """
 def scan(fileString):
     # Regex to find valid C word
@@ -157,16 +156,18 @@ def scan(fileString):
     re_id_after = re.compile(r"[a-zA-Z0-9_]")
     # Regex to find special character
     re_spec = re.compile(r"[^a-zA-Z0-9\s]")
-    re_spec_2nd_char = "+-><=|&"
+    re_spec_2nd_char = "+-><=|&" # QSTN: Should we include '/' and '*' for comments as 2nd characters?
     re_spec_3rd_char = "="
     # re_whtspace = re.compile("[\s]")
 
     # three_char_ops = [['<', '<', "="], ['>', '>', '=']]
-    two_char_ops = [['=', '='], ['!', '='], ['>', '='], ['>', '='], ['&', '&'], ['|', '|'], ['+', '='], ['-', '='], ['*', '='], ['/', '='], ['%', '='], ['&', '='], ['^', '='], ['|', '='], ['+', '+'], ['-', '-'], ['<', '<'], ['>', '>']]
-    one_char_ops = ['+', '-', '*', '/', '%', '=', '~', '&', '^', '|', ',', ';', '\"', '\'', '(', ')', '{', '}', '[', ']', '<', '>']
+    two_char_ops = [['=', '='], ['!', '='], ['>', '='], ['>', '='], ['&', '&'], ['|', '|'], ['+', '='], ['-', '='],
+                    ['*', '='], ['/', '='], ['%', '='], ['&', '='], ['^', '='], ['|', '='], ['+', '+'], ['-', '-'], ['<', '<'], ['>', '>']]
+    one_char_ops = ['+', '-', '*', '/', '%', '=', '~', '&', '^', '|',
+                    ',', ';', '\"', '\'', '(', ')', '{', '}', '[', ']', '<', '>']
     # token_dict = {}
     tokens = []
-    comments = []    
+    comments = []
     lineNum = 1
     curr_token = ''
     index = 0
@@ -175,11 +176,11 @@ def scan(fileString):
     fileString = fileString + ' '
     print(fileString)
     while (not fileIndexReached):
-       
+
         try:
             """ Checking for words, numbers, special characters, comments, and strings """
             c = fileString[index]
-            
+
             if (re.search(r"\s", c)):
                 # The character is a white space character
                 if (c == '\n'):
@@ -191,8 +192,9 @@ def scan(fileString):
                     curr_token = ''
                     continue
                 else:
+                    # QSTN: Do we want to continue down the program if curr_token is empty?
                     # Skip white space character
-                    if (curr_token != ""): 
+                    if (curr_token != ""):
                         tokens.append(curr_token)
                         index += 1
                         curr_token = ''
@@ -201,20 +203,22 @@ def scan(fileString):
             if (re.search(re_id_first, c) != None):
                 # The character is a character of an id/keyword
                 curr_token += c
-                
+
                 while (re.search(re_id_after, fileString[index + 1]) != None):
+                    # Continue looking for valid id/keyword characters
                     index += 1
                     curr_token += fileString[index]
-                # All letters found, append full token to token list
+
+                # All valid characters found, append full token to token list
                 tokens.append(curr_token)
                 index += 1
                 curr_token = ''
                 continue
-            
+
             elif (c.isnumeric()):
                 # The character is a number
                 curr_token += c
-                
+
                 while (fileString[index + 1].isnumeric() or fileString[index + 1] == '.'):
                     # Keep checking for more digits or decimal point in the number
                     index += 1
@@ -230,11 +234,11 @@ def scan(fileString):
                 # The character is a special character
                 curr_token += c
                 print("beginning", curr_token)
-                index += 1
-               
+                index += 1 # QSTN: Is there a reason this is here as opposed to within the conditional?
+
                 # if (re.search(re_spec_2nd_char, fileString[index]) != None):
                 if (fileString[index] in re_spec_2nd_char):
-                   
+
                     curr_token += fileString[index]
                     index += 1
                     # if (fileString[index] in re_spec_3rd_char):
@@ -243,13 +247,13 @@ def scan(fileString):
                     #     index += 1
                     #     i = 0
                     #     while True:
-                    #         # Going through the loop on three_char_ops 
+                    #         # Going through the loop on three_char_ops
                     #         # and finding which operator matches the current token
-                    #         # if matched then break and work with the corresponding 
+                    #         # if matched then break and work with the corresponding
                     #         # i. Else continue
                     #         try:
                     #             if (curr_token == ''.join(three_char_ops[i])):
-                                    
+
                     #                 break
                     #         except StopIteration:
                     #             print("In special char, three_char_spec Not found ")
@@ -259,18 +263,18 @@ def scan(fileString):
                     #             print(sys.exec_info()[0])
                     #             break
                     #         i += 1
-                        
-                    #     # We need a mapping of operators to Name. 
+
+                    #     # We need a mapping of operators to Name.
                     #     continue
                     # else:
-                    # two character operator 
+                    # two character operator
                     # # curr_token += fileString[index]
                     # # index += 1
-                    i = 0
+                    i = 0 # QSTN: Do we need this up here since there's another one on line 311?
                     if (curr_token == '//'):
                         # Single line comments
                         # # while (fileString[index] not "\n"):
-                        while (re.search("\n\r", fileString[index])):
+                        while (re.search("\n\r", fileString[index])): # QSTN: Should this have != None at the end?
                             curr_token += fileString[index]
                             index += 1
                         comments.append(curr_token)
@@ -297,7 +301,7 @@ def scan(fileString):
 
                                 curr_token += fileString[index]
                                 if (fileString[index] == '\n'):
-                                    linenum += 1
+                                    lineNum += 1
                                 index += 1
                                 end_tracker = fileString[index]
 
@@ -305,10 +309,10 @@ def scan(fileString):
                         comments.append(curr_token)
                         curr_token = ''
                         continue
-                    else:
+                    else: # QSTN: Could we just remove this else?
                         pass
                     i = 0
-                   
+
                     while True:
                         # Going thru the loop on two_char_ops
                         # and finding which operator matches the current_token
@@ -326,27 +330,27 @@ def scan(fileString):
                             print(sys.exc_info()[0])
                             break
                         i += 1
-                           
+
                     # We need a mapping of operators to their name
                     continue
-                        
+
                 else:
                     print("current", curr_token)
                     # one character operator
 
-                    # Check for quotation first 
-                    if (curr_token == '\"'):
+                    # Check for quotation first
+                    if (curr_token == '\"'): # QSTN: Do we need to escape the quote? It seems like writing this way will match \" and not simply "
                         while (fileString[index] != '\"'):
                             # We do not yet take care of Escape character strings
                             curr_token += fileString[index]
                             index += 1
-                        
-                        # Send strings to the tokenizer 
+
+                        # Send strings to the tokenizer
                         tokens.append(curr_token)
                         index += 1
                         curr_token = ''
                         continue
-                        
+
                     elif (curr_token == '\''):
                         while (fileString[index] != '\''):
                             # We do not yet take care of Escape character strings
@@ -358,14 +362,14 @@ def scan(fileString):
                         continue
                     else:
                         pass
-                    
+
                     i = 0
                     listSizeReached = False
                     while (not listSizeReached):
                         # Going thru the loop on one_char_ops
                         # and finding which operator matches the current_token
-                        # if matched then break and work with the corresponding i 
-                        # else continue 
+                        # if matched then break and work with the corresponding i
+                        # else continue
                         # if i goes beyond the size of one_char_ops printout an error msg
                         # # i = 0
                         try:
@@ -377,8 +381,8 @@ def scan(fileString):
                                 break
                         except IndexError:
                             print("In special char, one_char_ops Not found")
-                            #print("index = {}".format(index))  # debugging
-                            #print("fileString[index] = {}".format(fileString[index]))  # debugging
+                            # print("index = {}".format(index))  # debugging
+                            # print("fileString[index] = {}".format(fileString[index]))  # debugging
                             print(sys.exc_info()[0])
                             listSizeReached = True
                             break

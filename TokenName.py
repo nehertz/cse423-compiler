@@ -1,7 +1,6 @@
 from enum import Enum
 
 class TokenName(Enum):
-        # data-types
         TypeSpecifier = 1
         String = 2 
         Identifier = 3 
@@ -23,8 +22,9 @@ class TokenName(Enum):
         Keyword = 19
         LogicalOperator = 20
         AssignmentOperator = 21
-        comma = 22
-        single_quot = 23
-        double_quot = 24
-        increment = 25
-        decrement = 26
+        Comma = 22
+        SingleQuot = 23
+        DoubleQuot = 24
+        Increment = 25
+        Decrement = 26
+        Colon = 27
