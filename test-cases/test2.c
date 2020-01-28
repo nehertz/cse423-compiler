@@ -1,8 +1,7 @@
 int main()
 {
         unsigned int a = 2;
-        auto b = 99;
-        extern double c = 32.2;
+        auto int b = 99;
         struct d;
         typedef signed long slong;
         char e = 'e';
@@ -82,12 +81,12 @@ void func(int param1, int param2) {
         int check == aa == 3 ? aa > 3 : return;
 
         //test Bitwise operators
-        dd = cc >> 3;
-        ee = dd << 1;
-        ff = ~ee;
-        gg = ff & 1;
-        hh = gg | 0;
-        ii = gg ^ 1;
+        int dd = cc >> 3;
+        int ee = dd << 1;
+        int ff = ~ee;
+        int gg = ff & 1;
+        int hh = gg | 0;
+        int ii = gg ^ 1;
 
         //test Special operators
         int size = sizeof(aa);
@@ -101,7 +100,7 @@ void func(int param1, int param2) {
 }
 
 void func2(int param1) {
-        if(param1 % 2 == 0){
+        if (param1 % 2 == 0){
                 goto even;
         } else {
                 goto odd;

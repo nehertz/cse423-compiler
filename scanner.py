@@ -124,13 +124,16 @@ Takes in a token and assigns it a token definition
 """
 def tokenize(tokens):
 
-    re_word = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+    re_word = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]*$")
     tokens_dict = create_token_defs()
     re_string = re.compile("((\")|(\'))[\w\d]((\")|(\'))")
+    re_numconst = re.compile(r"(^\d*\.?\d*$)    ")
     for token in tokens:
         if (token in tokens_dict):
             n = tokens_dict[token]
             print("< " + token + " , " + TokenName(n).name + " >")
+        elif (re_numconst.match(token)):
+            print("< " + token + " , " + "NumConst >")
         elif (re_word.match(token)):
             print("< " + token + " , " + "Identifier >")
         elif (re_string.match(token)):
@@ -153,7 +156,7 @@ def scan(fileString):
     re_id_after = re.compile(r"[a-zA-Z0-9_]")
     # Regex to find special character
     re_spec = re.compile(r"[^a-zA-Z0-9\s]")
-    re_spec_2nd_char = "+-><=|&/*" # FIXME: Should we include '/' and '*' for comments as 2nd characters?
+    re_spec_2nd_char = "+-><=|&/*" 
     re_spec_3rd_char = "="
     # re_whtspace = re.compile("[\s]")
 
@@ -301,11 +304,9 @@ def scan(fileString):
 
                                     if (fileString[index] == '\n'):
                                         lineNum += 1
-                                    
                                     curr_token += fileString[index]
                                     index += 1
                                     end_tracker = fileString[index]
-
                             ## index += 1
                             comments.append(curr_token)
                             curr_token = ''
