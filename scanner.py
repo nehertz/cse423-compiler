@@ -127,9 +127,9 @@ def tokenize(tokens):
     re_word = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]*$")
     tokens_dict = create_token_defs()
     re_string = re.compile("((\")|(\'))[\w\d]((\")|(\'))")
-    re_numconst = re.compile(r"(^\d*\.?\d*$)    ")
+    re_numconst = re.compile(r"(^\d*\.?\d*$)")
     for token in tokens:
-        if (token in tokens_dict):
+        if (token in tokens_dict): 
             n = tokens_dict[token]
             print("< " + token + " , " + TokenName(n).name + " >")
         elif (re_numconst.match(token)):
