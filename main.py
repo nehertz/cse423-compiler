@@ -55,13 +55,13 @@ if __name__ == "__main__":
         if (currentArgument in ("-h", "--help")):
             printHelp()
             sys.exit()
-    # Read file, store the entire file in a string
     try:
         f = open(inputFile, 'r')
     except OSError:
         print("ERROR: Could not open/read " + inputFile + ".")
 
     with f:
+        # Read file, store the entire file in a string
         fileString = f.read()
 
     if (flag & 1 or flag == 0):

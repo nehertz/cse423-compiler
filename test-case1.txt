@@ -1,0 +1,10 @@
+['// Line comments', '/*\n        Hello World\n        */']
+< int , TypeSpecifier >
+< main , Identifier >
+< ( , LParen >
+< ) , RParen >
+< { , LBracket >
+< return , Keyword >
+< 1 , NumConst >
+< ; , Semicolon >
+< } , RParen >

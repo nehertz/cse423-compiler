@@ -126,7 +126,7 @@ def tokenize(tokens):
 
     re_word = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]*$")
     tokens_dict = create_token_defs()
-    re_string = re.compile("((\")|(\'))[\w\d]((\")|(\'))")
+    re_string = re.compile(r"((\")|(\'))[\w\d]((\")|(\'))")
     re_numconst = re.compile(r"(^\d*\.?\d*$)")
     for token in tokens:
         if (token in tokens_dict): 
@@ -140,11 +140,6 @@ def tokenize(tokens):
             print("< " + token + " , " + "String >")
         else:
             pass
-    """
-    TODO: Check if token is directly indexable in the dict
-    If not, check for strings, identifiers, numbers, and anything else
-    that doesn't have a fixed value
-    """
 
 
 """
@@ -176,10 +171,11 @@ def scan(fileString):
     fileString = fileString + ' '
     # print(fileString)
     while (not fileIndexReached):
+        """ Iterate through the file string character by character and check each character for known patterns """
         if (index >= len(fileString)):
+            # Check for end of file
             fileIndexReached = True
             break
-
         
         try:
             """ Checking for words, numbers, special characters, comments, and strings """
@@ -189,10 +185,10 @@ def scan(fileString):
                 # The character is a white space character
                 if (c == '\n'):
                     # New line char found, increment line num
-                    lineNum += 1
+                    lineNum += 1 # TODO: Currently unused; implement line number storing
                     index += 1
                     
-                    curr_token = ''
+                    curr_token = '' # Return current token to empty string
                     continue
                 else:
                     # Skip white space character
