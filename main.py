@@ -5,7 +5,7 @@ from os import path
 import time
 from io import BytesIO
 from scanner import *
-
+from PlyScanner import tokenizer
 
 def printHelp():
     print("usage: scanner.py [-t] [-p] filename")
@@ -66,8 +66,9 @@ if __name__ == "__main__":
 
     if (flag & 1 or flag == 0):
         # goes to scanner and prints the tokens
-        tokens = scan(fileString)
-        tokenize(tokens)
+        #tokens = scan(fileString)
+        #tokenize(tokens)
+        tokenizer(fileString)
     #if (flag & 10):
         # goes to parser
         # parse(fileString)
