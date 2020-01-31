@@ -28,6 +28,9 @@ def t_comments(t):
     pass
 
 # Block comments
+def t_blockComments(t):
+    r'(\/\*)[\s\S]*(\*\/)'
+    pass
 
 # Identifiers
 def t_ID(t):
