@@ -4,8 +4,9 @@ import re
 from os import path
 import time
 from io import BytesIO
-from scanner import *
+#from scanner import *
 from PlyScanner import tokenizer
+from PlyParser import parser
 
 def printHelp():
     print("usage: scanner.py [-t] [-p] filename")
@@ -15,6 +16,10 @@ def printHelp():
     print("-h   :print the usage information")
     print("Default   :print option -t")
 
+def printTokens(lexer):
+    for tok in lexer:
+        print("Token['" + str(tok.value)+ "' , '" + tok.type + "']")
+        #print(tok.type, tok.value, tok.lineno, tok.lexpos)
 
 if __name__ == "__main__":
 
@@ -63,12 +68,15 @@ if __name__ == "__main__":
     with f:
         # Read file, store the entire file in a string
         fileString = f.read()
-
+    
+    # Goes to the tokenizer
+    lexer = tokenizer(fileString)
+    
     if (flag & 1 or flag == 0):
-        # goes to scanner and prints the tokens
-        #tokens = scan(fileString)
-        #tokenize(tokens)
-        tokenizer(fileString)
-    #if (flag & 10):
+       # prints the tokens
+        printTokens(lexer)
+    if (flag & 10):
         # goes to parser
-        # parse(fileString)
+        parser(lexer)
+
+       

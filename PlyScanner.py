@@ -178,6 +178,4 @@ def t_error(t):
 def tokenizer(fileString):
     lexer = lex.lex()
     lexer.input(fileString)
-    for tok in lexer:
-        print("Token['" + str(tok.value)+ "' , '" + tok.type + "']")
-        #print(tok.type, tok.value, tok.lineno, tok.lexpos)
+    return lexer
