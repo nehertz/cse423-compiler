@@ -1,18 +1,72 @@
 import re
 import ply.lex as lex
 
-keywords = ['else', 'register','do','goto','continue','if','sizeof','switch', 'for', 'case','while','break','default','return']
+keywords = ['else', 'register','do','goto','continue','if','sizeof','switch', 'for', 'case','while','break','default','return', 'typedef']
 TypeSpecifier = ['auto', 'union', 'short', 'double','long', 'unsigned','int','char','static','volatile','struct','extern','signed','const','enum','void','float']
+OperatorConst = {
+    # Opeartors 
+    '+' : 'PLUS',
+    '-' : 'MINUS',
+    '*' : 'TIMES',
+    '/' : 'DIVIDE',
+    '%' : 'MODULO',
+    '|' : 'OR',
+    '&' : 'AND',
+    '~' : 'NOT',
+    '^' : 'XOR',
+    '<<' : 'LSHIFT',
+    '>>' : 'RSHIFT',
+    '||' : 'LOR',
+    '&&' : 'LAND',
+    '!' : 'LNOT',
+    # '<' : 'LT',
+    # '>' : 'GT',
+    '<=' : 'LE',
+    '>=' : 'GE',
+    '==' : 'EQ',
+    '!=' : 'NE',
+
+    # Assignment operators
+    '=' : 'EQUALS',
+    '*=' : 'TIMESEQUAL',
+    '/=' : 'DIVEQUAL',
+    '%=' : 'MODEQUAL',
+    '+=' : 'PLUSEQUAL',
+    '-=' : 'MINUSEQUAL',
+    '<<=' : 'LSHIFTEQUAL',
+    '>>=' : 'RSHIFTEQUAL',
+    '&=' : 'ANDEQUAL',
+    '|=' : 'OREQUAL',
+    '^=' : 'XOREQUAL',
+
+    # Increment/decrement
+    '++' : 'INCREMENT',
+    '--' : 'DECREMENT',
+
+    # ->
+    '->' : 'ARROW',
+
+    # Delimeters
+    '(' : 'LPAREN',
+    ')' : 'RPAREN',
+    '[' : 'LBRACKET',
+    ']' : 'RBRACKET',
+    '{' : 'LBRACE',
+    '}' : 'RBRACE',
+    ',' : 'COMMA',
+    '.' : 'PERIOD',
+    ';' : 'SEMI',
+    ':' : 'COLON',
+    '\'' : 'SQUOT',
+    '\"' : 'DQUOT',
+    '<' : 'LANGLE',
+    '>' : 'RANGLE',
+    '...' : 'ELLIPSIS',
+}
 
 # List of token names. Copy from TokenName.py 
-tokens = ['TypeSpecifier','String','Identifier','NumberConstant',
-        'SpecialCharacter', 'BitwiseOperator','ComparisonOperator',
-        'Equals', 'Semicolon', 'LParen', 'RParen', 'LBracket',
-        'RBracket', 'LCurly', 'RCurly', 'LAngle', 'RAngle',
-        'ArithmeticOperator', 'Keyword', 'LogicalOperator',
-        'AssignmentOperator','Comma', 'SingleQuot',
-        'DoubleQuot', 'Increment', 'Decrement',
-        'Colon'] + keywords + TypeSpecifier
+tokens = ['String','Identifier','TypeSpecifier',
+        'NumberConstant','Keyword'] + keywords + TypeSpecifier + list(OperatorConst.values())
 
 # Ignore whitespace and tabs
 t_ignore  = ' \t'
@@ -60,114 +114,36 @@ def t_number(t):
 # BitwiseOperator
 def t_bitOps(t):
     r"(<<)|(>>)|(&)|(\|)|(\^)|(~)"
-    t.type = 'BitwiseOperator'
+    t.type = OperatorConst.get(t.value)
     return t
 
 # ComparisonOperator
 def t_compOps(t):
     r"(==)|(\!=)|(>=)|(<=)"
-    t.type = 'ComparisonOperator'
+    t.type = OperatorConst.get(t.value)
     return t
 
 # AssignmentOperator
 def t_assignOps(t):
     r"(=)|(\+=)|(-=)|(\*=)|(/=)|(%=)|(<<=)|(>>=)|(&=)|(\^=)|(\|=)"   
-    t.type = 'AssignmentOperator'
+    t.type = OperatorConst.get(t.value)
     return t
 
-# Increment
+# Increment and Decrement 
 def t_increment(t):
-    r'\+\+'
-    t.type = 'Increment'
-    return t
-
-# Decrement
-def t_decrement(t):
-    r'\-\-'
-    t.type = 'Decrement'
+    r'\-\-|\+\+'
+    t.type = OperatorConst.get(t.value)
     return t
 
 # ArithmeticOperator
 def t_arithOps(t):
     r'[\/\+\-\*\%]'
-    t.type = 'ArithmeticOperator'
-    return t
-# Comma
-def t_comma(t):
-    r'\,'
-    t.type = 'Comma'
+    t.type = OperatorConst.get(t.value)
     return t
 
-# SingleQuot
-def t_singleQuot(t):
-    r'\''  
-    t.type = 'SingleQuot'
-    return t
-
-# DoubleQuot
-def t_doubleQuot(t):
-    r'\"'
-    t.type = 'DoubleQuot'
-    return t
-
-# Colon
-def t_colon(t):
-    r'\:'
-    t.type = 'Colon'
-    return t
-
-# LCurly
-def t_lcurly(t):
-    r'\{'
-    t.type = 'LCurly'
-    return t
-
-# RCurly
-def t_rcurly(t):
-    r'\}'
-    t.type = 'RCurly'
-    return t
-
-# LAngle
-def t_langle(t):
-    r'\<'
-    t.type = 'LAngle'
-    return t
-
-# RAngle 
-def t_rangle(t):
-    r'\>'
-    t.type = 'RAngle'
-    return t
-
-# Left Bracket 
-def t_lbracket(t):
-    r'\{'
-    t.type = 'LBracket'      
-    return t
-
-# Right Bracket 
-def t_rbracket(t):
-    r'\}'
-    t.type = 'RBracket'      
-    return t
-
-# Left paren
-def t_lparen(t):
-    r'\)'
-    t.type = 'LParen'      
-    return t
-
-# Right paren
-def t_rparen(t):
-    r'\('
-    t.type = 'RParen'      
-    return t
-
-# Semicolon
-def t_semicolon(t):
-    r'\;'
-    t.type = 'Semicolon'      
+def t_delimeters(t):
+    r'\,|\'|\"|\:|\{|\}|\<|\>|\[|\]|\(|\)|\;|\.'
+    t.type = OperatorConst.get(t.value)
     return t
 
 # Error Handling 
