@@ -97,7 +97,7 @@ def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     # Check for reserved words
     if (t.value in keywords):
-        t.type = 'Keyword'
+        t.type = t.value.capitalize()
     elif (t.value in type_specifier):
         t.type = 'TypeSpecifier'
     else:
