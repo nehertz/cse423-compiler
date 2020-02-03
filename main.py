@@ -5,8 +5,8 @@ from os import path
 import time
 from io import BytesIO
 #from scanner import *
-from PlyScanner import tokenizer
-from PlyParser import parser
+from ply_scanner import tokenizer
+from ply_parser import parser
 
 def printHelp():
     print("usage: scanner.py [-t] [-p] filename")

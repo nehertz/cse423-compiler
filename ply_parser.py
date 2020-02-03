@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from PlyScanner import tokens
+from ply_scanner import tokens
 
 # Grammar rule functions, should be modified to follow the AST Construction. 
 # Refer to section 6.10, PLY-documentation. NEED TO DECIDE WHICH APPOARCH WE WANT TO DO
