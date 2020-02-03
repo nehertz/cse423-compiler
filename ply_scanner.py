@@ -71,8 +71,7 @@ operators = {
 }
 
 # List of token names. Copy from TokenName.py 
-tokens = ['String','Identifier','type_specifier',
-        'NumberConstant','Keyword'] + keywords + type_specifier + list(operators.values())
+tokens = ['STRING','ID', 'NUMCONST'] + [keyword.upper() for keyword in keywords] + [t.upper() for t in type_specifier] + list(operators.values())
 
 # Ignore whitespace and tabs
 t_ignore  = ' \t'
@@ -97,24 +96,24 @@ def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     # Check for reserved words
     if (t.value in keywords):
-        t.type = t.value.capitalize()
+        t.type = t.value.upper()
     elif (t.value in type_specifier):
-        t.type = 'TypeSpecifier'
+        t.type = t.value.upper()
     else:
-        t.type = 'Identifier'
+        t.type = 'ID'
     return t
 
 # String, got the regex from ply documentation 
 def t_string(t):
     r'\"([^\\\n]|(\\.))*?\"'
-    t.type = 'String'
+    t.type = 'STRING'
     return t
 
 # Number
 def t_number(t):
     r'\d+'
     t.value = int(t.value)    
-    t.type = 'NumberConstant'
+    t.type = 'NUMCONST'
     return t
 
 # BitwiseOperator
