@@ -4,3 +4,6 @@ __pycache__/scanner.cpython-37.pyc
 __pycache__/PlyScanner.cpython-37.pyc
 ply/__pycache__/lex.cpython-36.pyc
 __pycache__/TokenName.cpython-37.pyc
+a.out
+__pycache__/ply_parser.cpython-36.pyc
+__pycache__/ply_scanner.cpython-36.pyc

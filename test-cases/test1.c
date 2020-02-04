@@ -1,8 +1,9 @@
 int main()
 {
-        /* yash 
-        asjdhkjdsf
+        /* 
+        this is comment
         */
         // Hello world
-        return 1;
+        int i = 1;
+        return (i = 1);
 }

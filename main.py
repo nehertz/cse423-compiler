@@ -77,6 +77,4 @@ if __name__ == "__main__":
         printTokens(lexer)
     if (flag & 10):
         # goes to parser
-        parser(lexer)
-
-       
+        parser(lexer)     
