@@ -1,0 +1,88 @@
+
+program ->  declarationList
+
+declarationList -> declarationList declaration | declaration
+
+declaration -> var_declaration | fun_declaration  [##Added this to support global variable]
+
+------------------------------------------------------------------------
+var_declaration -> type_spec ID 
+                    | type_spec var_assign 
+                    | type_spec ID LBRACKET NUMCONST RBRACKET  [##Added this to support Array decl]
+
+type_spec -> INT 
+            | CHAR 
+            | FLOAT 
+            | DOUBLE 
+
+------------------------------------------------------------------------
+
+funcDecl -> type_spec ID LPAREN args RPAREN scope 
+
+args -> type_spec_list | empty | VOID  [##Added this to support 'int main(void)']
+
+type_spec_list -> type_spec_list COMMA type_spec ID | type_spec ID
+
+scope -> LBRACE statement_list RBRACE
+
+statement_list -> empty | statement SEMI statement_list
+
+statement -> expression_stmt 
+            | selection_stmt 
+            | iteration_stmt
+            | return_stmt 
+            | break_stmt 
+            | goto_stmt
+            | var_decl 
+            | var_assign 
+            | empty
+
+------------------------------------------------------------------------
+
+expression_stmt -> var bin_op var
+
+var -> ID | NUMCONST
+
+bin_op : PLUS
+        | MINUS
+        | TIMES
+        | DIVIDE
+        | MODULO
+
+------------------------------------------------------------------------
+
+selection_stmt ->
+
+------------------------------------------------------------------------
+
+iteration_stmt -> 
+
+------------------------------------------------------------------------
+
+break_stmt -> BREAK SIMI
+
+------------------------------------------------------------------------
+
+goto_stmt -> GOTO ID SIMI 
+
+------------------------------------------------------------------------
+
+return_stmt -> RETURN var | RETURN expression_stmt | RETURN var_assign
+
+------------------------------------------------------------------------
+
+var_decl -> type_spec ID 
+            | type_spec var_assign 
+
+------------------------------------------------------------------------
+var_assign -> ID EQUALS var 
+            | ID EQUALS expression_stmt 
+            | ID EQUALS STRING 
+            | LPAREN var_assign RPAREN
+
+------------------------------------------------------------------------
+
+
+
+
+
