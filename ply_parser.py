@@ -35,11 +35,13 @@ def p_statement_list(p):
 
 def p_expr(p):
     '''
-    expr : var bin_op var
-    var : ID
-        | NUMCONST
+    expr : operand bin_op operand
     '''
-
+def p_operand(p):
+    '''
+    operand : ID
+            | NUMCONST
+    '''
 def p_bin_op(p):
     '''
     bin_op : PLUS
@@ -52,7 +54,7 @@ def p_bin_op(p):
 # TODO: Add other types
 def p_return_stmt(p):
     '''
-    return_stmt : RETURN var
+    return_stmt : RETURN operand
                 | RETURN expr
                 | RETURN var_assign
     '''
@@ -67,7 +69,7 @@ def p_var_decl(p):
 # TODO: Add support for +=, -=, etc.
 def p_var_assign(p):
     '''
-    var_assign : ID EQUALS var
+    var_assign : ID EQUALS operand
                | ID EQUALS expr
                | ID EQUALS STRING
                | LPAREN var_assign RPAREN
@@ -116,7 +118,23 @@ def p_funcDeclaration(p):
     args : type_spec_list
          | empty
     '''
-
+def p_compOps(p):
+    '''
+    compOps     : LE
+                | GE
+                | EQ
+                | NE
+    '''
+def p_conditionals(p):
+    '''
+    conditionals    : operand compOps operand
+                    | TRUE
+                    | FALSE
+    '''
+def p_whileLoop(p):
+    '''
+    whileLoop   : WHILE LPAREN conditionals RPAREN scope
+    '''
 def p_error(t):
     print("Syntax error at '%s'" % t.value)
 

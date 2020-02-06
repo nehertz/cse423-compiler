@@ -6,7 +6,7 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'funcDeclAND ANDEQUAL ARROW AUTO BREAK CASE CHAR COLON COMMA CONST CONTINUE DECREMENT DEFAULT DIVEQUAL DIVIDE DO DOUBLE DQUOT ELLIPSIS ELSE ENUM EQ EQUALS EXTERN FLOAT FOR GE GOTO ID IF INCREMENT INT LAND LANGLE LBRACE LBRACKET LE LNOT LONG LOR LPAREN LSHIFT LSHIFTEQUAL MINUS MINUSEQUAL MODEQUAL MODULO NE NOT NUMCONST OR OREQUAL PERIOD PLUS PLUSEQUAL RANGLE RBRACE RBRACKET REGISTER RETURN RPAREN RSHIFT RSHIFTEQUAL SEMI SHORT SIGNED SIZEOF SQUOT STATIC STRING STRUCT SWITCH TIMES TIMESEQUAL TYPEDEF UNION UNSIGNED VOID VOLATILE WHILE XOR XOREQUALempty :\n    statement_list : empty\n                   | statement SEMI statement_list\n    statement : return_stmt\n              | var_decl\n              | var_assign\n              | empty\n    \n    expr : var bin_op var\n    var : ID\n        | NUMCONST\n    \n    bin_op : PLUS\n           | MINUS\n           | TIMES\n           | DIVIDE\n           | MODULO\n    \n    return_stmt : RETURN var\n                | RETURN expr\n                | RETURN var_assign\n    \n    var_decl : type_spec ID\n             | type_spec var_assign\n    \n    var_assign : ID EQUALS var\n               | ID EQUALS expr\n               | ID EQUALS STRING\n               | LPAREN var_assign RPAREN\n    \n    type_spec_list : type_spec_list COMMA type_spec ID\n                   | type_spec ID\n    type_spec : INT\n              | CHAR\n    \n    scope : LBRACE statement_list RBRACE\n    \n    funcDecl : type_spec ID LPAREN args RPAREN scope\n    args : type_spec_list\n         | empty\n    '
+_lr_signature = 'funcDeclAND ANDEQUAL ARROW AUTO BREAK CASE CHAR CHARACTER COLON COMMA CONST CONTINUE DECREMENT DEFAULT DIVEQUAL DIVIDE DO DOUBLE DQUOT ELLIPSIS ELSE ENUM EQ EQUALS EXTERN FALSE FLOAT FOR GE GOTO ID IF INCREMENT INT LAND LANGLE LBRACE LBRACKET LE LNOT LONG LOR LPAREN LSHIFT LSHIFTEQUAL MINUS MINUSEQUAL MODEQUAL MODULO NE NOT NUMCONST OR OREQUAL PERIOD PLUS PLUSEQUAL RANGLE RBRACE RBRACKET REGISTER RETURN RPAREN RSHIFT RSHIFTEQUAL SEMI SHORT SIGNED SIZEOF SQUOT STATIC STRING STRUCT SWITCH TIMES TIMESEQUAL TRUE TYPEDEF UNION UNSIGNED VOID VOLATILE WHILE XOR XOREQUALempty :\n    statement_list : empty\n                   | statement SEMI statement_list\n    statement : return_stmt\n              | var_decl\n              | var_assign\n              | empty\n    \n    expr : operand bin_op operand\n    \n    operand : ID\n            | NUMCONST\n    \n    bin_op : PLUS\n           | MINUS\n           | TIMES\n           | DIVIDE\n           | MODULO\n    \n    return_stmt : RETURN operand\n                | RETURN expr\n                | RETURN var_assign\n    \n    var_decl : type_spec ID\n             | type_spec var_assign\n    \n    var_assign : ID EQUALS operand\n               | ID EQUALS expr\n               | ID EQUALS STRING\n               | LPAREN var_assign RPAREN\n    \n    type_spec_list : type_spec_list COMMA type_spec ID\n                   | type_spec ID\n    type_spec : INT\n              | CHAR\n    \n    scope : LBRACE statement_list RBRACE\n    \n    funcDecl : type_spec ID LPAREN args RPAREN scope\n    args : type_spec_list\n         | empty\n    \n    compOps     : LE\n                | GE\n                | EQ\n                | NE\n    \n    conditionals    : operand compOps operand\n                    | TRUE\n                    | FALSE\n    \n    whileLoop    : WHILE LPAREN conditionals RPAREN scope\n    '
     
 _lr_action_items = {'INT':([0,6,13,15,29,],[3,3,3,3,3,]),'CHAR':([0,6,13,15,29,],[4,4,4,4,4,]),'$end':([1,14,28,],[0,-30,-29,]),'ID':([2,3,4,7,15,16,23,24,26,29,37,40,41,42,43,44,45,],[5,-27,-28,11,25,27,33,35,25,25,46,46,-11,-12,-13,-14,-15,]),'LPAREN':([3,4,5,15,23,24,26,29,],[-27,-28,6,26,26,26,26,26,]),'RPAREN':([6,8,9,10,11,27,34,38,46,47,48,49,50,51,],[-1,12,-31,-32,-26,-25,-10,50,-9,-21,-22,-23,-24,-8,]),'COMMA':([9,11,27,],[13,-26,-25,]),'LBRACE':([12,],[15,]),'RBRACE':([15,17,18,29,39,],[-1,28,-2,-1,-3,]),'SEMI':([15,18,19,20,21,22,29,30,31,32,33,34,35,36,46,47,48,49,50,51,],[-1,-7,29,-4,-5,-6,-1,-16,-17,-18,-9,-10,-19,-20,-9,-21,-22,-23,-24,-8,]),'RETURN':([15,29,],[23,23,]),'NUMCONST':([23,37,40,41,42,43,44,45,],[34,34,34,-11,-12,-13,-14,-15,]),'EQUALS':([25,33,35,],[37,37,37,]),'PLUS':([30,33,34,46,47,],[41,-9,-10,-9,41,]),'MINUS':([30,33,34,46,47,],[42,-9,-10,-9,42,]),'TIMES':([30,33,34,46,47,],[43,-9,-10,-9,43,]),'DIVIDE':([30,33,34,46,47,],[44,-9,-10,-9,44,]),'MODULO':([30,33,34,46,47,],[45,-9,-10,-9,45,]),'STRING':([37,],[49,]),}
 
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'funcDecl':([0,],[1,]),'type_spec':([0,6,13,15,29,],[2,7,16,24,24,]),'args':([6,],[8,]),'type_spec_list':([6,],[9,]),'empty':([6,15,29,],[10,18,18,]),'scope':([12,],[14,]),'statement_list':([15,29,],[17,39,]),'statement':([15,29,],[19,19,]),'return_stmt':([15,29,],[20,20,]),'var_decl':([15,29,],[21,21,]),'var_assign':([15,23,24,26,29,],[22,32,36,38,22,]),'var':([23,37,40,],[30,47,51,]),'expr':([23,37,],[31,48,]),'bin_op':([30,47,],[40,40,]),}
+_lr_goto_items = {'funcDecl':([0,],[1,]),'type_spec':([0,6,13,15,29,],[2,7,16,24,24,]),'args':([6,],[8,]),'type_spec_list':([6,],[9,]),'empty':([6,15,29,],[10,18,18,]),'scope':([12,],[14,]),'statement_list':([15,29,],[17,39,]),'statement':([15,29,],[19,19,]),'return_stmt':([15,29,],[20,20,]),'var_decl':([15,29,],[21,21,]),'var_assign':([15,23,24,26,29,],[22,32,36,38,22,]),'operand':([23,37,40,],[30,47,51,]),'expr':([23,37,],[31,48,]),'bin_op':([30,47,],[40,40,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -34,29 +34,37 @@ _lr_productions = [
   ('statement -> var_decl','statement',1,'p_statement_list','ply_parser.py',31),
   ('statement -> var_assign','statement',1,'p_statement_list','ply_parser.py',32),
   ('statement -> empty','statement',1,'p_statement_list','ply_parser.py',33),
-  ('expr -> var bin_op var','expr',3,'p_expr','ply_parser.py',38),
-  ('var -> ID','var',1,'p_expr','ply_parser.py',39),
-  ('var -> NUMCONST','var',1,'p_expr','ply_parser.py',40),
-  ('bin_op -> PLUS','bin_op',1,'p_bin_op','ply_parser.py',45),
-  ('bin_op -> MINUS','bin_op',1,'p_bin_op','ply_parser.py',46),
-  ('bin_op -> TIMES','bin_op',1,'p_bin_op','ply_parser.py',47),
-  ('bin_op -> DIVIDE','bin_op',1,'p_bin_op','ply_parser.py',48),
-  ('bin_op -> MODULO','bin_op',1,'p_bin_op','ply_parser.py',49),
-  ('return_stmt -> RETURN var','return_stmt',2,'p_return_stmt','ply_parser.py',55),
-  ('return_stmt -> RETURN expr','return_stmt',2,'p_return_stmt','ply_parser.py',56),
-  ('return_stmt -> RETURN var_assign','return_stmt',2,'p_return_stmt','ply_parser.py',57),
-  ('var_decl -> type_spec ID','var_decl',2,'p_var_decl','ply_parser.py',62),
-  ('var_decl -> type_spec var_assign','var_decl',2,'p_var_decl','ply_parser.py',63),
-  ('var_assign -> ID EQUALS var','var_assign',3,'p_var_assign','ply_parser.py',70),
-  ('var_assign -> ID EQUALS expr','var_assign',3,'p_var_assign','ply_parser.py',71),
-  ('var_assign -> ID EQUALS STRING','var_assign',3,'p_var_assign','ply_parser.py',72),
-  ('var_assign -> LPAREN var_assign RPAREN','var_assign',3,'p_var_assign','ply_parser.py',73),
-  ('type_spec_list -> type_spec_list COMMA type_spec ID','type_spec_list',4,'p_typeSpec','ply_parser.py',78),
-  ('type_spec_list -> type_spec ID','type_spec_list',2,'p_typeSpec','ply_parser.py',79),
-  ('type_spec -> INT','type_spec',1,'p_typeSpec','ply_parser.py',80),
-  ('type_spec -> CHAR','type_spec',1,'p_typeSpec','ply_parser.py',81),
-  ('scope -> LBRACE statement_list RBRACE','scope',3,'p_scope','ply_parser.py',110),
-  ('funcDecl -> type_spec ID LPAREN args RPAREN scope','funcDecl',6,'p_funcDeclaration','ply_parser.py',115),
-  ('args -> type_spec_list','args',1,'p_funcDeclaration','ply_parser.py',116),
-  ('args -> empty','args',1,'p_funcDeclaration','ply_parser.py',117),
+  ('expr -> operand bin_op operand','expr',3,'p_expr','ply_parser.py',38),
+  ('operand -> ID','operand',1,'p_operand','ply_parser.py',42),
+  ('operand -> NUMCONST','operand',1,'p_operand','ply_parser.py',43),
+  ('bin_op -> PLUS','bin_op',1,'p_bin_op','ply_parser.py',47),
+  ('bin_op -> MINUS','bin_op',1,'p_bin_op','ply_parser.py',48),
+  ('bin_op -> TIMES','bin_op',1,'p_bin_op','ply_parser.py',49),
+  ('bin_op -> DIVIDE','bin_op',1,'p_bin_op','ply_parser.py',50),
+  ('bin_op -> MODULO','bin_op',1,'p_bin_op','ply_parser.py',51),
+  ('return_stmt -> RETURN operand','return_stmt',2,'p_return_stmt','ply_parser.py',57),
+  ('return_stmt -> RETURN expr','return_stmt',2,'p_return_stmt','ply_parser.py',58),
+  ('return_stmt -> RETURN var_assign','return_stmt',2,'p_return_stmt','ply_parser.py',59),
+  ('var_decl -> type_spec ID','var_decl',2,'p_var_decl','ply_parser.py',64),
+  ('var_decl -> type_spec var_assign','var_decl',2,'p_var_decl','ply_parser.py',65),
+  ('var_assign -> ID EQUALS operand','var_assign',3,'p_var_assign','ply_parser.py',72),
+  ('var_assign -> ID EQUALS expr','var_assign',3,'p_var_assign','ply_parser.py',73),
+  ('var_assign -> ID EQUALS STRING','var_assign',3,'p_var_assign','ply_parser.py',74),
+  ('var_assign -> LPAREN var_assign RPAREN','var_assign',3,'p_var_assign','ply_parser.py',75),
+  ('type_spec_list -> type_spec_list COMMA type_spec ID','type_spec_list',4,'p_typeSpec','ply_parser.py',80),
+  ('type_spec_list -> type_spec ID','type_spec_list',2,'p_typeSpec','ply_parser.py',81),
+  ('type_spec -> INT','type_spec',1,'p_typeSpec','ply_parser.py',82),
+  ('type_spec -> CHAR','type_spec',1,'p_typeSpec','ply_parser.py',83),
+  ('scope -> LBRACE statement_list RBRACE','scope',3,'p_scope','ply_parser.py',112),
+  ('funcDecl -> type_spec ID LPAREN args RPAREN scope','funcDecl',6,'p_funcDeclaration','ply_parser.py',117),
+  ('args -> type_spec_list','args',1,'p_funcDeclaration','ply_parser.py',118),
+  ('args -> empty','args',1,'p_funcDeclaration','ply_parser.py',119),
+  ('compOps -> LE','compOps',1,'p_compOps','ply_parser.py',123),
+  ('compOps -> GE','compOps',1,'p_compOps','ply_parser.py',124),
+  ('compOps -> EQ','compOps',1,'p_compOps','ply_parser.py',125),
+  ('compOps -> NE','compOps',1,'p_compOps','ply_parser.py',126),
+  ('conditionals -> operand compOps operand','conditionals',3,'p_conditionals','ply_parser.py',130),
+  ('conditionals -> TRUE','conditionals',1,'p_conditionals','ply_parser.py',131),
+  ('conditionals -> FALSE','conditionals',1,'p_conditionals','ply_parser.py',132),
+  ('whileLoop -> WHILE LPAREN conditionals RPAREN scope','whileLoop',5,'p_whileLoop','ply_parser.py',136),
 ]

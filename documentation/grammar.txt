@@ -82,7 +82,8 @@ var_assign -> ID EQUALS var
 
 ------------------------------------------------------------------------
 
+whileLoop -> WHILE LPAREN CONDITIONALS RPAREN scope
 
-
-
+CONDITIONALS -> var compOps var 
+-------------------------------------------------------------------------
 

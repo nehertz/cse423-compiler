@@ -8,6 +8,7 @@ Unused terminals:
     AUTO
     BREAK
     CASE
+    CHARACTER
     COLON
     CONST
     CONTINUE
@@ -20,18 +21,15 @@ Unused terminals:
     ELLIPSIS
     ELSE
     ENUM
-    EQ
     EXTERN
     FLOAT
     FOR
-    GE
     GOTO
     IF
     INCREMENT
     LAND
     LANGLE
     LBRACKET
-    LE
     LNOT
     LONG
     LOR
@@ -39,7 +37,6 @@ Unused terminals:
     LSHIFTEQUAL
     MINUSEQUAL
     MODEQUAL
-    NE
     NOT
     OR
     OREQUAL
@@ -63,7 +60,6 @@ Unused terminals:
     UNSIGNED
     VOID
     VOLATILE
-    WHILE
     XOR
     XOREQUAL
 
@@ -77,20 +73,20 @@ Rule 4     statement -> return_stmt
 Rule 5     statement -> var_decl
 Rule 6     statement -> var_assign
 Rule 7     statement -> empty
-Rule 8     expr -> var bin_op var
-Rule 9     var -> ID
-Rule 10    var -> NUMCONST
+Rule 8     expr -> operand bin_op operand
+Rule 9     operand -> ID
+Rule 10    operand -> NUMCONST
 Rule 11    bin_op -> PLUS
 Rule 12    bin_op -> MINUS
 Rule 13    bin_op -> TIMES
 Rule 14    bin_op -> DIVIDE
 Rule 15    bin_op -> MODULO
-Rule 16    return_stmt -> RETURN var
+Rule 16    return_stmt -> RETURN operand
 Rule 17    return_stmt -> RETURN expr
 Rule 18    return_stmt -> RETURN var_assign
 Rule 19    var_decl -> type_spec ID
 Rule 20    var_decl -> type_spec var_assign
-Rule 21    var_assign -> ID EQUALS var
+Rule 21    var_assign -> ID EQUALS operand
 Rule 22    var_assign -> ID EQUALS expr
 Rule 23    var_assign -> ID EQUALS STRING
 Rule 24    var_assign -> LPAREN var_assign RPAREN
@@ -102,6 +98,14 @@ Rule 29    scope -> LBRACE statement_list RBRACE
 Rule 30    funcDecl -> type_spec ID LPAREN args RPAREN scope
 Rule 31    args -> type_spec_list
 Rule 32    args -> empty
+Rule 33    compOps -> LE
+Rule 34    compOps -> GE
+Rule 35    compOps -> EQ
+Rule 36    compOps -> NE
+Rule 37    conditionals -> operand compOps operand
+Rule 38    conditionals -> TRUE
+Rule 39    conditionals -> FALSE
+Rule 40    whileLoop -> WHILE LPAREN conditionals RPAREN scope
 
 Terminals, with rules where they appear
 
@@ -112,6 +116,7 @@ AUTO                 :
 BREAK                : 
 CASE                 : 
 CHAR                 : 28
+CHARACTER            : 
 COLON                : 
 COMMA                : 25
 CONST                : 
@@ -126,12 +131,13 @@ DQUOT                :
 ELLIPSIS             : 
 ELSE                 : 
 ENUM                 : 
-EQ                   : 
+EQ                   : 35
 EQUALS               : 21 22 23
 EXTERN               : 
+FALSE                : 39
 FLOAT                : 
 FOR                  : 
-GE                   : 
+GE                   : 34
 GOTO                 : 
 ID                   : 9 19 21 22 23 25 26 30
 IF                   : 
@@ -141,18 +147,18 @@ LAND                 :
 LANGLE               : 
 LBRACE               : 29
 LBRACKET             : 
-LE                   : 
+LE                   : 33
 LNOT                 : 
 LONG                 : 
 LOR                  : 
-LPAREN               : 24 30
+LPAREN               : 24 30 40
 LSHIFT               : 
 LSHIFTEQUAL          : 
 MINUS                : 12
 MINUSEQUAL           : 
 MODEQUAL             : 
 MODULO               : 15
-NE                   : 
+NE                   : 36
 NOT                  : 
 NUMCONST             : 10
 OR                   : 
@@ -165,7 +171,7 @@ RBRACE               : 29
 RBRACKET             : 
 REGISTER             : 
 RETURN               : 16 17 18
-RPAREN               : 24 30
+RPAREN               : 24 30 40
 RSHIFT               : 
 RSHIFTEQUAL          : 
 SEMI                 : 3
@@ -179,12 +185,13 @@ STRUCT               :
 SWITCH               : 
 TIMES                : 13
 TIMESEQUAL           : 
+TRUE                 : 38
 TYPEDEF              : 
 UNION                : 
 UNSIGNED             : 
 VOID                 : 
 VOLATILE             : 
-WHILE                : 
+WHILE                : 40
 XOR                  : 
 XOREQUAL             : 
 error                : 
@@ -193,18 +200,21 @@ Nonterminals, with rules where they appear
 
 args                 : 30
 bin_op               : 8
+compOps              : 37
+conditionals         : 40
 empty                : 2 7 32
 expr                 : 17 22
 funcDecl             : 0
+operand              : 8 8 16 21 37 37
 return_stmt          : 4
-scope                : 30
+scope                : 30 40
 statement            : 3
 statement_list       : 3 29
 type_spec            : 19 20 25 26 30
 type_spec_list       : 25 31
-var                  : 8 8 16 21
 var_assign           : 6 18 20 24
 var_decl             : 5
+whileLoop            : 
 
 Parsing method: LALR
 
@@ -352,12 +362,12 @@ state 15
     (5) statement -> . var_decl
     (6) statement -> . var_assign
     (7) statement -> . empty
-    (16) return_stmt -> . RETURN var
+    (16) return_stmt -> . RETURN operand
     (17) return_stmt -> . RETURN expr
     (18) return_stmt -> . RETURN var_assign
     (19) var_decl -> . type_spec ID
     (20) var_decl -> . type_spec var_assign
-    (21) var_assign -> . ID EQUALS var
+    (21) var_assign -> . ID EQUALS operand
     (22) var_assign -> . ID EQUALS expr
     (23) var_assign -> . ID EQUALS STRING
     (24) var_assign -> . LPAREN var_assign RPAREN
@@ -433,13 +443,13 @@ state 22
 
 state 23
 
-    (16) return_stmt -> RETURN . var
+    (16) return_stmt -> RETURN . operand
     (17) return_stmt -> RETURN . expr
     (18) return_stmt -> RETURN . var_assign
-    (9) var -> . ID
-    (10) var -> . NUMCONST
-    (8) expr -> . var bin_op var
-    (21) var_assign -> . ID EQUALS var
+    (9) operand -> . ID
+    (10) operand -> . NUMCONST
+    (8) expr -> . operand bin_op operand
+    (21) var_assign -> . ID EQUALS operand
     (22) var_assign -> . ID EQUALS expr
     (23) var_assign -> . ID EQUALS STRING
     (24) var_assign -> . LPAREN var_assign RPAREN
@@ -448,7 +458,7 @@ state 23
     NUMCONST        shift and go to state 34
     LPAREN          shift and go to state 26
 
-    var                            shift and go to state 30
+    operand                        shift and go to state 30
     expr                           shift and go to state 31
     var_assign                     shift and go to state 32
 
@@ -456,7 +466,7 @@ state 24
 
     (19) var_decl -> type_spec . ID
     (20) var_decl -> type_spec . var_assign
-    (21) var_assign -> . ID EQUALS var
+    (21) var_assign -> . ID EQUALS operand
     (22) var_assign -> . ID EQUALS expr
     (23) var_assign -> . ID EQUALS STRING
     (24) var_assign -> . LPAREN var_assign RPAREN
@@ -468,7 +478,7 @@ state 24
 
 state 25
 
-    (21) var_assign -> ID . EQUALS var
+    (21) var_assign -> ID . EQUALS operand
     (22) var_assign -> ID . EQUALS expr
     (23) var_assign -> ID . EQUALS STRING
 
@@ -478,7 +488,7 @@ state 25
 state 26
 
     (24) var_assign -> LPAREN . var_assign RPAREN
-    (21) var_assign -> . ID EQUALS var
+    (21) var_assign -> . ID EQUALS operand
     (22) var_assign -> . ID EQUALS expr
     (23) var_assign -> . ID EQUALS STRING
     (24) var_assign -> . LPAREN var_assign RPAREN
@@ -513,12 +523,12 @@ state 29
     (5) statement -> . var_decl
     (6) statement -> . var_assign
     (7) statement -> . empty
-    (16) return_stmt -> . RETURN var
+    (16) return_stmt -> . RETURN operand
     (17) return_stmt -> . RETURN expr
     (18) return_stmt -> . RETURN var_assign
     (19) var_decl -> . type_spec ID
     (20) var_decl -> . type_spec var_assign
-    (21) var_assign -> . ID EQUALS var
+    (21) var_assign -> . ID EQUALS operand
     (22) var_assign -> . ID EQUALS expr
     (23) var_assign -> . ID EQUALS STRING
     (24) var_assign -> . LPAREN var_assign RPAREN
@@ -543,15 +553,15 @@ state 29
 
 state 30
 
-    (16) return_stmt -> RETURN var .
-    (8) expr -> var . bin_op var
+    (16) return_stmt -> RETURN operand .
+    (8) expr -> operand . bin_op operand
     (11) bin_op -> . PLUS
     (12) bin_op -> . MINUS
     (13) bin_op -> . TIMES
     (14) bin_op -> . DIVIDE
     (15) bin_op -> . MODULO
 
-    SEMI            reduce using rule 16 (return_stmt -> RETURN var .)
+    SEMI            reduce using rule 16 (return_stmt -> RETURN operand .)
     PLUS            shift and go to state 41
     MINUS           shift and go to state 42
     TIMES           shift and go to state 43
@@ -576,37 +586,37 @@ state 32
 
 state 33
 
-    (9) var -> ID .
-    (21) var_assign -> ID . EQUALS var
+    (9) operand -> ID .
+    (21) var_assign -> ID . EQUALS operand
     (22) var_assign -> ID . EQUALS expr
     (23) var_assign -> ID . EQUALS STRING
 
-    PLUS            reduce using rule 9 (var -> ID .)
-    MINUS           reduce using rule 9 (var -> ID .)
-    TIMES           reduce using rule 9 (var -> ID .)
-    DIVIDE          reduce using rule 9 (var -> ID .)
-    MODULO          reduce using rule 9 (var -> ID .)
-    SEMI            reduce using rule 9 (var -> ID .)
+    PLUS            reduce using rule 9 (operand -> ID .)
+    MINUS           reduce using rule 9 (operand -> ID .)
+    TIMES           reduce using rule 9 (operand -> ID .)
+    DIVIDE          reduce using rule 9 (operand -> ID .)
+    MODULO          reduce using rule 9 (operand -> ID .)
+    SEMI            reduce using rule 9 (operand -> ID .)
     EQUALS          shift and go to state 37
 
 
 state 34
 
-    (10) var -> NUMCONST .
+    (10) operand -> NUMCONST .
 
-    PLUS            reduce using rule 10 (var -> NUMCONST .)
-    MINUS           reduce using rule 10 (var -> NUMCONST .)
-    TIMES           reduce using rule 10 (var -> NUMCONST .)
-    DIVIDE          reduce using rule 10 (var -> NUMCONST .)
-    MODULO          reduce using rule 10 (var -> NUMCONST .)
-    SEMI            reduce using rule 10 (var -> NUMCONST .)
-    RPAREN          reduce using rule 10 (var -> NUMCONST .)
+    PLUS            reduce using rule 10 (operand -> NUMCONST .)
+    MINUS           reduce using rule 10 (operand -> NUMCONST .)
+    TIMES           reduce using rule 10 (operand -> NUMCONST .)
+    DIVIDE          reduce using rule 10 (operand -> NUMCONST .)
+    MODULO          reduce using rule 10 (operand -> NUMCONST .)
+    SEMI            reduce using rule 10 (operand -> NUMCONST .)
+    RPAREN          reduce using rule 10 (operand -> NUMCONST .)
 
 
 state 35
 
     (19) var_decl -> type_spec ID .
-    (21) var_assign -> ID . EQUALS var
+    (21) var_assign -> ID . EQUALS operand
     (22) var_assign -> ID . EQUALS expr
     (23) var_assign -> ID . EQUALS STRING
 
@@ -623,18 +633,18 @@ state 36
 
 state 37
 
-    (21) var_assign -> ID EQUALS . var
+    (21) var_assign -> ID EQUALS . operand
     (22) var_assign -> ID EQUALS . expr
     (23) var_assign -> ID EQUALS . STRING
-    (9) var -> . ID
-    (10) var -> . NUMCONST
-    (8) expr -> . var bin_op var
+    (9) operand -> . ID
+    (10) operand -> . NUMCONST
+    (8) expr -> . operand bin_op operand
 
     STRING          shift and go to state 49
     ID              shift and go to state 46
     NUMCONST        shift and go to state 34
 
-    var                            shift and go to state 47
+    operand                        shift and go to state 47
     expr                           shift and go to state 48
 
 state 38
@@ -653,14 +663,14 @@ state 39
 
 state 40
 
-    (8) expr -> var bin_op . var
-    (9) var -> . ID
-    (10) var -> . NUMCONST
+    (8) expr -> operand bin_op . operand
+    (9) operand -> . ID
+    (10) operand -> . NUMCONST
 
     ID              shift and go to state 46
     NUMCONST        shift and go to state 34
 
-    var                            shift and go to state 51
+    operand                        shift and go to state 51
 
 state 41
 
@@ -704,29 +714,29 @@ state 45
 
 state 46
 
-    (9) var -> ID .
+    (9) operand -> ID .
 
-    PLUS            reduce using rule 9 (var -> ID .)
-    MINUS           reduce using rule 9 (var -> ID .)
-    TIMES           reduce using rule 9 (var -> ID .)
-    DIVIDE          reduce using rule 9 (var -> ID .)
-    MODULO          reduce using rule 9 (var -> ID .)
-    SEMI            reduce using rule 9 (var -> ID .)
-    RPAREN          reduce using rule 9 (var -> ID .)
+    PLUS            reduce using rule 9 (operand -> ID .)
+    MINUS           reduce using rule 9 (operand -> ID .)
+    TIMES           reduce using rule 9 (operand -> ID .)
+    DIVIDE          reduce using rule 9 (operand -> ID .)
+    MODULO          reduce using rule 9 (operand -> ID .)
+    SEMI            reduce using rule 9 (operand -> ID .)
+    RPAREN          reduce using rule 9 (operand -> ID .)
 
 
 state 47
 
-    (21) var_assign -> ID EQUALS var .
-    (8) expr -> var . bin_op var
+    (21) var_assign -> ID EQUALS operand .
+    (8) expr -> operand . bin_op operand
     (11) bin_op -> . PLUS
     (12) bin_op -> . MINUS
     (13) bin_op -> . TIMES
     (14) bin_op -> . DIVIDE
     (15) bin_op -> . MODULO
 
-    SEMI            reduce using rule 21 (var_assign -> ID EQUALS var .)
-    RPAREN          reduce using rule 21 (var_assign -> ID EQUALS var .)
+    SEMI            reduce using rule 21 (var_assign -> ID EQUALS operand .)
+    RPAREN          reduce using rule 21 (var_assign -> ID EQUALS operand .)
     PLUS            shift and go to state 41
     MINUS           shift and go to state 42
     TIMES           shift and go to state 43
@@ -761,8 +771,8 @@ state 50
 
 state 51
 
-    (8) expr -> var bin_op var .
+    (8) expr -> operand bin_op operand .
 
-    SEMI            reduce using rule 8 (expr -> var bin_op var .)
-    RPAREN          reduce using rule 8 (expr -> var bin_op var .)
+    SEMI            reduce using rule 8 (expr -> operand bin_op operand .)
+    RPAREN          reduce using rule 8 (expr -> operand bin_op operand .)
 

@@ -1,0 +1,214 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    AND
+    ANDEQUAL
+    ARROW
+    AUTO
+    BREAK
+    CASE
+    CHARACTER
+    COLON
+    CONST
+    CONTINUE
+    DECREMENT
+    DEFAULT
+    DIVEQUAL
+    DO
+    DOUBLE
+    DQUOT
+    ELLIPSIS
+    ELSE
+    ENUM
+    EQ
+    EXTERN
+    FLOAT
+    FOR
+    GE
+    GOTO
+    IF
+    INCREMENT
+    LAND
+    LANGLE
+    LBRACKET
+    LE
+    LNOT
+    LONG
+    LOR
+    LSHIFT
+    LSHIFTEQUAL
+    MINUSEQUAL
+    MODEQUAL
+    NE
+    NOT
+    OR
+    OREQUAL
+    PERIOD
+    PLUSEQUAL
+    RANGLE
+    RBRACKET
+    REGISTER
+    RSHIFT
+    RSHIFTEQUAL
+    SHORT
+    SIGNED
+    SIZEOF
+    SQUOT
+    STATIC
+    STRUCT
+    SWITCH
+    TIMESEQUAL
+    TYPEDEF
+    UNION
+    UNSIGNED
+    VOID
+    VOLATILE
+    XOR
+    XOREQUAL
+
+Grammar
+
+Rule 0     S' -> funcDecl
+Rule 1     empty -> <empty>
+Rule 2     statement_list -> empty
+Rule 3     statement_list -> statement SEMI statement_list
+Rule 4     statement -> return_stmt
+Rule 5     statement -> var_decl
+Rule 6     statement -> var_assign
+Rule 7     statement -> empty
+Rule 8     expr -> var bin_op var
+Rule 9     var -> ID
+Rule 10    var -> NUMCONST
+Rule 11    bin_op -> PLUS
+Rule 12    bin_op -> MINUS
+Rule 13    bin_op -> TIMES
+Rule 14    bin_op -> DIVIDE
+Rule 15    bin_op -> MODULO
+Rule 16    return_stmt -> RETURN var
+Rule 17    return_stmt -> RETURN expr
+Rule 18    return_stmt -> RETURN var_assign
+Rule 19    var_decl -> type_spec ID
+Rule 20    var_decl -> type_spec var_assign
+Rule 21    var_assign -> ID EQUALS var
+Rule 22    var_assign -> ID EQUALS expr
+Rule 23    var_assign -> ID EQUALS STRING
+Rule 24    var_assign -> LPAREN var_assign RPAREN
+Rule 25    type_spec_list -> type_spec_list COMMA type_spec ID
+Rule 26    type_spec_list -> type_spec ID
+Rule 27    type_spec -> INT
+Rule 28    type_spec -> CHAR
+Rule 29    scope -> LBRACE statement_list RBRACE
+Rule 30    funcDecl -> type_spec ID LPAREN args RPAREN scope
+Rule 31    args -> type_spec_list
+Rule 32    args -> empty
+Rule 33    whileLoop -> WHILE LPAREN conditionals RPAREN scope
+Rule 34    conditionals -> var compOps var
+
+Terminals, with rules where they appear
+
+AND                  : 
+ANDEQUAL             : 
+ARROW                : 
+AUTO                 : 
+BREAK                : 
+CASE                 : 
+CHAR                 : 28
+CHARACTER            : 
+COLON                : 
+COMMA                : 25
+CONST                : 
+CONTINUE             : 
+DECREMENT            : 
+DEFAULT              : 
+DIVEQUAL             : 
+DIVIDE               : 14
+DO                   : 
+DOUBLE               : 
+DQUOT                : 
+ELLIPSIS             : 
+ELSE                 : 
+ENUM                 : 
+EQ                   : 
+EQUALS               : 21 22 23
+EXTERN               : 
+FLOAT                : 
+FOR                  : 
+GE                   : 
+GOTO                 : 
+ID                   : 9 19 21 22 23 25 26 30
+IF                   : 
+INCREMENT            : 
+INT                  : 27
+LAND                 : 
+LANGLE               : 
+LBRACE               : 29
+LBRACKET             : 
+LE                   : 
+LNOT                 : 
+LONG                 : 
+LOR                  : 
+LPAREN               : 24 30 33
+LSHIFT               : 
+LSHIFTEQUAL          : 
+MINUS                : 12
+MINUSEQUAL           : 
+MODEQUAL             : 
+MODULO               : 15
+NE                   : 
+NOT                  : 
+NUMCONST             : 10
+OR                   : 
+OREQUAL              : 
+PERIOD               : 
+PLUS                 : 11
+PLUSEQUAL            : 
+RANGLE               : 
+RBRACE               : 29
+RBRACKET             : 
+REGISTER             : 
+RETURN               : 16 17 18
+RPAREN               : 24 30 33
+RSHIFT               : 
+RSHIFTEQUAL          : 
+SEMI                 : 3
+SHORT                : 
+SIGNED               : 
+SIZEOF               : 
+SQUOT                : 
+STATIC               : 
+STRING               : 23
+STRUCT               : 
+SWITCH               : 
+TIMES                : 13
+TIMESEQUAL           : 
+TYPEDEF              : 
+UNION                : 
+UNSIGNED             : 
+VOID                 : 
+VOLATILE             : 
+WHILE                : 33
+XOR                  : 
+XOREQUAL             : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+args                 : 30
+bin_op               : 8
+compOps              : 34
+conditionals         : 33
+empty                : 2 7 32
+expr                 : 17 22
+funcDecl             : 0
+return_stmt          : 4
+scope                : 30 33
+statement            : 3
+statement_list       : 3 29
+type_spec            : 19 20 25 26 30
+type_spec_list       : 25 31
+var                  : 8 8 16 21 34 34
+var_assign           : 6 18 20 24
+var_decl             : 5
+whileLoop            : 
+

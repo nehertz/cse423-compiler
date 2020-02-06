@@ -68,6 +68,10 @@ operators = {
     '<' : 'LANGLE',
     '>' : 'RANGLE',
     '...' : 'ELLIPSIS',
+
+    # Boolean
+    'true' : 'TRUE',
+    'false' : 'FALSE',
 }
 
 # List of token names. Copy from TokenName.py 
