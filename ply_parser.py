@@ -27,32 +27,44 @@ def p_statement_list(p):
     '''
     statement_list : empty
                    | statement SEMI statement_list
+                   | whileLoop statement_list
     statement : return_stmt
               | var_decl
               | var_assign
               | empty
     '''
-
+#TODO: Type cast in C
+#TODO: sizeof(), Pointers, dereferencing 
+#TODO: Structure ->, . operators to be added
 def p_expr(p):
     '''
-    expr : var bin_op var
-    var : ID
+    expr : expr PLUS multiplicative_expr
+         | expr MINUS multiplicative_expr
+         | multiplicative_expr
+    multiplicative_expr : multiplicative_expr TIMES unary_expr 
+                        | multiplicative_expr DIVIDE unary_expr 
+                        | multiplicative_expr MODULO unary_expr
+                        | unary_expr    
+    unary_expr : INCREMENT operand
+                | DECREMENT operand
+                | operand INCREMENT
+                | operand DECREMENT
+    operand : ID
         | NUMCONST
     '''
-
-def p_bin_op(p):
-    '''
-    bin_op : PLUS
-           | MINUS
-           | TIMES
-           | DIVIDE
-           | MODULO
-    '''
+# def p_bin_op(p):
+#     '''
+#     bin_op : PLUS
+#            | MINUS
+#            | TIMES
+#            | DIVIDE
+#            | MODULO
+#     '''
 # TODO: Add RETURN func_call later
 # TODO: Add other types
 def p_return_stmt(p):
     '''
-    return_stmt : RETURN var
+    return_stmt : RETURN operand
                 | RETURN expr
                 | RETURN var_assign
     '''
@@ -60,17 +72,27 @@ def p_return_stmt(p):
 def p_var_decl(p):
     '''
     var_decl : type_spec ID
-             | type_spec var_assign
+             | type_spec var_assign 
     '''
 
 # TODO: Finish char impl in scanner and add it here (| ID EQUALS CHAR SEMI)
 # TODO: Add support for +=, -=, etc.
 def p_var_assign(p):
     '''
-    var_assign : ID EQUALS var
+    var_assign : ID EQUALS operand
                | ID EQUALS expr
                | ID EQUALS STRING
                | LPAREN var_assign RPAREN
+               | ID TIMESEQUAL operand
+               | ID DIVEQUAL operand 
+               | ID MODEQUAL operand 
+               | ID PLUSEQUAL operand 
+               | ID MINUSEQUAL operand 
+               | ID LSHIFTEQUAL operand 
+               | ID RSHIFTEQUAL operand 
+               | ID ANDEQUAL operand
+               | ID OREQUAL operand 
+               | ID XOREQUAL operand
     '''
 
 def p_typeSpec(p):
@@ -116,7 +138,18 @@ def p_funcDeclaration(p):
     args : type_spec_list
          | empty
     '''
-
+def p_whileLoop(p):
+    '''
+    whileLoop   : WHILE LPAREN conditionals RPAREN scope
+    '''
+def p_conditionals(p):
+    '''
+    conditionals    :  operand compOps operand
+    compOps :   LE
+            | GE
+            | EQ
+            | NE
+    '''
 def p_error(t):
     print("Syntax error at '%s'" % t.value)
 

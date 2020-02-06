@@ -82,6 +82,20 @@ var_assign -> ID EQUALS var
 
 ------------------------------------------------------------------------
 
+expr -> expr PLUS multiplicative_expr
+        | expr MINUS multiplicative_expr 
+
+multiplicative_expr -> multiplicative_expr TIMES unary_expr
+                     | multiplicative_expr DIVIDE unary_expr 
+                     | multiplicative_expr MODULO unary_expr 
+
+unary_expr -> INCREMENT operand
+            | DECREMENT operand
+            | MINUS operand
+            | operand INCREMENT
+            | operand DECREMENT
+
+
 
 
 
