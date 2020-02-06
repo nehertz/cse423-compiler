@@ -26,11 +26,11 @@ def p_empty(p):
 def p_statement_list(p):
     '''
     statement_list : empty
-                   | statement SEMI statement_list
-    statement : return_stmt
-              | var_decl
-              | var_assign
-              | whileLoop
+                   | statement statement_list
+    statement : return_stmt SEMI
+              | var_decl SEMI
+              | var_assign SEMI
+              | whileLoop 
               | empty
     '''
 def p_expr(p):
@@ -118,24 +118,24 @@ def p_funcDeclaration(p):
     args : type_spec_list
          | empty
     '''
-# def p_compOps(p):
-#     '''
-#     compOps     : LE
-#                 | GE
-#                 | EQ
-#                 | NE
-#     '''
-# def p_conditionals(p):
-#     '''
-#     conditionals    : operand compOps operand
-#                     | TRUE
-#                     | FALSE
-#                     | LPAREN conditionals RPAREN
-#     '''
-# def p_whileLoop(p):
-#     '''
-#     whileLoop   : WHILE LPAREN conditionals RPAREN scope
-#     '''
+def p_compOps(p):
+    '''
+    compOps     : LE
+                | GE
+                | EQ
+                | NE
+    '''
+def p_conditionals(p):
+    '''
+    conditionals    : operand compOps operand
+                    | TRUE
+                    | FALSE
+                    | LPAREN conditionals RPAREN
+    '''
+def p_whileLoop(p):
+    '''
+    whileLoop   : WHILE LPAREN conditionals RPAREN scope
+    '''
 def p_error(t):
     # print("Syntax error at '%s' line number: '%d'" % t.value, t.lineno)
     print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))

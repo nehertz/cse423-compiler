@@ -4,7 +4,7 @@ int main()
         return (i = 1);
         
         while (true) {
-                
+                i =3 ;
         }
 
 }
