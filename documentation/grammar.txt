@@ -82,7 +82,6 @@ var_assign -> ID EQUALS var
 
 ------------------------------------------------------------------------
 
-<<<<<<< .merge_file_IUeI0A
 expr -> expr PLUS multiplicative_expr
         | expr MINUS multiplicative_expr 
 
@@ -96,10 +95,8 @@ unary_expr -> INCREMENT operand
             | operand INCREMENT
             | operand DECREMENT
 
-
-=======
+------------------------------------------------------------------------
 whileLoop -> WHILE LPAREN CONDITIONALS RPAREN scope
->>>>>>> .merge_file_u9ZrIA
 
 CONDITIONALS -> var compOps var 
 -------------------------------------------------------------------------

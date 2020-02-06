@@ -7,3 +7,5 @@ __pycache__/TokenName.cpython-37.pyc
 a.out
 __pycache__/ply_parser.cpython-36.pyc
 __pycache__/ply_scanner.cpython-36.pyc
+parser.out
+parsetab.py

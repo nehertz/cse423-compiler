@@ -44,14 +44,10 @@ def p_expr(p):
     expr : expr PLUS multiplicative_expr
          | expr MINUS multiplicative_expr
          | multiplicative_expr
-    multiplicative_expr : multiplicative_expr TIMES unary_expr 
-                        | multiplicative_expr DIVIDE unary_expr 
-                        | multiplicative_expr MODULO unary_expr
-                        | unary_expr    
-    unary_expr : INCREMENT operand
-                | DECREMENT operand
-                | operand INCREMENT
-                | operand DECREMENT
+    multiplicative_expr : multiplicative_expr TIMES operand 
+                        | multiplicative_expr DIVIDE operand 
+                        | multiplicative_expr MODULO operand   
+                        | operand
     operand : ID
         | NUMCONST
     '''
@@ -67,8 +63,7 @@ def p_expr(p):
 # TODO: Add other types
 def p_return_stmt(p):
     '''
-    return_stmt : RETURN operand
-                | RETURN expr
+    return_stmt : RETURN expr
                 | RETURN var_assign
     '''
 
@@ -82,20 +77,19 @@ def p_var_decl(p):
 # TODO: Add support for +=, -=, etc.
 def p_var_assign(p):
     '''
-    var_assign : ID EQUALS operand
-               | ID EQUALS expr
+    var_assign : ID EQUALS expr
                | ID EQUALS STRING
                | LPAREN var_assign RPAREN
-               | ID TIMESEQUAL operand
-               | ID DIVEQUAL operand 
-               | ID MODEQUAL operand 
-               | ID PLUSEQUAL operand 
-               | ID MINUSEQUAL operand 
-               | ID LSHIFTEQUAL operand 
-               | ID RSHIFTEQUAL operand 
-               | ID ANDEQUAL operand
-               | ID OREQUAL operand 
-               | ID XOREQUAL operand
+               | ID TIMESEQUAL expr
+               | ID DIVEQUAL expr 
+               | ID MODEQUAL expr 
+               | ID PLUSEQUAL expr 
+               | ID MINUSEQUAL expr 
+               | ID LSHIFTEQUAL expr 
+               | ID RSHIFTEQUAL expr 
+               | ID ANDEQUAL expr
+               | ID OREQUAL expr 
+               | ID XOREQUAL expr
     '''
 
 def p_typeSpec(p):
