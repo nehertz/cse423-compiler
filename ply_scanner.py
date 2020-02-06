@@ -11,6 +11,11 @@ operators = {
     '/' : 'DIVIDE',
     '%' : 'MODULO',
     
+    # Logical operators
+    '||' : 'LOR',
+    '&&' : 'LAND',
+    '!' : 'LNOT',
+
     # Bitwise operators
     '|' : 'OR',
     '&' : 'AND',
@@ -19,11 +24,6 @@ operators = {
     '<<' : 'LSHIFT',
     '>>' : 'RSHIFT',
     
-    # Logical operators
-    '||' : 'LOR',
-    '&&' : 'LAND',
-    '!' : 'LNOT',
-
     # Comparison operators
     # '<' : 'LT',
     # '>' : 'GT',
@@ -71,7 +71,7 @@ operators = {
 }
 
 # List of token names. Copy from TokenName.py 
-tokens = ['STRING','ID', 'NUMCONST'] + [keyword.upper() for keyword in keywords] + [t.upper() for t in type_specifier] + list(operators.values())
+tokens = ['STRING','CHARACTER','ID', 'NUMCONST'] + [keyword.upper() for keyword in keywords] + [t.upper() for t in type_specifier] + list(operators.values())
 
 # Ignore whitespace and tabs
 t_ignore  = ' \t'
@@ -109,11 +109,44 @@ def t_string(t):
     t.type = 'STRING'
     return t
 
-# Number
+# Single Character
+def t_character(t):
+    r'\'.\''
+    t.type = 'CHARACTER'
+    return t
+
+# binary number 
+def t_binary(t):
+    r'0b[01]+'
+    t.value = int(t.value,2)
+    t.type = 'NUMCONST'
+    return t
+
+# Hex number Stolen from Stackoverflow but modified to accpect both 0X and 0x 
+def t_hex(t):
+    r'0[xX]([abcdef]|\d)+'
+    t.value = int(t.value, 16)
+    t.type = 'NUMCONST'
+    return t
+
+# Floating Point Number
+def t_float(t):
+    r'[0-9]*\.[0-9]*'
+    t.value = float(t.value)
+    t.type = 'NUMCONST'
+    return t
+
+# Integer Number
 def t_number(t):
     r'\d+'
-    t.value = int(t.value)    
+    t.value = int(t.value)
     t.type = 'NUMCONST'
+    return t
+
+# Logic Operator
+def t_logicOps(t):
+    r"(\|\|)|(&&)|(\!)"
+    t.type = operators.get(t.value)
     return t
 
 # BitwiseOperator
