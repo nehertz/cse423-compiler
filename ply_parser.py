@@ -138,20 +138,27 @@ def p_funcDeclaration(p):
     args : type_spec_list
          | empty
     '''
+def p_compOps(p):
+    '''
+    compOps     : LE
+                | GE
+                | EQ
+                | NE
+    '''
+def p_conditionals(p):
+    '''
+    conditionals    : operand compOps operand
+                    | TRUE
+                    | FALSE
+                    | LPAREN conditionals RPAREN
+    '''
 def p_whileLoop(p):
     '''
     whileLoop   : WHILE LPAREN conditionals RPAREN scope
     '''
-def p_conditionals(p):
-    '''
-    conditionals    :  operand compOps operand
-    compOps :   LE
-            | GE
-            | EQ
-            | NE
-    '''
 def p_error(t):
-    print("Syntax error at '%s'" % t.value)
+    # print("Syntax error at '%s' line number: '%d'" % t.value, t.lineno)
+    print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))
 
 # Build the parser and pass lex into the parser
 def parser(lex):

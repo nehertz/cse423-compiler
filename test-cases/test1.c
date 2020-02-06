@@ -1,13 +1,11 @@
 int main()
 {
-        /* 
-        this is comment
-        */
-        // Hello world
+        // char c = 'A';
+        return (i = 1);
         
-        int a = 0b0011;
-        int b = 0x88;
-        int i = 1;
+        while (true) {
+                i =3 ;
+        }
 
         // char c = 'A';
         while (i == 1) {
