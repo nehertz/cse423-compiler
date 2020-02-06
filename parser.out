@@ -5,7 +5,6 @@ Unused terminals:
     AND
     ARROW
     AUTO
-    BREAK
     CASE
     CHARACTER
     COLON
@@ -16,13 +15,10 @@ Unused terminals:
     DOUBLE
     DQUOT
     ELLIPSIS
-    ELSE
     ENUM
     EXTERN
     FLOAT
     FOR
-    GOTO
-    IF
     LAND
     LANGLE
     LBRACKET
@@ -58,163 +54,177 @@ Rule 1     empty -> <empty>
 Rule 2     statement_list -> empty
 Rule 3     statement_list -> statement SEMI statement_list
 Rule 4     statement_list -> whileLoop statement_list
-Rule 5     statement -> return_stmt
-Rule 6     statement -> var_decl
-Rule 7     statement -> var_assign
-Rule 8     statement -> empty
-Rule 9     expr -> expr PLUS multiplicative_expr
-Rule 10    expr -> expr MINUS multiplicative_expr
-Rule 11    expr -> multiplicative_expr
-Rule 12    multiplicative_expr -> multiplicative_expr TIMES unary_expr
-Rule 13    multiplicative_expr -> multiplicative_expr DIVIDE unary_expr
-Rule 14    multiplicative_expr -> multiplicative_expr MODULO unary_expr
-Rule 15    multiplicative_expr -> unary_expr
-Rule 16    unary_expr -> INCREMENT operand
-Rule 17    unary_expr -> DECREMENT operand
-Rule 18    unary_expr -> operand INCREMENT
-Rule 19    unary_expr -> operand DECREMENT
-Rule 20    operand -> ID
-Rule 21    operand -> NUMCONST
-Rule 22    return_stmt -> RETURN operand
-Rule 23    return_stmt -> RETURN expr
-Rule 24    return_stmt -> RETURN var_assign
-Rule 25    var_decl -> type_spec ID
-Rule 26    var_decl -> type_spec var_assign
-Rule 27    var_assign -> ID EQUALS operand
-Rule 28    var_assign -> ID EQUALS expr
-Rule 29    var_assign -> ID EQUALS STRING
-Rule 30    var_assign -> LPAREN var_assign RPAREN
-Rule 31    var_assign -> ID TIMESEQUAL operand
-Rule 32    var_assign -> ID DIVEQUAL operand
-Rule 33    var_assign -> ID MODEQUAL operand
-Rule 34    var_assign -> ID PLUSEQUAL operand
-Rule 35    var_assign -> ID MINUSEQUAL operand
-Rule 36    var_assign -> ID LSHIFTEQUAL operand
-Rule 37    var_assign -> ID RSHIFTEQUAL operand
-Rule 38    var_assign -> ID ANDEQUAL operand
-Rule 39    var_assign -> ID OREQUAL operand
-Rule 40    var_assign -> ID XOREQUAL operand
-Rule 41    type_spec_list -> type_spec_list COMMA type_spec ID
-Rule 42    type_spec_list -> type_spec ID
-Rule 43    type_spec -> INT
-Rule 44    type_spec -> CHAR
-Rule 45    scope -> LBRACE statement_list RBRACE
-Rule 46    funcDecl -> type_spec ID LPAREN args RPAREN scope
-Rule 47    args -> type_spec_list
-Rule 48    args -> empty
-Rule 49    whileLoop -> WHILE LPAREN conditionals RPAREN scope
-Rule 50    conditionals -> operand compOps operand
-Rule 51    compOps -> LE
-Rule 52    compOps -> GE
-Rule 53    compOps -> EQ
-Rule 54    compOps -> NE
+Rule 5     statement_list -> if_stmt statement_list
+Rule 6     statement -> return_stmt
+Rule 7     statement -> var_decl
+Rule 8     statement -> var_assign
+Rule 9     statement -> goto_stmt
+Rule 10    statement -> break_stmt
+Rule 11    statement -> empty
+Rule 12    expr -> expr PLUS multiplicative_expr
+Rule 13    expr -> expr MINUS multiplicative_expr
+Rule 14    expr -> multiplicative_expr
+Rule 15    multiplicative_expr -> multiplicative_expr TIMES unary_expr
+Rule 16    multiplicative_expr -> multiplicative_expr DIVIDE unary_expr
+Rule 17    multiplicative_expr -> multiplicative_expr MODULO unary_expr
+Rule 18    multiplicative_expr -> unary_expr
+Rule 19    unary_expr -> INCREMENT operand
+Rule 20    unary_expr -> DECREMENT operand
+Rule 21    unary_expr -> operand INCREMENT
+Rule 22    unary_expr -> operand DECREMENT
+Rule 23    operand -> ID
+Rule 24    operand -> NUMCONST
+Rule 25    return_stmt -> RETURN operand
+Rule 26    return_stmt -> RETURN expr
+Rule 27    return_stmt -> RETURN var_assign
+Rule 28    var_decl -> type_spec ID
+Rule 29    var_decl -> type_spec var_assign
+Rule 30    var_assign -> ID EQUALS operand
+Rule 31    var_assign -> ID EQUALS expr
+Rule 32    var_assign -> ID EQUALS STRING
+Rule 33    var_assign -> LPAREN var_assign RPAREN
+Rule 34    var_assign -> ID TIMESEQUAL operand
+Rule 35    var_assign -> ID DIVEQUAL operand
+Rule 36    var_assign -> ID MODEQUAL operand
+Rule 37    var_assign -> ID PLUSEQUAL operand
+Rule 38    var_assign -> ID MINUSEQUAL operand
+Rule 39    var_assign -> ID LSHIFTEQUAL operand
+Rule 40    var_assign -> ID RSHIFTEQUAL operand
+Rule 41    var_assign -> ID ANDEQUAL operand
+Rule 42    var_assign -> ID OREQUAL operand
+Rule 43    var_assign -> ID XOREQUAL operand
+Rule 44    type_spec_list -> type_spec_list COMMA type_spec ID
+Rule 45    type_spec_list -> type_spec ID
+Rule 46    type_spec -> INT
+Rule 47    type_spec -> CHAR
+Rule 48    scope -> LBRACE statement_list RBRACE
+Rule 49    funcDecl -> type_spec ID LPAREN args RPAREN scope
+Rule 50    args -> type_spec_list
+Rule 51    args -> empty
+Rule 52    whileLoop -> WHILE LPAREN conditionals RPAREN scope
+Rule 53    conditionals -> operand compOps operand
+Rule 54    compOps -> LE
+Rule 55    compOps -> GE
+Rule 56    compOps -> EQ
+Rule 57    compOps -> NE
+Rule 58    break_stmt -> BREAK
+Rule 59    goto_stmt -> GOTO ID
+Rule 60    if_stmt -> IF LPAREN conditionals RPAREN scope
+Rule 61    if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist
+Rule 62    elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist
+Rule 63    elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty
+Rule 64    elsiflist -> ELSE scope
 
 Terminals, with rules where they appear
 
 AND                  : 
-ANDEQUAL             : 38
+ANDEQUAL             : 41
 ARROW                : 
 AUTO                 : 
-BREAK                : 
+BREAK                : 58
 CASE                 : 
-CHAR                 : 44
+CHAR                 : 47
 CHARACTER            : 
 COLON                : 
-COMMA                : 41
+COMMA                : 44
 CONST                : 
 CONTINUE             : 
-DECREMENT            : 17 19
+DECREMENT            : 20 22
 DEFAULT              : 
-DIVEQUAL             : 32
-DIVIDE               : 13
+DIVEQUAL             : 35
+DIVIDE               : 16
 DO                   : 
 DOUBLE               : 
 DQUOT                : 
 ELLIPSIS             : 
-ELSE                 : 
+ELSE                 : 62 63 64
 ENUM                 : 
-EQ                   : 53
-EQUALS               : 27 28 29
+EQ                   : 56
+EQUALS               : 30 31 32
 EXTERN               : 
 FLOAT                : 
 FOR                  : 
-GE                   : 52
-GOTO                 : 
-ID                   : 20 25 27 28 29 31 32 33 34 35 36 37 38 39 40 41 42 46
-IF                   : 
-INCREMENT            : 16 18
-INT                  : 43
+GE                   : 55
+GOTO                 : 59
+ID                   : 23 28 30 31 32 34 35 36 37 38 39 40 41 42 43 44 45 49 59
+IF                   : 60 61 62 63
+INCREMENT            : 19 21
+INT                  : 46
 LAND                 : 
 LANGLE               : 
-LBRACE               : 45
+LBRACE               : 48
 LBRACKET             : 
-LE                   : 51
+LE                   : 54
 LNOT                 : 
 LONG                 : 
 LOR                  : 
-LPAREN               : 30 46 49
+LPAREN               : 33 49 52 60 61 62 63
 LSHIFT               : 
-LSHIFTEQUAL          : 36
-MINUS                : 10
-MINUSEQUAL           : 35
-MODEQUAL             : 33
-MODULO               : 14
-NE                   : 54
+LSHIFTEQUAL          : 39
+MINUS                : 13
+MINUSEQUAL           : 38
+MODEQUAL             : 36
+MODULO               : 17
+NE                   : 57
 NOT                  : 
-NUMCONST             : 21
+NUMCONST             : 24
 OR                   : 
-OREQUAL              : 39
+OREQUAL              : 42
 PERIOD               : 
-PLUS                 : 9
-PLUSEQUAL            : 34
+PLUS                 : 12
+PLUSEQUAL            : 37
 RANGLE               : 
-RBRACE               : 45
+RBRACE               : 48
 RBRACKET             : 
 REGISTER             : 
-RETURN               : 22 23 24
-RPAREN               : 30 46 49
+RETURN               : 25 26 27
+RPAREN               : 33 49 52 60 61 62 63
 RSHIFT               : 
-RSHIFTEQUAL          : 37
+RSHIFTEQUAL          : 40
 SEMI                 : 3
 SHORT                : 
 SIGNED               : 
 SIZEOF               : 
 SQUOT                : 
 STATIC               : 
-STRING               : 29
+STRING               : 32
 STRUCT               : 
 SWITCH               : 
-TIMES                : 12
-TIMESEQUAL           : 31
+TIMES                : 15
+TIMESEQUAL           : 34
 TYPEDEF              : 
 UNION                : 
 UNSIGNED             : 
 VOID                 : 
 VOLATILE             : 
-WHILE                : 49
+WHILE                : 52
 XOR                  : 
-XOREQUAL             : 40
+XOREQUAL             : 43
 error                : 
 
 Nonterminals, with rules where they appear
 
-args                 : 46
-compOps              : 50
-conditionals         : 49
-empty                : 2 8 48
-expr                 : 9 10 23 28
+args                 : 49
+break_stmt           : 10
+compOps              : 53
+conditionals         : 52 60 61 62 63
+elsiflist            : 61 62
+empty                : 2 11 51 63
+expr                 : 12 13 26 31
 funcDecl             : 0
-multiplicative_expr  : 9 10 11 12 13 14
-operand              : 16 17 18 19 22 27 31 32 33 34 35 36 37 38 39 40 50 50
-return_stmt          : 5
-scope                : 46 49
+goto_stmt            : 9
+if_stmt              : 5
+multiplicative_expr  : 12 13 14 15 16 17
+operand              : 19 20 21 22 25 30 34 35 36 37 38 39 40 41 42 43 53 53
+return_stmt          : 6
+scope                : 49 52 60 61 62 63 64
 statement            : 3
-statement_list       : 3 4 45
-type_spec            : 25 26 41 42 46
-type_spec_list       : 41 47
-unary_expr           : 12 13 14 15
-var_assign           : 7 24 26 30
-var_decl             : 6
+statement_list       : 3 4 5 48
+type_spec            : 28 29 44 45 49
+type_spec_list       : 44 50
+unary_expr           : 15 16 17 18
+var_assign           : 8 27 29 33
+var_decl             : 7
 whileLoop            : 4
 
 Parsing method: LALR
@@ -222,9 +232,9 @@ Parsing method: LALR
 state 0
 
     (0) S' -> . funcDecl
-    (46) funcDecl -> . type_spec ID LPAREN args RPAREN scope
-    (43) type_spec -> . INT
-    (44) type_spec -> . CHAR
+    (49) funcDecl -> . type_spec ID LPAREN args RPAREN scope
+    (46) type_spec -> . INT
+    (47) type_spec -> . CHAR
 
     INT             shift and go to state 3
     CHAR            shift and go to state 4
@@ -240,44 +250,44 @@ state 1
 
 state 2
 
-    (46) funcDecl -> type_spec . ID LPAREN args RPAREN scope
+    (49) funcDecl -> type_spec . ID LPAREN args RPAREN scope
 
     ID              shift and go to state 5
 
 
 state 3
 
-    (43) type_spec -> INT .
+    (46) type_spec -> INT .
 
-    ID              reduce using rule 43 (type_spec -> INT .)
-    LPAREN          reduce using rule 43 (type_spec -> INT .)
+    ID              reduce using rule 46 (type_spec -> INT .)
+    LPAREN          reduce using rule 46 (type_spec -> INT .)
 
 
 state 4
 
-    (44) type_spec -> CHAR .
+    (47) type_spec -> CHAR .
 
-    ID              reduce using rule 44 (type_spec -> CHAR .)
-    LPAREN          reduce using rule 44 (type_spec -> CHAR .)
+    ID              reduce using rule 47 (type_spec -> CHAR .)
+    LPAREN          reduce using rule 47 (type_spec -> CHAR .)
 
 
 state 5
 
-    (46) funcDecl -> type_spec ID . LPAREN args RPAREN scope
+    (49) funcDecl -> type_spec ID . LPAREN args RPAREN scope
 
     LPAREN          shift and go to state 6
 
 
 state 6
 
-    (46) funcDecl -> type_spec ID LPAREN . args RPAREN scope
-    (47) args -> . type_spec_list
-    (48) args -> . empty
-    (41) type_spec_list -> . type_spec_list COMMA type_spec ID
-    (42) type_spec_list -> . type_spec ID
+    (49) funcDecl -> type_spec ID LPAREN . args RPAREN scope
+    (50) args -> . type_spec_list
+    (51) args -> . empty
+    (44) type_spec_list -> . type_spec_list COMMA type_spec ID
+    (45) type_spec_list -> . type_spec ID
     (1) empty -> .
-    (43) type_spec -> . INT
-    (44) type_spec -> . CHAR
+    (46) type_spec -> . INT
+    (47) type_spec -> . CHAR
 
     RPAREN          reduce using rule 1 (empty -> .)
     INT             shift and go to state 3
@@ -290,46 +300,46 @@ state 6
 
 state 7
 
-    (42) type_spec_list -> type_spec . ID
+    (45) type_spec_list -> type_spec . ID
 
     ID              shift and go to state 11
 
 
 state 8
 
-    (46) funcDecl -> type_spec ID LPAREN args . RPAREN scope
+    (49) funcDecl -> type_spec ID LPAREN args . RPAREN scope
 
     RPAREN          shift and go to state 12
 
 
 state 9
 
-    (47) args -> type_spec_list .
-    (41) type_spec_list -> type_spec_list . COMMA type_spec ID
+    (50) args -> type_spec_list .
+    (44) type_spec_list -> type_spec_list . COMMA type_spec ID
 
-    RPAREN          reduce using rule 47 (args -> type_spec_list .)
+    RPAREN          reduce using rule 50 (args -> type_spec_list .)
     COMMA           shift and go to state 13
 
 
 state 10
 
-    (48) args -> empty .
+    (51) args -> empty .
 
-    RPAREN          reduce using rule 48 (args -> empty .)
+    RPAREN          reduce using rule 51 (args -> empty .)
 
 
 state 11
 
-    (42) type_spec_list -> type_spec ID .
+    (45) type_spec_list -> type_spec ID .
 
-    COMMA           reduce using rule 42 (type_spec_list -> type_spec ID .)
-    RPAREN          reduce using rule 42 (type_spec_list -> type_spec ID .)
+    COMMA           reduce using rule 45 (type_spec_list -> type_spec ID .)
+    RPAREN          reduce using rule 45 (type_spec_list -> type_spec ID .)
 
 
 state 12
 
-    (46) funcDecl -> type_spec ID LPAREN args RPAREN . scope
-    (45) scope -> . LBRACE statement_list RBRACE
+    (49) funcDecl -> type_spec ID LPAREN args RPAREN . scope
+    (48) scope -> . LBRACE statement_list RBRACE
 
     LBRACE          shift and go to state 15
 
@@ -337,9 +347,9 @@ state 12
 
 state 13
 
-    (41) type_spec_list -> type_spec_list COMMA . type_spec ID
-    (43) type_spec -> . INT
-    (44) type_spec -> . CHAR
+    (44) type_spec_list -> type_spec_list COMMA . type_spec ID
+    (46) type_spec -> . INT
+    (47) type_spec -> . CHAR
 
     INT             shift and go to state 3
     CHAR            shift and go to state 4
@@ -348,51 +358,61 @@ state 13
 
 state 14
 
-    (46) funcDecl -> type_spec ID LPAREN args RPAREN scope .
+    (49) funcDecl -> type_spec ID LPAREN args RPAREN scope .
 
-    $end            reduce using rule 46 (funcDecl -> type_spec ID LPAREN args RPAREN scope .)
+    $end            reduce using rule 49 (funcDecl -> type_spec ID LPAREN args RPAREN scope .)
 
 
 state 15
 
-    (45) scope -> LBRACE . statement_list RBRACE
+    (48) scope -> LBRACE . statement_list RBRACE
     (2) statement_list -> . empty
     (3) statement_list -> . statement SEMI statement_list
     (4) statement_list -> . whileLoop statement_list
+    (5) statement_list -> . if_stmt statement_list
     (1) empty -> .
-    (5) statement -> . return_stmt
-    (6) statement -> . var_decl
-    (7) statement -> . var_assign
-    (8) statement -> . empty
-    (49) whileLoop -> . WHILE LPAREN conditionals RPAREN scope
-    (22) return_stmt -> . RETURN operand
-    (23) return_stmt -> . RETURN expr
-    (24) return_stmt -> . RETURN var_assign
-    (25) var_decl -> . type_spec ID
-    (26) var_decl -> . type_spec var_assign
-    (27) var_assign -> . ID EQUALS operand
-    (28) var_assign -> . ID EQUALS expr
-    (29) var_assign -> . ID EQUALS STRING
-    (30) var_assign -> . LPAREN var_assign RPAREN
-    (31) var_assign -> . ID TIMESEQUAL operand
-    (32) var_assign -> . ID DIVEQUAL operand
-    (33) var_assign -> . ID MODEQUAL operand
-    (34) var_assign -> . ID PLUSEQUAL operand
-    (35) var_assign -> . ID MINUSEQUAL operand
-    (36) var_assign -> . ID LSHIFTEQUAL operand
-    (37) var_assign -> . ID RSHIFTEQUAL operand
-    (38) var_assign -> . ID ANDEQUAL operand
-    (39) var_assign -> . ID OREQUAL operand
-    (40) var_assign -> . ID XOREQUAL operand
-    (43) type_spec -> . INT
-    (44) type_spec -> . CHAR
+    (6) statement -> . return_stmt
+    (7) statement -> . var_decl
+    (8) statement -> . var_assign
+    (9) statement -> . goto_stmt
+    (10) statement -> . break_stmt
+    (11) statement -> . empty
+    (52) whileLoop -> . WHILE LPAREN conditionals RPAREN scope
+    (60) if_stmt -> . IF LPAREN conditionals RPAREN scope
+    (61) if_stmt -> . IF LPAREN conditionals RPAREN scope elsiflist
+    (25) return_stmt -> . RETURN operand
+    (26) return_stmt -> . RETURN expr
+    (27) return_stmt -> . RETURN var_assign
+    (28) var_decl -> . type_spec ID
+    (29) var_decl -> . type_spec var_assign
+    (30) var_assign -> . ID EQUALS operand
+    (31) var_assign -> . ID EQUALS expr
+    (32) var_assign -> . ID EQUALS STRING
+    (33) var_assign -> . LPAREN var_assign RPAREN
+    (34) var_assign -> . ID TIMESEQUAL operand
+    (35) var_assign -> . ID DIVEQUAL operand
+    (36) var_assign -> . ID MODEQUAL operand
+    (37) var_assign -> . ID PLUSEQUAL operand
+    (38) var_assign -> . ID MINUSEQUAL operand
+    (39) var_assign -> . ID LSHIFTEQUAL operand
+    (40) var_assign -> . ID RSHIFTEQUAL operand
+    (41) var_assign -> . ID ANDEQUAL operand
+    (42) var_assign -> . ID OREQUAL operand
+    (43) var_assign -> . ID XOREQUAL operand
+    (59) goto_stmt -> . GOTO ID
+    (58) break_stmt -> . BREAK
+    (46) type_spec -> . INT
+    (47) type_spec -> . CHAR
 
     RBRACE          reduce using rule 1 (empty -> .)
     SEMI            reduce using rule 1 (empty -> .)
-    WHILE           shift and go to state 24
-    RETURN          shift and go to state 26
-    ID              shift and go to state 28
-    LPAREN          shift and go to state 25
+    WHILE           shift and go to state 27
+    IF              shift and go to state 29
+    RETURN          shift and go to state 30
+    ID              shift and go to state 32
+    LPAREN          shift and go to state 28
+    GOTO            shift and go to state 33
+    BREAK           shift and go to state 34
     INT             shift and go to state 3
     CHAR            shift and go to state 4
 
@@ -400,39 +420,42 @@ state 15
     empty                          shift and go to state 18
     statement                      shift and go to state 19
     whileLoop                      shift and go to state 20
-    return_stmt                    shift and go to state 21
-    var_decl                       shift and go to state 22
-    var_assign                     shift and go to state 23
-    type_spec                      shift and go to state 27
+    if_stmt                        shift and go to state 21
+    return_stmt                    shift and go to state 22
+    var_decl                       shift and go to state 23
+    var_assign                     shift and go to state 24
+    goto_stmt                      shift and go to state 25
+    break_stmt                     shift and go to state 26
+    type_spec                      shift and go to state 31
 
 state 16
 
-    (41) type_spec_list -> type_spec_list COMMA type_spec . ID
+    (44) type_spec_list -> type_spec_list COMMA type_spec . ID
 
-    ID              shift and go to state 29
+    ID              shift and go to state 35
 
 
 state 17
 
-    (45) scope -> LBRACE statement_list . RBRACE
+    (48) scope -> LBRACE statement_list . RBRACE
 
-    RBRACE          shift and go to state 30
+    RBRACE          shift and go to state 36
 
 
 state 18
 
     (2) statement_list -> empty .
-    (8) statement -> empty .
+    (11) statement -> empty .
 
     RBRACE          reduce using rule 2 (statement_list -> empty .)
-    SEMI            reduce using rule 8 (statement -> empty .)
+    SEMI            reduce using rule 11 (statement -> empty .)
 
 
 state 19
 
     (3) statement_list -> statement . SEMI statement_list
 
-    SEMI            shift and go to state 31
+    SEMI            shift and go to state 37
 
 
 state 20
@@ -441,1082 +464,1430 @@ state 20
     (2) statement_list -> . empty
     (3) statement_list -> . statement SEMI statement_list
     (4) statement_list -> . whileLoop statement_list
+    (5) statement_list -> . if_stmt statement_list
     (1) empty -> .
-    (5) statement -> . return_stmt
-    (6) statement -> . var_decl
-    (7) statement -> . var_assign
-    (8) statement -> . empty
-    (49) whileLoop -> . WHILE LPAREN conditionals RPAREN scope
-    (22) return_stmt -> . RETURN operand
-    (23) return_stmt -> . RETURN expr
-    (24) return_stmt -> . RETURN var_assign
-    (25) var_decl -> . type_spec ID
-    (26) var_decl -> . type_spec var_assign
-    (27) var_assign -> . ID EQUALS operand
-    (28) var_assign -> . ID EQUALS expr
-    (29) var_assign -> . ID EQUALS STRING
-    (30) var_assign -> . LPAREN var_assign RPAREN
-    (31) var_assign -> . ID TIMESEQUAL operand
-    (32) var_assign -> . ID DIVEQUAL operand
-    (33) var_assign -> . ID MODEQUAL operand
-    (34) var_assign -> . ID PLUSEQUAL operand
-    (35) var_assign -> . ID MINUSEQUAL operand
-    (36) var_assign -> . ID LSHIFTEQUAL operand
-    (37) var_assign -> . ID RSHIFTEQUAL operand
-    (38) var_assign -> . ID ANDEQUAL operand
-    (39) var_assign -> . ID OREQUAL operand
-    (40) var_assign -> . ID XOREQUAL operand
-    (43) type_spec -> . INT
-    (44) type_spec -> . CHAR
+    (6) statement -> . return_stmt
+    (7) statement -> . var_decl
+    (8) statement -> . var_assign
+    (9) statement -> . goto_stmt
+    (10) statement -> . break_stmt
+    (11) statement -> . empty
+    (52) whileLoop -> . WHILE LPAREN conditionals RPAREN scope
+    (60) if_stmt -> . IF LPAREN conditionals RPAREN scope
+    (61) if_stmt -> . IF LPAREN conditionals RPAREN scope elsiflist
+    (25) return_stmt -> . RETURN operand
+    (26) return_stmt -> . RETURN expr
+    (27) return_stmt -> . RETURN var_assign
+    (28) var_decl -> . type_spec ID
+    (29) var_decl -> . type_spec var_assign
+    (30) var_assign -> . ID EQUALS operand
+    (31) var_assign -> . ID EQUALS expr
+    (32) var_assign -> . ID EQUALS STRING
+    (33) var_assign -> . LPAREN var_assign RPAREN
+    (34) var_assign -> . ID TIMESEQUAL operand
+    (35) var_assign -> . ID DIVEQUAL operand
+    (36) var_assign -> . ID MODEQUAL operand
+    (37) var_assign -> . ID PLUSEQUAL operand
+    (38) var_assign -> . ID MINUSEQUAL operand
+    (39) var_assign -> . ID LSHIFTEQUAL operand
+    (40) var_assign -> . ID RSHIFTEQUAL operand
+    (41) var_assign -> . ID ANDEQUAL operand
+    (42) var_assign -> . ID OREQUAL operand
+    (43) var_assign -> . ID XOREQUAL operand
+    (59) goto_stmt -> . GOTO ID
+    (58) break_stmt -> . BREAK
+    (46) type_spec -> . INT
+    (47) type_spec -> . CHAR
 
     RBRACE          reduce using rule 1 (empty -> .)
     SEMI            reduce using rule 1 (empty -> .)
-    WHILE           shift and go to state 24
-    RETURN          shift and go to state 26
-    ID              shift and go to state 28
-    LPAREN          shift and go to state 25
+    WHILE           shift and go to state 27
+    IF              shift and go to state 29
+    RETURN          shift and go to state 30
+    ID              shift and go to state 32
+    LPAREN          shift and go to state 28
+    GOTO            shift and go to state 33
+    BREAK           shift and go to state 34
     INT             shift and go to state 3
     CHAR            shift and go to state 4
 
     whileLoop                      shift and go to state 20
-    statement_list                 shift and go to state 32
+    statement_list                 shift and go to state 38
     empty                          shift and go to state 18
     statement                      shift and go to state 19
-    return_stmt                    shift and go to state 21
-    var_decl                       shift and go to state 22
-    var_assign                     shift and go to state 23
-    type_spec                      shift and go to state 27
+    if_stmt                        shift and go to state 21
+    return_stmt                    shift and go to state 22
+    var_decl                       shift and go to state 23
+    var_assign                     shift and go to state 24
+    goto_stmt                      shift and go to state 25
+    break_stmt                     shift and go to state 26
+    type_spec                      shift and go to state 31
 
 state 21
 
-    (5) statement -> return_stmt .
+    (5) statement_list -> if_stmt . statement_list
+    (2) statement_list -> . empty
+    (3) statement_list -> . statement SEMI statement_list
+    (4) statement_list -> . whileLoop statement_list
+    (5) statement_list -> . if_stmt statement_list
+    (1) empty -> .
+    (6) statement -> . return_stmt
+    (7) statement -> . var_decl
+    (8) statement -> . var_assign
+    (9) statement -> . goto_stmt
+    (10) statement -> . break_stmt
+    (11) statement -> . empty
+    (52) whileLoop -> . WHILE LPAREN conditionals RPAREN scope
+    (60) if_stmt -> . IF LPAREN conditionals RPAREN scope
+    (61) if_stmt -> . IF LPAREN conditionals RPAREN scope elsiflist
+    (25) return_stmt -> . RETURN operand
+    (26) return_stmt -> . RETURN expr
+    (27) return_stmt -> . RETURN var_assign
+    (28) var_decl -> . type_spec ID
+    (29) var_decl -> . type_spec var_assign
+    (30) var_assign -> . ID EQUALS operand
+    (31) var_assign -> . ID EQUALS expr
+    (32) var_assign -> . ID EQUALS STRING
+    (33) var_assign -> . LPAREN var_assign RPAREN
+    (34) var_assign -> . ID TIMESEQUAL operand
+    (35) var_assign -> . ID DIVEQUAL operand
+    (36) var_assign -> . ID MODEQUAL operand
+    (37) var_assign -> . ID PLUSEQUAL operand
+    (38) var_assign -> . ID MINUSEQUAL operand
+    (39) var_assign -> . ID LSHIFTEQUAL operand
+    (40) var_assign -> . ID RSHIFTEQUAL operand
+    (41) var_assign -> . ID ANDEQUAL operand
+    (42) var_assign -> . ID OREQUAL operand
+    (43) var_assign -> . ID XOREQUAL operand
+    (59) goto_stmt -> . GOTO ID
+    (58) break_stmt -> . BREAK
+    (46) type_spec -> . INT
+    (47) type_spec -> . CHAR
 
-    SEMI            reduce using rule 5 (statement -> return_stmt .)
+    RBRACE          reduce using rule 1 (empty -> .)
+    SEMI            reduce using rule 1 (empty -> .)
+    WHILE           shift and go to state 27
+    IF              shift and go to state 29
+    RETURN          shift and go to state 30
+    ID              shift and go to state 32
+    LPAREN          shift and go to state 28
+    GOTO            shift and go to state 33
+    BREAK           shift and go to state 34
+    INT             shift and go to state 3
+    CHAR            shift and go to state 4
 
+    if_stmt                        shift and go to state 21
+    statement_list                 shift and go to state 39
+    empty                          shift and go to state 18
+    statement                      shift and go to state 19
+    whileLoop                      shift and go to state 20
+    return_stmt                    shift and go to state 22
+    var_decl                       shift and go to state 23
+    var_assign                     shift and go to state 24
+    goto_stmt                      shift and go to state 25
+    break_stmt                     shift and go to state 26
+    type_spec                      shift and go to state 31
 
 state 22
 
-    (6) statement -> var_decl .
+    (6) statement -> return_stmt .
 
-    SEMI            reduce using rule 6 (statement -> var_decl .)
+    SEMI            reduce using rule 6 (statement -> return_stmt .)
 
 
 state 23
 
-    (7) statement -> var_assign .
+    (7) statement -> var_decl .
 
-    SEMI            reduce using rule 7 (statement -> var_assign .)
+    SEMI            reduce using rule 7 (statement -> var_decl .)
 
 
 state 24
 
-    (49) whileLoop -> WHILE . LPAREN conditionals RPAREN scope
+    (8) statement -> var_assign .
 
-    LPAREN          shift and go to state 33
+    SEMI            reduce using rule 8 (statement -> var_assign .)
 
 
 state 25
 
-    (30) var_assign -> LPAREN . var_assign RPAREN
-    (27) var_assign -> . ID EQUALS operand
-    (28) var_assign -> . ID EQUALS expr
-    (29) var_assign -> . ID EQUALS STRING
-    (30) var_assign -> . LPAREN var_assign RPAREN
-    (31) var_assign -> . ID TIMESEQUAL operand
-    (32) var_assign -> . ID DIVEQUAL operand
-    (33) var_assign -> . ID MODEQUAL operand
-    (34) var_assign -> . ID PLUSEQUAL operand
-    (35) var_assign -> . ID MINUSEQUAL operand
-    (36) var_assign -> . ID LSHIFTEQUAL operand
-    (37) var_assign -> . ID RSHIFTEQUAL operand
-    (38) var_assign -> . ID ANDEQUAL operand
-    (39) var_assign -> . ID OREQUAL operand
-    (40) var_assign -> . ID XOREQUAL operand
+    (9) statement -> goto_stmt .
 
-    ID              shift and go to state 28
-    LPAREN          shift and go to state 25
+    SEMI            reduce using rule 9 (statement -> goto_stmt .)
 
-    var_assign                     shift and go to state 34
 
 state 26
 
-    (22) return_stmt -> RETURN . operand
-    (23) return_stmt -> RETURN . expr
-    (24) return_stmt -> RETURN . var_assign
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
-    (9) expr -> . expr PLUS multiplicative_expr
-    (10) expr -> . expr MINUS multiplicative_expr
-    (11) expr -> . multiplicative_expr
-    (27) var_assign -> . ID EQUALS operand
-    (28) var_assign -> . ID EQUALS expr
-    (29) var_assign -> . ID EQUALS STRING
-    (30) var_assign -> . LPAREN var_assign RPAREN
-    (31) var_assign -> . ID TIMESEQUAL operand
-    (32) var_assign -> . ID DIVEQUAL operand
-    (33) var_assign -> . ID MODEQUAL operand
-    (34) var_assign -> . ID PLUSEQUAL operand
-    (35) var_assign -> . ID MINUSEQUAL operand
-    (36) var_assign -> . ID LSHIFTEQUAL operand
-    (37) var_assign -> . ID RSHIFTEQUAL operand
-    (38) var_assign -> . ID ANDEQUAL operand
-    (39) var_assign -> . ID OREQUAL operand
-    (40) var_assign -> . ID XOREQUAL operand
-    (12) multiplicative_expr -> . multiplicative_expr TIMES unary_expr
-    (13) multiplicative_expr -> . multiplicative_expr DIVIDE unary_expr
-    (14) multiplicative_expr -> . multiplicative_expr MODULO unary_expr
-    (15) multiplicative_expr -> . unary_expr
-    (16) unary_expr -> . INCREMENT operand
-    (17) unary_expr -> . DECREMENT operand
-    (18) unary_expr -> . operand INCREMENT
-    (19) unary_expr -> . operand DECREMENT
+    (10) statement -> break_stmt .
 
-    ID              shift and go to state 38
-    NUMCONST        shift and go to state 39
-    LPAREN          shift and go to state 25
-    INCREMENT       shift and go to state 42
-    DECREMENT       shift and go to state 43
+    SEMI            reduce using rule 10 (statement -> break_stmt .)
 
-    operand                        shift and go to state 35
-    expr                           shift and go to state 36
-    var_assign                     shift and go to state 37
-    multiplicative_expr            shift and go to state 40
-    unary_expr                     shift and go to state 41
 
 state 27
 
-    (25) var_decl -> type_spec . ID
-    (26) var_decl -> type_spec . var_assign
-    (27) var_assign -> . ID EQUALS operand
-    (28) var_assign -> . ID EQUALS expr
-    (29) var_assign -> . ID EQUALS STRING
-    (30) var_assign -> . LPAREN var_assign RPAREN
-    (31) var_assign -> . ID TIMESEQUAL operand
-    (32) var_assign -> . ID DIVEQUAL operand
-    (33) var_assign -> . ID MODEQUAL operand
-    (34) var_assign -> . ID PLUSEQUAL operand
-    (35) var_assign -> . ID MINUSEQUAL operand
-    (36) var_assign -> . ID LSHIFTEQUAL operand
-    (37) var_assign -> . ID RSHIFTEQUAL operand
-    (38) var_assign -> . ID ANDEQUAL operand
-    (39) var_assign -> . ID OREQUAL operand
-    (40) var_assign -> . ID XOREQUAL operand
+    (52) whileLoop -> WHILE . LPAREN conditionals RPAREN scope
 
-    ID              shift and go to state 44
-    LPAREN          shift and go to state 25
+    LPAREN          shift and go to state 40
 
-    var_assign                     shift and go to state 45
 
 state 28
 
-    (27) var_assign -> ID . EQUALS operand
-    (28) var_assign -> ID . EQUALS expr
-    (29) var_assign -> ID . EQUALS STRING
-    (31) var_assign -> ID . TIMESEQUAL operand
-    (32) var_assign -> ID . DIVEQUAL operand
-    (33) var_assign -> ID . MODEQUAL operand
-    (34) var_assign -> ID . PLUSEQUAL operand
-    (35) var_assign -> ID . MINUSEQUAL operand
-    (36) var_assign -> ID . LSHIFTEQUAL operand
-    (37) var_assign -> ID . RSHIFTEQUAL operand
-    (38) var_assign -> ID . ANDEQUAL operand
-    (39) var_assign -> ID . OREQUAL operand
-    (40) var_assign -> ID . XOREQUAL operand
+    (33) var_assign -> LPAREN . var_assign RPAREN
+    (30) var_assign -> . ID EQUALS operand
+    (31) var_assign -> . ID EQUALS expr
+    (32) var_assign -> . ID EQUALS STRING
+    (33) var_assign -> . LPAREN var_assign RPAREN
+    (34) var_assign -> . ID TIMESEQUAL operand
+    (35) var_assign -> . ID DIVEQUAL operand
+    (36) var_assign -> . ID MODEQUAL operand
+    (37) var_assign -> . ID PLUSEQUAL operand
+    (38) var_assign -> . ID MINUSEQUAL operand
+    (39) var_assign -> . ID LSHIFTEQUAL operand
+    (40) var_assign -> . ID RSHIFTEQUAL operand
+    (41) var_assign -> . ID ANDEQUAL operand
+    (42) var_assign -> . ID OREQUAL operand
+    (43) var_assign -> . ID XOREQUAL operand
 
-    EQUALS          shift and go to state 46
-    TIMESEQUAL      shift and go to state 47
-    DIVEQUAL        shift and go to state 48
-    MODEQUAL        shift and go to state 49
-    PLUSEQUAL       shift and go to state 50
-    MINUSEQUAL      shift and go to state 51
-    LSHIFTEQUAL     shift and go to state 52
-    RSHIFTEQUAL     shift and go to state 53
-    ANDEQUAL        shift and go to state 54
-    OREQUAL         shift and go to state 55
-    XOREQUAL        shift and go to state 56
+    ID              shift and go to state 32
+    LPAREN          shift and go to state 28
 
+    var_assign                     shift and go to state 41
 
 state 29
 
-    (41) type_spec_list -> type_spec_list COMMA type_spec ID .
+    (60) if_stmt -> IF . LPAREN conditionals RPAREN scope
+    (61) if_stmt -> IF . LPAREN conditionals RPAREN scope elsiflist
 
-    COMMA           reduce using rule 41 (type_spec_list -> type_spec_list COMMA type_spec ID .)
-    RPAREN          reduce using rule 41 (type_spec_list -> type_spec_list COMMA type_spec ID .)
+    LPAREN          shift and go to state 42
 
 
 state 30
 
-    (45) scope -> LBRACE statement_list RBRACE .
+    (25) return_stmt -> RETURN . operand
+    (26) return_stmt -> RETURN . expr
+    (27) return_stmt -> RETURN . var_assign
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+    (12) expr -> . expr PLUS multiplicative_expr
+    (13) expr -> . expr MINUS multiplicative_expr
+    (14) expr -> . multiplicative_expr
+    (30) var_assign -> . ID EQUALS operand
+    (31) var_assign -> . ID EQUALS expr
+    (32) var_assign -> . ID EQUALS STRING
+    (33) var_assign -> . LPAREN var_assign RPAREN
+    (34) var_assign -> . ID TIMESEQUAL operand
+    (35) var_assign -> . ID DIVEQUAL operand
+    (36) var_assign -> . ID MODEQUAL operand
+    (37) var_assign -> . ID PLUSEQUAL operand
+    (38) var_assign -> . ID MINUSEQUAL operand
+    (39) var_assign -> . ID LSHIFTEQUAL operand
+    (40) var_assign -> . ID RSHIFTEQUAL operand
+    (41) var_assign -> . ID ANDEQUAL operand
+    (42) var_assign -> . ID OREQUAL operand
+    (43) var_assign -> . ID XOREQUAL operand
+    (15) multiplicative_expr -> . multiplicative_expr TIMES unary_expr
+    (16) multiplicative_expr -> . multiplicative_expr DIVIDE unary_expr
+    (17) multiplicative_expr -> . multiplicative_expr MODULO unary_expr
+    (18) multiplicative_expr -> . unary_expr
+    (19) unary_expr -> . INCREMENT operand
+    (20) unary_expr -> . DECREMENT operand
+    (21) unary_expr -> . operand INCREMENT
+    (22) unary_expr -> . operand DECREMENT
 
-    $end            reduce using rule 45 (scope -> LBRACE statement_list RBRACE .)
-    WHILE           reduce using rule 45 (scope -> LBRACE statement_list RBRACE .)
-    RETURN          reduce using rule 45 (scope -> LBRACE statement_list RBRACE .)
-    ID              reduce using rule 45 (scope -> LBRACE statement_list RBRACE .)
-    LPAREN          reduce using rule 45 (scope -> LBRACE statement_list RBRACE .)
-    INT             reduce using rule 45 (scope -> LBRACE statement_list RBRACE .)
-    CHAR            reduce using rule 45 (scope -> LBRACE statement_list RBRACE .)
-    SEMI            reduce using rule 45 (scope -> LBRACE statement_list RBRACE .)
-    RBRACE          reduce using rule 45 (scope -> LBRACE statement_list RBRACE .)
+    ID              shift and go to state 46
+    NUMCONST        shift and go to state 47
+    LPAREN          shift and go to state 28
+    INCREMENT       shift and go to state 50
+    DECREMENT       shift and go to state 51
 
+    operand                        shift and go to state 43
+    expr                           shift and go to state 44
+    var_assign                     shift and go to state 45
+    multiplicative_expr            shift and go to state 48
+    unary_expr                     shift and go to state 49
 
 state 31
+
+    (28) var_decl -> type_spec . ID
+    (29) var_decl -> type_spec . var_assign
+    (30) var_assign -> . ID EQUALS operand
+    (31) var_assign -> . ID EQUALS expr
+    (32) var_assign -> . ID EQUALS STRING
+    (33) var_assign -> . LPAREN var_assign RPAREN
+    (34) var_assign -> . ID TIMESEQUAL operand
+    (35) var_assign -> . ID DIVEQUAL operand
+    (36) var_assign -> . ID MODEQUAL operand
+    (37) var_assign -> . ID PLUSEQUAL operand
+    (38) var_assign -> . ID MINUSEQUAL operand
+    (39) var_assign -> . ID LSHIFTEQUAL operand
+    (40) var_assign -> . ID RSHIFTEQUAL operand
+    (41) var_assign -> . ID ANDEQUAL operand
+    (42) var_assign -> . ID OREQUAL operand
+    (43) var_assign -> . ID XOREQUAL operand
+
+    ID              shift and go to state 52
+    LPAREN          shift and go to state 28
+
+    var_assign                     shift and go to state 53
+
+state 32
+
+    (30) var_assign -> ID . EQUALS operand
+    (31) var_assign -> ID . EQUALS expr
+    (32) var_assign -> ID . EQUALS STRING
+    (34) var_assign -> ID . TIMESEQUAL operand
+    (35) var_assign -> ID . DIVEQUAL operand
+    (36) var_assign -> ID . MODEQUAL operand
+    (37) var_assign -> ID . PLUSEQUAL operand
+    (38) var_assign -> ID . MINUSEQUAL operand
+    (39) var_assign -> ID . LSHIFTEQUAL operand
+    (40) var_assign -> ID . RSHIFTEQUAL operand
+    (41) var_assign -> ID . ANDEQUAL operand
+    (42) var_assign -> ID . OREQUAL operand
+    (43) var_assign -> ID . XOREQUAL operand
+
+    EQUALS          shift and go to state 54
+    TIMESEQUAL      shift and go to state 55
+    DIVEQUAL        shift and go to state 56
+    MODEQUAL        shift and go to state 57
+    PLUSEQUAL       shift and go to state 58
+    MINUSEQUAL      shift and go to state 59
+    LSHIFTEQUAL     shift and go to state 60
+    RSHIFTEQUAL     shift and go to state 61
+    ANDEQUAL        shift and go to state 62
+    OREQUAL         shift and go to state 63
+    XOREQUAL        shift and go to state 64
+
+
+state 33
+
+    (59) goto_stmt -> GOTO . ID
+
+    ID              shift and go to state 65
+
+
+state 34
+
+    (58) break_stmt -> BREAK .
+
+    SEMI            reduce using rule 58 (break_stmt -> BREAK .)
+
+
+state 35
+
+    (44) type_spec_list -> type_spec_list COMMA type_spec ID .
+
+    COMMA           reduce using rule 44 (type_spec_list -> type_spec_list COMMA type_spec ID .)
+    RPAREN          reduce using rule 44 (type_spec_list -> type_spec_list COMMA type_spec ID .)
+
+
+state 36
+
+    (48) scope -> LBRACE statement_list RBRACE .
+
+    $end            reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    WHILE           reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    IF              reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    RETURN          reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    ID              reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    LPAREN          reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    GOTO            reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    BREAK           reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    INT             reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    CHAR            reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    SEMI            reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    RBRACE          reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+    ELSE            reduce using rule 48 (scope -> LBRACE statement_list RBRACE .)
+
+
+state 37
 
     (3) statement_list -> statement SEMI . statement_list
     (2) statement_list -> . empty
     (3) statement_list -> . statement SEMI statement_list
     (4) statement_list -> . whileLoop statement_list
+    (5) statement_list -> . if_stmt statement_list
     (1) empty -> .
-    (5) statement -> . return_stmt
-    (6) statement -> . var_decl
-    (7) statement -> . var_assign
-    (8) statement -> . empty
-    (49) whileLoop -> . WHILE LPAREN conditionals RPAREN scope
-    (22) return_stmt -> . RETURN operand
-    (23) return_stmt -> . RETURN expr
-    (24) return_stmt -> . RETURN var_assign
-    (25) var_decl -> . type_spec ID
-    (26) var_decl -> . type_spec var_assign
-    (27) var_assign -> . ID EQUALS operand
-    (28) var_assign -> . ID EQUALS expr
-    (29) var_assign -> . ID EQUALS STRING
-    (30) var_assign -> . LPAREN var_assign RPAREN
-    (31) var_assign -> . ID TIMESEQUAL operand
-    (32) var_assign -> . ID DIVEQUAL operand
-    (33) var_assign -> . ID MODEQUAL operand
-    (34) var_assign -> . ID PLUSEQUAL operand
-    (35) var_assign -> . ID MINUSEQUAL operand
-    (36) var_assign -> . ID LSHIFTEQUAL operand
-    (37) var_assign -> . ID RSHIFTEQUAL operand
-    (38) var_assign -> . ID ANDEQUAL operand
-    (39) var_assign -> . ID OREQUAL operand
-    (40) var_assign -> . ID XOREQUAL operand
-    (43) type_spec -> . INT
-    (44) type_spec -> . CHAR
+    (6) statement -> . return_stmt
+    (7) statement -> . var_decl
+    (8) statement -> . var_assign
+    (9) statement -> . goto_stmt
+    (10) statement -> . break_stmt
+    (11) statement -> . empty
+    (52) whileLoop -> . WHILE LPAREN conditionals RPAREN scope
+    (60) if_stmt -> . IF LPAREN conditionals RPAREN scope
+    (61) if_stmt -> . IF LPAREN conditionals RPAREN scope elsiflist
+    (25) return_stmt -> . RETURN operand
+    (26) return_stmt -> . RETURN expr
+    (27) return_stmt -> . RETURN var_assign
+    (28) var_decl -> . type_spec ID
+    (29) var_decl -> . type_spec var_assign
+    (30) var_assign -> . ID EQUALS operand
+    (31) var_assign -> . ID EQUALS expr
+    (32) var_assign -> . ID EQUALS STRING
+    (33) var_assign -> . LPAREN var_assign RPAREN
+    (34) var_assign -> . ID TIMESEQUAL operand
+    (35) var_assign -> . ID DIVEQUAL operand
+    (36) var_assign -> . ID MODEQUAL operand
+    (37) var_assign -> . ID PLUSEQUAL operand
+    (38) var_assign -> . ID MINUSEQUAL operand
+    (39) var_assign -> . ID LSHIFTEQUAL operand
+    (40) var_assign -> . ID RSHIFTEQUAL operand
+    (41) var_assign -> . ID ANDEQUAL operand
+    (42) var_assign -> . ID OREQUAL operand
+    (43) var_assign -> . ID XOREQUAL operand
+    (59) goto_stmt -> . GOTO ID
+    (58) break_stmt -> . BREAK
+    (46) type_spec -> . INT
+    (47) type_spec -> . CHAR
 
     RBRACE          reduce using rule 1 (empty -> .)
     SEMI            reduce using rule 1 (empty -> .)
-    WHILE           shift and go to state 24
-    RETURN          shift and go to state 26
-    ID              shift and go to state 28
-    LPAREN          shift and go to state 25
+    WHILE           shift and go to state 27
+    IF              shift and go to state 29
+    RETURN          shift and go to state 30
+    ID              shift and go to state 32
+    LPAREN          shift and go to state 28
+    GOTO            shift and go to state 33
+    BREAK           shift and go to state 34
     INT             shift and go to state 3
     CHAR            shift and go to state 4
 
     statement                      shift and go to state 19
-    statement_list                 shift and go to state 57
+    statement_list                 shift and go to state 66
     empty                          shift and go to state 18
     whileLoop                      shift and go to state 20
-    return_stmt                    shift and go to state 21
-    var_decl                       shift and go to state 22
-    var_assign                     shift and go to state 23
-    type_spec                      shift and go to state 27
+    if_stmt                        shift and go to state 21
+    return_stmt                    shift and go to state 22
+    var_decl                       shift and go to state 23
+    var_assign                     shift and go to state 24
+    goto_stmt                      shift and go to state 25
+    break_stmt                     shift and go to state 26
+    type_spec                      shift and go to state 31
 
-state 32
+state 38
 
     (4) statement_list -> whileLoop statement_list .
 
     RBRACE          reduce using rule 4 (statement_list -> whileLoop statement_list .)
 
 
-state 33
-
-    (49) whileLoop -> WHILE LPAREN . conditionals RPAREN scope
-    (50) conditionals -> . operand compOps operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
-
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
-
-    conditionals                   shift and go to state 58
-    operand                        shift and go to state 59
-
-state 34
-
-    (30) var_assign -> LPAREN var_assign . RPAREN
-
-    RPAREN          shift and go to state 61
-
-
-state 35
-
-    (22) return_stmt -> RETURN operand .
-    (18) unary_expr -> operand . INCREMENT
-    (19) unary_expr -> operand . DECREMENT
-
-    SEMI            reduce using rule 22 (return_stmt -> RETURN operand .)
-    INCREMENT       shift and go to state 62
-    DECREMENT       shift and go to state 63
-
-
-state 36
-
-    (23) return_stmt -> RETURN expr .
-    (9) expr -> expr . PLUS multiplicative_expr
-    (10) expr -> expr . MINUS multiplicative_expr
-
-    SEMI            reduce using rule 23 (return_stmt -> RETURN expr .)
-    PLUS            shift and go to state 64
-    MINUS           shift and go to state 65
-
-
-state 37
-
-    (24) return_stmt -> RETURN var_assign .
-
-    SEMI            reduce using rule 24 (return_stmt -> RETURN var_assign .)
-
-
-state 38
-
-    (20) operand -> ID .
-    (27) var_assign -> ID . EQUALS operand
-    (28) var_assign -> ID . EQUALS expr
-    (29) var_assign -> ID . EQUALS STRING
-    (31) var_assign -> ID . TIMESEQUAL operand
-    (32) var_assign -> ID . DIVEQUAL operand
-    (33) var_assign -> ID . MODEQUAL operand
-    (34) var_assign -> ID . PLUSEQUAL operand
-    (35) var_assign -> ID . MINUSEQUAL operand
-    (36) var_assign -> ID . LSHIFTEQUAL operand
-    (37) var_assign -> ID . RSHIFTEQUAL operand
-    (38) var_assign -> ID . ANDEQUAL operand
-    (39) var_assign -> ID . OREQUAL operand
-    (40) var_assign -> ID . XOREQUAL operand
-
-    INCREMENT       reduce using rule 20 (operand -> ID .)
-    DECREMENT       reduce using rule 20 (operand -> ID .)
-    SEMI            reduce using rule 20 (operand -> ID .)
-    EQUALS          shift and go to state 46
-    TIMESEQUAL      shift and go to state 47
-    DIVEQUAL        shift and go to state 48
-    MODEQUAL        shift and go to state 49
-    PLUSEQUAL       shift and go to state 50
-    MINUSEQUAL      shift and go to state 51
-    LSHIFTEQUAL     shift and go to state 52
-    RSHIFTEQUAL     shift and go to state 53
-    ANDEQUAL        shift and go to state 54
-    OREQUAL         shift and go to state 55
-    XOREQUAL        shift and go to state 56
-
-
 state 39
 
-    (21) operand -> NUMCONST .
+    (5) statement_list -> if_stmt statement_list .
 
-    INCREMENT       reduce using rule 21 (operand -> NUMCONST .)
-    DECREMENT       reduce using rule 21 (operand -> NUMCONST .)
-    SEMI            reduce using rule 21 (operand -> NUMCONST .)
-    LE              reduce using rule 21 (operand -> NUMCONST .)
-    GE              reduce using rule 21 (operand -> NUMCONST .)
-    EQ              reduce using rule 21 (operand -> NUMCONST .)
-    NE              reduce using rule 21 (operand -> NUMCONST .)
-    TIMES           reduce using rule 21 (operand -> NUMCONST .)
-    DIVIDE          reduce using rule 21 (operand -> NUMCONST .)
-    MODULO          reduce using rule 21 (operand -> NUMCONST .)
-    PLUS            reduce using rule 21 (operand -> NUMCONST .)
-    MINUS           reduce using rule 21 (operand -> NUMCONST .)
-    RPAREN          reduce using rule 21 (operand -> NUMCONST .)
+    RBRACE          reduce using rule 5 (statement_list -> if_stmt statement_list .)
 
 
 state 40
 
-    (11) expr -> multiplicative_expr .
-    (12) multiplicative_expr -> multiplicative_expr . TIMES unary_expr
-    (13) multiplicative_expr -> multiplicative_expr . DIVIDE unary_expr
-    (14) multiplicative_expr -> multiplicative_expr . MODULO unary_expr
+    (52) whileLoop -> WHILE LPAREN . conditionals RPAREN scope
+    (53) conditionals -> . operand compOps operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    PLUS            reduce using rule 11 (expr -> multiplicative_expr .)
-    MINUS           reduce using rule 11 (expr -> multiplicative_expr .)
-    SEMI            reduce using rule 11 (expr -> multiplicative_expr .)
-    RPAREN          reduce using rule 11 (expr -> multiplicative_expr .)
-    TIMES           shift and go to state 66
-    DIVIDE          shift and go to state 67
-    MODULO          shift and go to state 68
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
+    conditionals                   shift and go to state 67
+    operand                        shift and go to state 68
 
 state 41
 
-    (15) multiplicative_expr -> unary_expr .
+    (33) var_assign -> LPAREN var_assign . RPAREN
 
-    TIMES           reduce using rule 15 (multiplicative_expr -> unary_expr .)
-    DIVIDE          reduce using rule 15 (multiplicative_expr -> unary_expr .)
-    MODULO          reduce using rule 15 (multiplicative_expr -> unary_expr .)
-    PLUS            reduce using rule 15 (multiplicative_expr -> unary_expr .)
-    MINUS           reduce using rule 15 (multiplicative_expr -> unary_expr .)
-    SEMI            reduce using rule 15 (multiplicative_expr -> unary_expr .)
-    RPAREN          reduce using rule 15 (multiplicative_expr -> unary_expr .)
+    RPAREN          shift and go to state 70
 
 
 state 42
 
-    (16) unary_expr -> INCREMENT . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (60) if_stmt -> IF LPAREN . conditionals RPAREN scope
+    (61) if_stmt -> IF LPAREN . conditionals RPAREN scope elsiflist
+    (53) conditionals -> . operand compOps operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
-    operand                        shift and go to state 69
+    conditionals                   shift and go to state 71
+    operand                        shift and go to state 68
 
 state 43
 
-    (17) unary_expr -> DECREMENT . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (25) return_stmt -> RETURN operand .
+    (21) unary_expr -> operand . INCREMENT
+    (22) unary_expr -> operand . DECREMENT
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    SEMI            reduce using rule 25 (return_stmt -> RETURN operand .)
+    INCREMENT       shift and go to state 72
+    DECREMENT       shift and go to state 73
 
-    operand                        shift and go to state 70
 
 state 44
 
-    (25) var_decl -> type_spec ID .
-    (27) var_assign -> ID . EQUALS operand
-    (28) var_assign -> ID . EQUALS expr
-    (29) var_assign -> ID . EQUALS STRING
-    (31) var_assign -> ID . TIMESEQUAL operand
-    (32) var_assign -> ID . DIVEQUAL operand
-    (33) var_assign -> ID . MODEQUAL operand
-    (34) var_assign -> ID . PLUSEQUAL operand
-    (35) var_assign -> ID . MINUSEQUAL operand
-    (36) var_assign -> ID . LSHIFTEQUAL operand
-    (37) var_assign -> ID . RSHIFTEQUAL operand
-    (38) var_assign -> ID . ANDEQUAL operand
-    (39) var_assign -> ID . OREQUAL operand
-    (40) var_assign -> ID . XOREQUAL operand
+    (26) return_stmt -> RETURN expr .
+    (12) expr -> expr . PLUS multiplicative_expr
+    (13) expr -> expr . MINUS multiplicative_expr
 
-    SEMI            reduce using rule 25 (var_decl -> type_spec ID .)
-    EQUALS          shift and go to state 46
-    TIMESEQUAL      shift and go to state 47
-    DIVEQUAL        shift and go to state 48
-    MODEQUAL        shift and go to state 49
-    PLUSEQUAL       shift and go to state 50
-    MINUSEQUAL      shift and go to state 51
-    LSHIFTEQUAL     shift and go to state 52
-    RSHIFTEQUAL     shift and go to state 53
-    ANDEQUAL        shift and go to state 54
-    OREQUAL         shift and go to state 55
-    XOREQUAL        shift and go to state 56
+    SEMI            reduce using rule 26 (return_stmt -> RETURN expr .)
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
 
 
 state 45
 
-    (26) var_decl -> type_spec var_assign .
+    (27) return_stmt -> RETURN var_assign .
 
-    SEMI            reduce using rule 26 (var_decl -> type_spec var_assign .)
+    SEMI            reduce using rule 27 (return_stmt -> RETURN var_assign .)
 
 
 state 46
 
-    (27) var_assign -> ID EQUALS . operand
-    (28) var_assign -> ID EQUALS . expr
-    (29) var_assign -> ID EQUALS . STRING
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
-    (9) expr -> . expr PLUS multiplicative_expr
-    (10) expr -> . expr MINUS multiplicative_expr
-    (11) expr -> . multiplicative_expr
-    (12) multiplicative_expr -> . multiplicative_expr TIMES unary_expr
-    (13) multiplicative_expr -> . multiplicative_expr DIVIDE unary_expr
-    (14) multiplicative_expr -> . multiplicative_expr MODULO unary_expr
-    (15) multiplicative_expr -> . unary_expr
-    (16) unary_expr -> . INCREMENT operand
-    (17) unary_expr -> . DECREMENT operand
-    (18) unary_expr -> . operand INCREMENT
-    (19) unary_expr -> . operand DECREMENT
+    (23) operand -> ID .
+    (30) var_assign -> ID . EQUALS operand
+    (31) var_assign -> ID . EQUALS expr
+    (32) var_assign -> ID . EQUALS STRING
+    (34) var_assign -> ID . TIMESEQUAL operand
+    (35) var_assign -> ID . DIVEQUAL operand
+    (36) var_assign -> ID . MODEQUAL operand
+    (37) var_assign -> ID . PLUSEQUAL operand
+    (38) var_assign -> ID . MINUSEQUAL operand
+    (39) var_assign -> ID . LSHIFTEQUAL operand
+    (40) var_assign -> ID . RSHIFTEQUAL operand
+    (41) var_assign -> ID . ANDEQUAL operand
+    (42) var_assign -> ID . OREQUAL operand
+    (43) var_assign -> ID . XOREQUAL operand
 
-    STRING          shift and go to state 73
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
-    INCREMENT       shift and go to state 42
-    DECREMENT       shift and go to state 43
+    INCREMENT       reduce using rule 23 (operand -> ID .)
+    DECREMENT       reduce using rule 23 (operand -> ID .)
+    SEMI            reduce using rule 23 (operand -> ID .)
+    EQUALS          shift and go to state 54
+    TIMESEQUAL      shift and go to state 55
+    DIVEQUAL        shift and go to state 56
+    MODEQUAL        shift and go to state 57
+    PLUSEQUAL       shift and go to state 58
+    MINUSEQUAL      shift and go to state 59
+    LSHIFTEQUAL     shift and go to state 60
+    RSHIFTEQUAL     shift and go to state 61
+    ANDEQUAL        shift and go to state 62
+    OREQUAL         shift and go to state 63
+    XOREQUAL        shift and go to state 64
 
-    operand                        shift and go to state 71
-    expr                           shift and go to state 72
-    multiplicative_expr            shift and go to state 40
-    unary_expr                     shift and go to state 41
 
 state 47
 
-    (31) var_assign -> ID TIMESEQUAL . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (24) operand -> NUMCONST .
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    INCREMENT       reduce using rule 24 (operand -> NUMCONST .)
+    DECREMENT       reduce using rule 24 (operand -> NUMCONST .)
+    SEMI            reduce using rule 24 (operand -> NUMCONST .)
+    LE              reduce using rule 24 (operand -> NUMCONST .)
+    GE              reduce using rule 24 (operand -> NUMCONST .)
+    EQ              reduce using rule 24 (operand -> NUMCONST .)
+    NE              reduce using rule 24 (operand -> NUMCONST .)
+    TIMES           reduce using rule 24 (operand -> NUMCONST .)
+    DIVIDE          reduce using rule 24 (operand -> NUMCONST .)
+    MODULO          reduce using rule 24 (operand -> NUMCONST .)
+    PLUS            reduce using rule 24 (operand -> NUMCONST .)
+    MINUS           reduce using rule 24 (operand -> NUMCONST .)
+    RPAREN          reduce using rule 24 (operand -> NUMCONST .)
 
-    operand                        shift and go to state 74
 
 state 48
 
-    (32) var_assign -> ID DIVEQUAL . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (14) expr -> multiplicative_expr .
+    (15) multiplicative_expr -> multiplicative_expr . TIMES unary_expr
+    (16) multiplicative_expr -> multiplicative_expr . DIVIDE unary_expr
+    (17) multiplicative_expr -> multiplicative_expr . MODULO unary_expr
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    PLUS            reduce using rule 14 (expr -> multiplicative_expr .)
+    MINUS           reduce using rule 14 (expr -> multiplicative_expr .)
+    SEMI            reduce using rule 14 (expr -> multiplicative_expr .)
+    RPAREN          reduce using rule 14 (expr -> multiplicative_expr .)
+    TIMES           shift and go to state 76
+    DIVIDE          shift and go to state 77
+    MODULO          shift and go to state 78
 
-    operand                        shift and go to state 75
 
 state 49
 
-    (33) var_assign -> ID MODEQUAL . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (18) multiplicative_expr -> unary_expr .
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    TIMES           reduce using rule 18 (multiplicative_expr -> unary_expr .)
+    DIVIDE          reduce using rule 18 (multiplicative_expr -> unary_expr .)
+    MODULO          reduce using rule 18 (multiplicative_expr -> unary_expr .)
+    PLUS            reduce using rule 18 (multiplicative_expr -> unary_expr .)
+    MINUS           reduce using rule 18 (multiplicative_expr -> unary_expr .)
+    SEMI            reduce using rule 18 (multiplicative_expr -> unary_expr .)
+    RPAREN          reduce using rule 18 (multiplicative_expr -> unary_expr .)
 
-    operand                        shift and go to state 76
 
 state 50
 
-    (34) var_assign -> ID PLUSEQUAL . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (19) unary_expr -> INCREMENT . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
-
-    operand                        shift and go to state 77
-
-state 51
-
-    (35) var_assign -> ID MINUSEQUAL . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
-
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
-
-    operand                        shift and go to state 78
-
-state 52
-
-    (36) var_assign -> ID LSHIFTEQUAL . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
-
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
     operand                        shift and go to state 79
 
-state 53
+state 51
 
-    (37) var_assign -> ID RSHIFTEQUAL . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (20) unary_expr -> DECREMENT . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
     operand                        shift and go to state 80
 
+state 52
+
+    (28) var_decl -> type_spec ID .
+    (30) var_assign -> ID . EQUALS operand
+    (31) var_assign -> ID . EQUALS expr
+    (32) var_assign -> ID . EQUALS STRING
+    (34) var_assign -> ID . TIMESEQUAL operand
+    (35) var_assign -> ID . DIVEQUAL operand
+    (36) var_assign -> ID . MODEQUAL operand
+    (37) var_assign -> ID . PLUSEQUAL operand
+    (38) var_assign -> ID . MINUSEQUAL operand
+    (39) var_assign -> ID . LSHIFTEQUAL operand
+    (40) var_assign -> ID . RSHIFTEQUAL operand
+    (41) var_assign -> ID . ANDEQUAL operand
+    (42) var_assign -> ID . OREQUAL operand
+    (43) var_assign -> ID . XOREQUAL operand
+
+    SEMI            reduce using rule 28 (var_decl -> type_spec ID .)
+    EQUALS          shift and go to state 54
+    TIMESEQUAL      shift and go to state 55
+    DIVEQUAL        shift and go to state 56
+    MODEQUAL        shift and go to state 57
+    PLUSEQUAL       shift and go to state 58
+    MINUSEQUAL      shift and go to state 59
+    LSHIFTEQUAL     shift and go to state 60
+    RSHIFTEQUAL     shift and go to state 61
+    ANDEQUAL        shift and go to state 62
+    OREQUAL         shift and go to state 63
+    XOREQUAL        shift and go to state 64
+
+
+state 53
+
+    (29) var_decl -> type_spec var_assign .
+
+    SEMI            reduce using rule 29 (var_decl -> type_spec var_assign .)
+
+
 state 54
 
-    (38) var_assign -> ID ANDEQUAL . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (30) var_assign -> ID EQUALS . operand
+    (31) var_assign -> ID EQUALS . expr
+    (32) var_assign -> ID EQUALS . STRING
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+    (12) expr -> . expr PLUS multiplicative_expr
+    (13) expr -> . expr MINUS multiplicative_expr
+    (14) expr -> . multiplicative_expr
+    (15) multiplicative_expr -> . multiplicative_expr TIMES unary_expr
+    (16) multiplicative_expr -> . multiplicative_expr DIVIDE unary_expr
+    (17) multiplicative_expr -> . multiplicative_expr MODULO unary_expr
+    (18) multiplicative_expr -> . unary_expr
+    (19) unary_expr -> . INCREMENT operand
+    (20) unary_expr -> . DECREMENT operand
+    (21) unary_expr -> . operand INCREMENT
+    (22) unary_expr -> . operand DECREMENT
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    STRING          shift and go to state 83
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
+    INCREMENT       shift and go to state 50
+    DECREMENT       shift and go to state 51
 
     operand                        shift and go to state 81
+    expr                           shift and go to state 82
+    multiplicative_expr            shift and go to state 48
+    unary_expr                     shift and go to state 49
 
 state 55
 
-    (39) var_assign -> ID OREQUAL . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (34) var_assign -> ID TIMESEQUAL . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
-    operand                        shift and go to state 82
+    operand                        shift and go to state 84
 
 state 56
 
-    (40) var_assign -> ID XOREQUAL . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (35) var_assign -> ID DIVEQUAL . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
-    operand                        shift and go to state 83
+    operand                        shift and go to state 85
 
 state 57
+
+    (36) var_assign -> ID MODEQUAL . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
+
+    operand                        shift and go to state 86
+
+state 58
+
+    (37) var_assign -> ID PLUSEQUAL . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
+
+    operand                        shift and go to state 87
+
+state 59
+
+    (38) var_assign -> ID MINUSEQUAL . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
+
+    operand                        shift and go to state 88
+
+state 60
+
+    (39) var_assign -> ID LSHIFTEQUAL . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
+
+    operand                        shift and go to state 89
+
+state 61
+
+    (40) var_assign -> ID RSHIFTEQUAL . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
+
+    operand                        shift and go to state 90
+
+state 62
+
+    (41) var_assign -> ID ANDEQUAL . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
+
+    operand                        shift and go to state 91
+
+state 63
+
+    (42) var_assign -> ID OREQUAL . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
+
+    operand                        shift and go to state 92
+
+state 64
+
+    (43) var_assign -> ID XOREQUAL . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
+
+    operand                        shift and go to state 93
+
+state 65
+
+    (59) goto_stmt -> GOTO ID .
+
+    SEMI            reduce using rule 59 (goto_stmt -> GOTO ID .)
+
+
+state 66
 
     (3) statement_list -> statement SEMI statement_list .
 
     RBRACE          reduce using rule 3 (statement_list -> statement SEMI statement_list .)
 
 
-state 58
-
-    (49) whileLoop -> WHILE LPAREN conditionals . RPAREN scope
-
-    RPAREN          shift and go to state 84
-
-
-state 59
-
-    (50) conditionals -> operand . compOps operand
-    (51) compOps -> . LE
-    (52) compOps -> . GE
-    (53) compOps -> . EQ
-    (54) compOps -> . NE
-
-    LE              shift and go to state 86
-    GE              shift and go to state 87
-    EQ              shift and go to state 88
-    NE              shift and go to state 89
-
-    compOps                        shift and go to state 85
-
-state 60
-
-    (20) operand -> ID .
-
-    LE              reduce using rule 20 (operand -> ID .)
-    GE              reduce using rule 20 (operand -> ID .)
-    EQ              reduce using rule 20 (operand -> ID .)
-    NE              reduce using rule 20 (operand -> ID .)
-    TIMES           reduce using rule 20 (operand -> ID .)
-    DIVIDE          reduce using rule 20 (operand -> ID .)
-    MODULO          reduce using rule 20 (operand -> ID .)
-    PLUS            reduce using rule 20 (operand -> ID .)
-    MINUS           reduce using rule 20 (operand -> ID .)
-    SEMI            reduce using rule 20 (operand -> ID .)
-    RPAREN          reduce using rule 20 (operand -> ID .)
-    INCREMENT       reduce using rule 20 (operand -> ID .)
-    DECREMENT       reduce using rule 20 (operand -> ID .)
-
-
-state 61
-
-    (30) var_assign -> LPAREN var_assign RPAREN .
-
-    SEMI            reduce using rule 30 (var_assign -> LPAREN var_assign RPAREN .)
-    RPAREN          reduce using rule 30 (var_assign -> LPAREN var_assign RPAREN .)
-
-
-state 62
-
-    (18) unary_expr -> operand INCREMENT .
-
-    TIMES           reduce using rule 18 (unary_expr -> operand INCREMENT .)
-    DIVIDE          reduce using rule 18 (unary_expr -> operand INCREMENT .)
-    MODULO          reduce using rule 18 (unary_expr -> operand INCREMENT .)
-    PLUS            reduce using rule 18 (unary_expr -> operand INCREMENT .)
-    MINUS           reduce using rule 18 (unary_expr -> operand INCREMENT .)
-    SEMI            reduce using rule 18 (unary_expr -> operand INCREMENT .)
-    RPAREN          reduce using rule 18 (unary_expr -> operand INCREMENT .)
-
-
-state 63
-
-    (19) unary_expr -> operand DECREMENT .
-
-    TIMES           reduce using rule 19 (unary_expr -> operand DECREMENT .)
-    DIVIDE          reduce using rule 19 (unary_expr -> operand DECREMENT .)
-    MODULO          reduce using rule 19 (unary_expr -> operand DECREMENT .)
-    PLUS            reduce using rule 19 (unary_expr -> operand DECREMENT .)
-    MINUS           reduce using rule 19 (unary_expr -> operand DECREMENT .)
-    SEMI            reduce using rule 19 (unary_expr -> operand DECREMENT .)
-    RPAREN          reduce using rule 19 (unary_expr -> operand DECREMENT .)
-
-
-state 64
-
-    (9) expr -> expr PLUS . multiplicative_expr
-    (12) multiplicative_expr -> . multiplicative_expr TIMES unary_expr
-    (13) multiplicative_expr -> . multiplicative_expr DIVIDE unary_expr
-    (14) multiplicative_expr -> . multiplicative_expr MODULO unary_expr
-    (15) multiplicative_expr -> . unary_expr
-    (16) unary_expr -> . INCREMENT operand
-    (17) unary_expr -> . DECREMENT operand
-    (18) unary_expr -> . operand INCREMENT
-    (19) unary_expr -> . operand DECREMENT
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
-
-    INCREMENT       shift and go to state 42
-    DECREMENT       shift and go to state 43
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
-
-    multiplicative_expr            shift and go to state 90
-    unary_expr                     shift and go to state 41
-    operand                        shift and go to state 91
-
-state 65
-
-    (10) expr -> expr MINUS . multiplicative_expr
-    (12) multiplicative_expr -> . multiplicative_expr TIMES unary_expr
-    (13) multiplicative_expr -> . multiplicative_expr DIVIDE unary_expr
-    (14) multiplicative_expr -> . multiplicative_expr MODULO unary_expr
-    (15) multiplicative_expr -> . unary_expr
-    (16) unary_expr -> . INCREMENT operand
-    (17) unary_expr -> . DECREMENT operand
-    (18) unary_expr -> . operand INCREMENT
-    (19) unary_expr -> . operand DECREMENT
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
-
-    INCREMENT       shift and go to state 42
-    DECREMENT       shift and go to state 43
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
-
-    multiplicative_expr            shift and go to state 92
-    unary_expr                     shift and go to state 41
-    operand                        shift and go to state 91
-
-state 66
-
-    (12) multiplicative_expr -> multiplicative_expr TIMES . unary_expr
-    (16) unary_expr -> . INCREMENT operand
-    (17) unary_expr -> . DECREMENT operand
-    (18) unary_expr -> . operand INCREMENT
-    (19) unary_expr -> . operand DECREMENT
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
-
-    INCREMENT       shift and go to state 42
-    DECREMENT       shift and go to state 43
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
-
-    unary_expr                     shift and go to state 93
-    operand                        shift and go to state 91
-
 state 67
 
-    (13) multiplicative_expr -> multiplicative_expr DIVIDE . unary_expr
-    (16) unary_expr -> . INCREMENT operand
-    (17) unary_expr -> . DECREMENT operand
-    (18) unary_expr -> . operand INCREMENT
-    (19) unary_expr -> . operand DECREMENT
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (52) whileLoop -> WHILE LPAREN conditionals . RPAREN scope
 
-    INCREMENT       shift and go to state 42
-    DECREMENT       shift and go to state 43
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    RPAREN          shift and go to state 94
 
-    unary_expr                     shift and go to state 94
-    operand                        shift and go to state 91
 
 state 68
 
-    (14) multiplicative_expr -> multiplicative_expr MODULO . unary_expr
-    (16) unary_expr -> . INCREMENT operand
-    (17) unary_expr -> . DECREMENT operand
-    (18) unary_expr -> . operand INCREMENT
-    (19) unary_expr -> . operand DECREMENT
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (53) conditionals -> operand . compOps operand
+    (54) compOps -> . LE
+    (55) compOps -> . GE
+    (56) compOps -> . EQ
+    (57) compOps -> . NE
 
-    INCREMENT       shift and go to state 42
-    DECREMENT       shift and go to state 43
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    LE              shift and go to state 96
+    GE              shift and go to state 97
+    EQ              shift and go to state 98
+    NE              shift and go to state 99
 
-    unary_expr                     shift and go to state 95
-    operand                        shift and go to state 91
+    compOps                        shift and go to state 95
 
 state 69
 
-    (16) unary_expr -> INCREMENT operand .
+    (23) operand -> ID .
 
-    TIMES           reduce using rule 16 (unary_expr -> INCREMENT operand .)
-    DIVIDE          reduce using rule 16 (unary_expr -> INCREMENT operand .)
-    MODULO          reduce using rule 16 (unary_expr -> INCREMENT operand .)
-    PLUS            reduce using rule 16 (unary_expr -> INCREMENT operand .)
-    MINUS           reduce using rule 16 (unary_expr -> INCREMENT operand .)
-    SEMI            reduce using rule 16 (unary_expr -> INCREMENT operand .)
-    RPAREN          reduce using rule 16 (unary_expr -> INCREMENT operand .)
+    LE              reduce using rule 23 (operand -> ID .)
+    GE              reduce using rule 23 (operand -> ID .)
+    EQ              reduce using rule 23 (operand -> ID .)
+    NE              reduce using rule 23 (operand -> ID .)
+    TIMES           reduce using rule 23 (operand -> ID .)
+    DIVIDE          reduce using rule 23 (operand -> ID .)
+    MODULO          reduce using rule 23 (operand -> ID .)
+    PLUS            reduce using rule 23 (operand -> ID .)
+    MINUS           reduce using rule 23 (operand -> ID .)
+    SEMI            reduce using rule 23 (operand -> ID .)
+    RPAREN          reduce using rule 23 (operand -> ID .)
+    INCREMENT       reduce using rule 23 (operand -> ID .)
+    DECREMENT       reduce using rule 23 (operand -> ID .)
 
 
 state 70
 
-    (17) unary_expr -> DECREMENT operand .
+    (33) var_assign -> LPAREN var_assign RPAREN .
 
-    TIMES           reduce using rule 17 (unary_expr -> DECREMENT operand .)
-    DIVIDE          reduce using rule 17 (unary_expr -> DECREMENT operand .)
-    MODULO          reduce using rule 17 (unary_expr -> DECREMENT operand .)
-    PLUS            reduce using rule 17 (unary_expr -> DECREMENT operand .)
-    MINUS           reduce using rule 17 (unary_expr -> DECREMENT operand .)
-    SEMI            reduce using rule 17 (unary_expr -> DECREMENT operand .)
-    RPAREN          reduce using rule 17 (unary_expr -> DECREMENT operand .)
+    SEMI            reduce using rule 33 (var_assign -> LPAREN var_assign RPAREN .)
+    RPAREN          reduce using rule 33 (var_assign -> LPAREN var_assign RPAREN .)
 
 
 state 71
 
-    (27) var_assign -> ID EQUALS operand .
-    (18) unary_expr -> operand . INCREMENT
-    (19) unary_expr -> operand . DECREMENT
+    (60) if_stmt -> IF LPAREN conditionals . RPAREN scope
+    (61) if_stmt -> IF LPAREN conditionals . RPAREN scope elsiflist
 
-    SEMI            reduce using rule 27 (var_assign -> ID EQUALS operand .)
-    RPAREN          reduce using rule 27 (var_assign -> ID EQUALS operand .)
-    INCREMENT       shift and go to state 62
-    DECREMENT       shift and go to state 63
+    RPAREN          shift and go to state 100
 
 
 state 72
 
-    (28) var_assign -> ID EQUALS expr .
-    (9) expr -> expr . PLUS multiplicative_expr
-    (10) expr -> expr . MINUS multiplicative_expr
+    (21) unary_expr -> operand INCREMENT .
 
-    SEMI            reduce using rule 28 (var_assign -> ID EQUALS expr .)
-    RPAREN          reduce using rule 28 (var_assign -> ID EQUALS expr .)
-    PLUS            shift and go to state 64
-    MINUS           shift and go to state 65
+    TIMES           reduce using rule 21 (unary_expr -> operand INCREMENT .)
+    DIVIDE          reduce using rule 21 (unary_expr -> operand INCREMENT .)
+    MODULO          reduce using rule 21 (unary_expr -> operand INCREMENT .)
+    PLUS            reduce using rule 21 (unary_expr -> operand INCREMENT .)
+    MINUS           reduce using rule 21 (unary_expr -> operand INCREMENT .)
+    SEMI            reduce using rule 21 (unary_expr -> operand INCREMENT .)
+    RPAREN          reduce using rule 21 (unary_expr -> operand INCREMENT .)
 
 
 state 73
 
-    (29) var_assign -> ID EQUALS STRING .
+    (22) unary_expr -> operand DECREMENT .
 
-    SEMI            reduce using rule 29 (var_assign -> ID EQUALS STRING .)
-    RPAREN          reduce using rule 29 (var_assign -> ID EQUALS STRING .)
+    TIMES           reduce using rule 22 (unary_expr -> operand DECREMENT .)
+    DIVIDE          reduce using rule 22 (unary_expr -> operand DECREMENT .)
+    MODULO          reduce using rule 22 (unary_expr -> operand DECREMENT .)
+    PLUS            reduce using rule 22 (unary_expr -> operand DECREMENT .)
+    MINUS           reduce using rule 22 (unary_expr -> operand DECREMENT .)
+    SEMI            reduce using rule 22 (unary_expr -> operand DECREMENT .)
+    RPAREN          reduce using rule 22 (unary_expr -> operand DECREMENT .)
 
 
 state 74
 
-    (31) var_assign -> ID TIMESEQUAL operand .
+    (12) expr -> expr PLUS . multiplicative_expr
+    (15) multiplicative_expr -> . multiplicative_expr TIMES unary_expr
+    (16) multiplicative_expr -> . multiplicative_expr DIVIDE unary_expr
+    (17) multiplicative_expr -> . multiplicative_expr MODULO unary_expr
+    (18) multiplicative_expr -> . unary_expr
+    (19) unary_expr -> . INCREMENT operand
+    (20) unary_expr -> . DECREMENT operand
+    (21) unary_expr -> . operand INCREMENT
+    (22) unary_expr -> . operand DECREMENT
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    SEMI            reduce using rule 31 (var_assign -> ID TIMESEQUAL operand .)
-    RPAREN          reduce using rule 31 (var_assign -> ID TIMESEQUAL operand .)
+    INCREMENT       shift and go to state 50
+    DECREMENT       shift and go to state 51
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
+    multiplicative_expr            shift and go to state 101
+    unary_expr                     shift and go to state 49
+    operand                        shift and go to state 102
 
 state 75
 
-    (32) var_assign -> ID DIVEQUAL operand .
+    (13) expr -> expr MINUS . multiplicative_expr
+    (15) multiplicative_expr -> . multiplicative_expr TIMES unary_expr
+    (16) multiplicative_expr -> . multiplicative_expr DIVIDE unary_expr
+    (17) multiplicative_expr -> . multiplicative_expr MODULO unary_expr
+    (18) multiplicative_expr -> . unary_expr
+    (19) unary_expr -> . INCREMENT operand
+    (20) unary_expr -> . DECREMENT operand
+    (21) unary_expr -> . operand INCREMENT
+    (22) unary_expr -> . operand DECREMENT
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    SEMI            reduce using rule 32 (var_assign -> ID DIVEQUAL operand .)
-    RPAREN          reduce using rule 32 (var_assign -> ID DIVEQUAL operand .)
+    INCREMENT       shift and go to state 50
+    DECREMENT       shift and go to state 51
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
+    multiplicative_expr            shift and go to state 103
+    unary_expr                     shift and go to state 49
+    operand                        shift and go to state 102
 
 state 76
 
-    (33) var_assign -> ID MODEQUAL operand .
+    (15) multiplicative_expr -> multiplicative_expr TIMES . unary_expr
+    (19) unary_expr -> . INCREMENT operand
+    (20) unary_expr -> . DECREMENT operand
+    (21) unary_expr -> . operand INCREMENT
+    (22) unary_expr -> . operand DECREMENT
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    SEMI            reduce using rule 33 (var_assign -> ID MODEQUAL operand .)
-    RPAREN          reduce using rule 33 (var_assign -> ID MODEQUAL operand .)
+    INCREMENT       shift and go to state 50
+    DECREMENT       shift and go to state 51
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
+    unary_expr                     shift and go to state 104
+    operand                        shift and go to state 102
 
 state 77
 
-    (34) var_assign -> ID PLUSEQUAL operand .
+    (16) multiplicative_expr -> multiplicative_expr DIVIDE . unary_expr
+    (19) unary_expr -> . INCREMENT operand
+    (20) unary_expr -> . DECREMENT operand
+    (21) unary_expr -> . operand INCREMENT
+    (22) unary_expr -> . operand DECREMENT
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    SEMI            reduce using rule 34 (var_assign -> ID PLUSEQUAL operand .)
-    RPAREN          reduce using rule 34 (var_assign -> ID PLUSEQUAL operand .)
+    INCREMENT       shift and go to state 50
+    DECREMENT       shift and go to state 51
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
+    unary_expr                     shift and go to state 105
+    operand                        shift and go to state 102
 
 state 78
 
-    (35) var_assign -> ID MINUSEQUAL operand .
+    (17) multiplicative_expr -> multiplicative_expr MODULO . unary_expr
+    (19) unary_expr -> . INCREMENT operand
+    (20) unary_expr -> . DECREMENT operand
+    (21) unary_expr -> . operand INCREMENT
+    (22) unary_expr -> . operand DECREMENT
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    SEMI            reduce using rule 35 (var_assign -> ID MINUSEQUAL operand .)
-    RPAREN          reduce using rule 35 (var_assign -> ID MINUSEQUAL operand .)
+    INCREMENT       shift and go to state 50
+    DECREMENT       shift and go to state 51
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
+    unary_expr                     shift and go to state 106
+    operand                        shift and go to state 102
 
 state 79
 
-    (36) var_assign -> ID LSHIFTEQUAL operand .
+    (19) unary_expr -> INCREMENT operand .
 
-    SEMI            reduce using rule 36 (var_assign -> ID LSHIFTEQUAL operand .)
-    RPAREN          reduce using rule 36 (var_assign -> ID LSHIFTEQUAL operand .)
+    TIMES           reduce using rule 19 (unary_expr -> INCREMENT operand .)
+    DIVIDE          reduce using rule 19 (unary_expr -> INCREMENT operand .)
+    MODULO          reduce using rule 19 (unary_expr -> INCREMENT operand .)
+    PLUS            reduce using rule 19 (unary_expr -> INCREMENT operand .)
+    MINUS           reduce using rule 19 (unary_expr -> INCREMENT operand .)
+    SEMI            reduce using rule 19 (unary_expr -> INCREMENT operand .)
+    RPAREN          reduce using rule 19 (unary_expr -> INCREMENT operand .)
 
 
 state 80
 
-    (37) var_assign -> ID RSHIFTEQUAL operand .
+    (20) unary_expr -> DECREMENT operand .
 
-    SEMI            reduce using rule 37 (var_assign -> ID RSHIFTEQUAL operand .)
-    RPAREN          reduce using rule 37 (var_assign -> ID RSHIFTEQUAL operand .)
+    TIMES           reduce using rule 20 (unary_expr -> DECREMENT operand .)
+    DIVIDE          reduce using rule 20 (unary_expr -> DECREMENT operand .)
+    MODULO          reduce using rule 20 (unary_expr -> DECREMENT operand .)
+    PLUS            reduce using rule 20 (unary_expr -> DECREMENT operand .)
+    MINUS           reduce using rule 20 (unary_expr -> DECREMENT operand .)
+    SEMI            reduce using rule 20 (unary_expr -> DECREMENT operand .)
+    RPAREN          reduce using rule 20 (unary_expr -> DECREMENT operand .)
 
 
 state 81
 
-    (38) var_assign -> ID ANDEQUAL operand .
+    (30) var_assign -> ID EQUALS operand .
+    (21) unary_expr -> operand . INCREMENT
+    (22) unary_expr -> operand . DECREMENT
 
-    SEMI            reduce using rule 38 (var_assign -> ID ANDEQUAL operand .)
-    RPAREN          reduce using rule 38 (var_assign -> ID ANDEQUAL operand .)
+    SEMI            reduce using rule 30 (var_assign -> ID EQUALS operand .)
+    RPAREN          reduce using rule 30 (var_assign -> ID EQUALS operand .)
+    INCREMENT       shift and go to state 72
+    DECREMENT       shift and go to state 73
 
 
 state 82
 
-    (39) var_assign -> ID OREQUAL operand .
+    (31) var_assign -> ID EQUALS expr .
+    (12) expr -> expr . PLUS multiplicative_expr
+    (13) expr -> expr . MINUS multiplicative_expr
 
-    SEMI            reduce using rule 39 (var_assign -> ID OREQUAL operand .)
-    RPAREN          reduce using rule 39 (var_assign -> ID OREQUAL operand .)
+    SEMI            reduce using rule 31 (var_assign -> ID EQUALS expr .)
+    RPAREN          reduce using rule 31 (var_assign -> ID EQUALS expr .)
+    PLUS            shift and go to state 74
+    MINUS           shift and go to state 75
 
 
 state 83
 
-    (40) var_assign -> ID XOREQUAL operand .
+    (32) var_assign -> ID EQUALS STRING .
 
-    SEMI            reduce using rule 40 (var_assign -> ID XOREQUAL operand .)
-    RPAREN          reduce using rule 40 (var_assign -> ID XOREQUAL operand .)
+    SEMI            reduce using rule 32 (var_assign -> ID EQUALS STRING .)
+    RPAREN          reduce using rule 32 (var_assign -> ID EQUALS STRING .)
 
 
 state 84
 
-    (49) whileLoop -> WHILE LPAREN conditionals RPAREN . scope
-    (45) scope -> . LBRACE statement_list RBRACE
+    (34) var_assign -> ID TIMESEQUAL operand .
 
-    LBRACE          shift and go to state 15
+    SEMI            reduce using rule 34 (var_assign -> ID TIMESEQUAL operand .)
+    RPAREN          reduce using rule 34 (var_assign -> ID TIMESEQUAL operand .)
 
-    scope                          shift and go to state 96
 
 state 85
 
-    (50) conditionals -> operand compOps . operand
-    (20) operand -> . ID
-    (21) operand -> . NUMCONST
+    (35) var_assign -> ID DIVEQUAL operand .
 
-    ID              shift and go to state 60
-    NUMCONST        shift and go to state 39
+    SEMI            reduce using rule 35 (var_assign -> ID DIVEQUAL operand .)
+    RPAREN          reduce using rule 35 (var_assign -> ID DIVEQUAL operand .)
 
-    operand                        shift and go to state 97
 
 state 86
 
-    (51) compOps -> LE .
+    (36) var_assign -> ID MODEQUAL operand .
 
-    ID              reduce using rule 51 (compOps -> LE .)
-    NUMCONST        reduce using rule 51 (compOps -> LE .)
+    SEMI            reduce using rule 36 (var_assign -> ID MODEQUAL operand .)
+    RPAREN          reduce using rule 36 (var_assign -> ID MODEQUAL operand .)
 
 
 state 87
 
-    (52) compOps -> GE .
+    (37) var_assign -> ID PLUSEQUAL operand .
 
-    ID              reduce using rule 52 (compOps -> GE .)
-    NUMCONST        reduce using rule 52 (compOps -> GE .)
+    SEMI            reduce using rule 37 (var_assign -> ID PLUSEQUAL operand .)
+    RPAREN          reduce using rule 37 (var_assign -> ID PLUSEQUAL operand .)
 
 
 state 88
 
-    (53) compOps -> EQ .
+    (38) var_assign -> ID MINUSEQUAL operand .
 
-    ID              reduce using rule 53 (compOps -> EQ .)
-    NUMCONST        reduce using rule 53 (compOps -> EQ .)
+    SEMI            reduce using rule 38 (var_assign -> ID MINUSEQUAL operand .)
+    RPAREN          reduce using rule 38 (var_assign -> ID MINUSEQUAL operand .)
 
 
 state 89
 
-    (54) compOps -> NE .
+    (39) var_assign -> ID LSHIFTEQUAL operand .
 
-    ID              reduce using rule 54 (compOps -> NE .)
-    NUMCONST        reduce using rule 54 (compOps -> NE .)
+    SEMI            reduce using rule 39 (var_assign -> ID LSHIFTEQUAL operand .)
+    RPAREN          reduce using rule 39 (var_assign -> ID LSHIFTEQUAL operand .)
 
 
 state 90
 
-    (9) expr -> expr PLUS multiplicative_expr .
-    (12) multiplicative_expr -> multiplicative_expr . TIMES unary_expr
-    (13) multiplicative_expr -> multiplicative_expr . DIVIDE unary_expr
-    (14) multiplicative_expr -> multiplicative_expr . MODULO unary_expr
+    (40) var_assign -> ID RSHIFTEQUAL operand .
 
-    PLUS            reduce using rule 9 (expr -> expr PLUS multiplicative_expr .)
-    MINUS           reduce using rule 9 (expr -> expr PLUS multiplicative_expr .)
-    SEMI            reduce using rule 9 (expr -> expr PLUS multiplicative_expr .)
-    RPAREN          reduce using rule 9 (expr -> expr PLUS multiplicative_expr .)
-    TIMES           shift and go to state 66
-    DIVIDE          shift and go to state 67
-    MODULO          shift and go to state 68
+    SEMI            reduce using rule 40 (var_assign -> ID RSHIFTEQUAL operand .)
+    RPAREN          reduce using rule 40 (var_assign -> ID RSHIFTEQUAL operand .)
 
 
 state 91
 
-    (18) unary_expr -> operand . INCREMENT
-    (19) unary_expr -> operand . DECREMENT
+    (41) var_assign -> ID ANDEQUAL operand .
 
-    INCREMENT       shift and go to state 62
-    DECREMENT       shift and go to state 63
+    SEMI            reduce using rule 41 (var_assign -> ID ANDEQUAL operand .)
+    RPAREN          reduce using rule 41 (var_assign -> ID ANDEQUAL operand .)
 
 
 state 92
 
-    (10) expr -> expr MINUS multiplicative_expr .
-    (12) multiplicative_expr -> multiplicative_expr . TIMES unary_expr
-    (13) multiplicative_expr -> multiplicative_expr . DIVIDE unary_expr
-    (14) multiplicative_expr -> multiplicative_expr . MODULO unary_expr
+    (42) var_assign -> ID OREQUAL operand .
 
-    PLUS            reduce using rule 10 (expr -> expr MINUS multiplicative_expr .)
-    MINUS           reduce using rule 10 (expr -> expr MINUS multiplicative_expr .)
-    SEMI            reduce using rule 10 (expr -> expr MINUS multiplicative_expr .)
-    RPAREN          reduce using rule 10 (expr -> expr MINUS multiplicative_expr .)
-    TIMES           shift and go to state 66
-    DIVIDE          shift and go to state 67
-    MODULO          shift and go to state 68
+    SEMI            reduce using rule 42 (var_assign -> ID OREQUAL operand .)
+    RPAREN          reduce using rule 42 (var_assign -> ID OREQUAL operand .)
 
 
 state 93
 
-    (12) multiplicative_expr -> multiplicative_expr TIMES unary_expr .
+    (43) var_assign -> ID XOREQUAL operand .
 
-    TIMES           reduce using rule 12 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
-    DIVIDE          reduce using rule 12 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
-    MODULO          reduce using rule 12 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
-    PLUS            reduce using rule 12 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
-    MINUS           reduce using rule 12 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
-    SEMI            reduce using rule 12 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
-    RPAREN          reduce using rule 12 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
+    SEMI            reduce using rule 43 (var_assign -> ID XOREQUAL operand .)
+    RPAREN          reduce using rule 43 (var_assign -> ID XOREQUAL operand .)
 
 
 state 94
 
-    (13) multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .
+    (52) whileLoop -> WHILE LPAREN conditionals RPAREN . scope
+    (48) scope -> . LBRACE statement_list RBRACE
 
-    TIMES           reduce using rule 13 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
-    DIVIDE          reduce using rule 13 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
-    MODULO          reduce using rule 13 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
-    PLUS            reduce using rule 13 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
-    MINUS           reduce using rule 13 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
-    SEMI            reduce using rule 13 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
-    RPAREN          reduce using rule 13 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
+    LBRACE          shift and go to state 15
 
+    scope                          shift and go to state 107
 
 state 95
 
-    (14) multiplicative_expr -> multiplicative_expr MODULO unary_expr .
+    (53) conditionals -> operand compOps . operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
 
-    TIMES           reduce using rule 14 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
-    DIVIDE          reduce using rule 14 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
-    MODULO          reduce using rule 14 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
-    PLUS            reduce using rule 14 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
-    MINUS           reduce using rule 14 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
-    SEMI            reduce using rule 14 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
-    RPAREN          reduce using rule 14 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
 
+    operand                        shift and go to state 108
 
 state 96
 
-    (49) whileLoop -> WHILE LPAREN conditionals RPAREN scope .
+    (54) compOps -> LE .
 
-    WHILE           reduce using rule 49 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
-    RETURN          reduce using rule 49 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
-    ID              reduce using rule 49 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
-    LPAREN          reduce using rule 49 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
-    INT             reduce using rule 49 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
-    CHAR            reduce using rule 49 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
-    SEMI            reduce using rule 49 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
-    RBRACE          reduce using rule 49 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    ID              reduce using rule 54 (compOps -> LE .)
+    NUMCONST        reduce using rule 54 (compOps -> LE .)
 
 
 state 97
 
-    (50) conditionals -> operand compOps operand .
+    (55) compOps -> GE .
 
-    RPAREN          reduce using rule 50 (conditionals -> operand compOps operand .)
+    ID              reduce using rule 55 (compOps -> GE .)
+    NUMCONST        reduce using rule 55 (compOps -> GE .)
+
+
+state 98
+
+    (56) compOps -> EQ .
+
+    ID              reduce using rule 56 (compOps -> EQ .)
+    NUMCONST        reduce using rule 56 (compOps -> EQ .)
+
+
+state 99
+
+    (57) compOps -> NE .
+
+    ID              reduce using rule 57 (compOps -> NE .)
+    NUMCONST        reduce using rule 57 (compOps -> NE .)
+
+
+state 100
+
+    (60) if_stmt -> IF LPAREN conditionals RPAREN . scope
+    (61) if_stmt -> IF LPAREN conditionals RPAREN . scope elsiflist
+    (48) scope -> . LBRACE statement_list RBRACE
+
+    LBRACE          shift and go to state 15
+
+    scope                          shift and go to state 109
+
+state 101
+
+    (12) expr -> expr PLUS multiplicative_expr .
+    (15) multiplicative_expr -> multiplicative_expr . TIMES unary_expr
+    (16) multiplicative_expr -> multiplicative_expr . DIVIDE unary_expr
+    (17) multiplicative_expr -> multiplicative_expr . MODULO unary_expr
+
+    PLUS            reduce using rule 12 (expr -> expr PLUS multiplicative_expr .)
+    MINUS           reduce using rule 12 (expr -> expr PLUS multiplicative_expr .)
+    SEMI            reduce using rule 12 (expr -> expr PLUS multiplicative_expr .)
+    RPAREN          reduce using rule 12 (expr -> expr PLUS multiplicative_expr .)
+    TIMES           shift and go to state 76
+    DIVIDE          shift and go to state 77
+    MODULO          shift and go to state 78
+
+
+state 102
+
+    (21) unary_expr -> operand . INCREMENT
+    (22) unary_expr -> operand . DECREMENT
+
+    INCREMENT       shift and go to state 72
+    DECREMENT       shift and go to state 73
+
+
+state 103
+
+    (13) expr -> expr MINUS multiplicative_expr .
+    (15) multiplicative_expr -> multiplicative_expr . TIMES unary_expr
+    (16) multiplicative_expr -> multiplicative_expr . DIVIDE unary_expr
+    (17) multiplicative_expr -> multiplicative_expr . MODULO unary_expr
+
+    PLUS            reduce using rule 13 (expr -> expr MINUS multiplicative_expr .)
+    MINUS           reduce using rule 13 (expr -> expr MINUS multiplicative_expr .)
+    SEMI            reduce using rule 13 (expr -> expr MINUS multiplicative_expr .)
+    RPAREN          reduce using rule 13 (expr -> expr MINUS multiplicative_expr .)
+    TIMES           shift and go to state 76
+    DIVIDE          shift and go to state 77
+    MODULO          shift and go to state 78
+
+
+state 104
+
+    (15) multiplicative_expr -> multiplicative_expr TIMES unary_expr .
+
+    TIMES           reduce using rule 15 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
+    DIVIDE          reduce using rule 15 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
+    MODULO          reduce using rule 15 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
+    PLUS            reduce using rule 15 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
+    MINUS           reduce using rule 15 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
+    SEMI            reduce using rule 15 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
+    RPAREN          reduce using rule 15 (multiplicative_expr -> multiplicative_expr TIMES unary_expr .)
+
+
+state 105
+
+    (16) multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .
+
+    TIMES           reduce using rule 16 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
+    DIVIDE          reduce using rule 16 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
+    MODULO          reduce using rule 16 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
+    PLUS            reduce using rule 16 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
+    MINUS           reduce using rule 16 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
+    SEMI            reduce using rule 16 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
+    RPAREN          reduce using rule 16 (multiplicative_expr -> multiplicative_expr DIVIDE unary_expr .)
+
+
+state 106
+
+    (17) multiplicative_expr -> multiplicative_expr MODULO unary_expr .
+
+    TIMES           reduce using rule 17 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
+    DIVIDE          reduce using rule 17 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
+    MODULO          reduce using rule 17 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
+    PLUS            reduce using rule 17 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
+    MINUS           reduce using rule 17 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
+    SEMI            reduce using rule 17 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
+    RPAREN          reduce using rule 17 (multiplicative_expr -> multiplicative_expr MODULO unary_expr .)
+
+
+state 107
+
+    (52) whileLoop -> WHILE LPAREN conditionals RPAREN scope .
+
+    WHILE           reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    IF              reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    RETURN          reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    ID              reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    LPAREN          reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    GOTO            reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    BREAK           reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    INT             reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    CHAR            reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    SEMI            reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+    RBRACE          reduce using rule 52 (whileLoop -> WHILE LPAREN conditionals RPAREN scope .)
+
+
+state 108
+
+    (53) conditionals -> operand compOps operand .
+
+    RPAREN          reduce using rule 53 (conditionals -> operand compOps operand .)
+
+
+state 109
+
+    (60) if_stmt -> IF LPAREN conditionals RPAREN scope .
+    (61) if_stmt -> IF LPAREN conditionals RPAREN scope . elsiflist
+    (62) elsiflist -> . ELSE IF LPAREN conditionals RPAREN scope elsiflist
+    (63) elsiflist -> . ELSE IF LPAREN conditionals RPAREN scope empty
+    (64) elsiflist -> . ELSE scope
+
+    WHILE           reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    IF              reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    RETURN          reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    ID              reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    LPAREN          reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    GOTO            reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    BREAK           reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    INT             reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    CHAR            reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    SEMI            reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    RBRACE          reduce using rule 60 (if_stmt -> IF LPAREN conditionals RPAREN scope .)
+    ELSE            shift and go to state 111
+
+    elsiflist                      shift and go to state 110
+
+state 110
+
+    (61) if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .
+
+    WHILE           reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+    IF              reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+    RETURN          reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+    ID              reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+    LPAREN          reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+    GOTO            reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+    BREAK           reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+    INT             reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+    CHAR            reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+    SEMI            reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+    RBRACE          reduce using rule 61 (if_stmt -> IF LPAREN conditionals RPAREN scope elsiflist .)
+
+
+state 111
+
+    (62) elsiflist -> ELSE . IF LPAREN conditionals RPAREN scope elsiflist
+    (63) elsiflist -> ELSE . IF LPAREN conditionals RPAREN scope empty
+    (64) elsiflist -> ELSE . scope
+    (48) scope -> . LBRACE statement_list RBRACE
+
+    IF              shift and go to state 112
+    LBRACE          shift and go to state 15
+
+    scope                          shift and go to state 113
+
+state 112
+
+    (62) elsiflist -> ELSE IF . LPAREN conditionals RPAREN scope elsiflist
+    (63) elsiflist -> ELSE IF . LPAREN conditionals RPAREN scope empty
+
+    LPAREN          shift and go to state 114
+
+
+state 113
+
+    (64) elsiflist -> ELSE scope .
+
+    WHILE           reduce using rule 64 (elsiflist -> ELSE scope .)
+    IF              reduce using rule 64 (elsiflist -> ELSE scope .)
+    RETURN          reduce using rule 64 (elsiflist -> ELSE scope .)
+    ID              reduce using rule 64 (elsiflist -> ELSE scope .)
+    LPAREN          reduce using rule 64 (elsiflist -> ELSE scope .)
+    GOTO            reduce using rule 64 (elsiflist -> ELSE scope .)
+    BREAK           reduce using rule 64 (elsiflist -> ELSE scope .)
+    INT             reduce using rule 64 (elsiflist -> ELSE scope .)
+    CHAR            reduce using rule 64 (elsiflist -> ELSE scope .)
+    SEMI            reduce using rule 64 (elsiflist -> ELSE scope .)
+    RBRACE          reduce using rule 64 (elsiflist -> ELSE scope .)
+
+
+state 114
+
+    (62) elsiflist -> ELSE IF LPAREN . conditionals RPAREN scope elsiflist
+    (63) elsiflist -> ELSE IF LPAREN . conditionals RPAREN scope empty
+    (53) conditionals -> . operand compOps operand
+    (23) operand -> . ID
+    (24) operand -> . NUMCONST
+
+    ID              shift and go to state 69
+    NUMCONST        shift and go to state 47
+
+    conditionals                   shift and go to state 115
+    operand                        shift and go to state 68
+
+state 115
+
+    (62) elsiflist -> ELSE IF LPAREN conditionals . RPAREN scope elsiflist
+    (63) elsiflist -> ELSE IF LPAREN conditionals . RPAREN scope empty
+
+    RPAREN          shift and go to state 116
+
+
+state 116
+
+    (62) elsiflist -> ELSE IF LPAREN conditionals RPAREN . scope elsiflist
+    (63) elsiflist -> ELSE IF LPAREN conditionals RPAREN . scope empty
+    (48) scope -> . LBRACE statement_list RBRACE
+
+    LBRACE          shift and go to state 15
+
+    scope                          shift and go to state 117
+
+state 117
+
+    (62) elsiflist -> ELSE IF LPAREN conditionals RPAREN scope . elsiflist
+    (63) elsiflist -> ELSE IF LPAREN conditionals RPAREN scope . empty
+    (62) elsiflist -> . ELSE IF LPAREN conditionals RPAREN scope elsiflist
+    (63) elsiflist -> . ELSE IF LPAREN conditionals RPAREN scope empty
+    (64) elsiflist -> . ELSE scope
+    (1) empty -> .
+
+    ELSE            shift and go to state 111
+    WHILE           reduce using rule 1 (empty -> .)
+    IF              reduce using rule 1 (empty -> .)
+    RETURN          reduce using rule 1 (empty -> .)
+    ID              reduce using rule 1 (empty -> .)
+    LPAREN          reduce using rule 1 (empty -> .)
+    GOTO            reduce using rule 1 (empty -> .)
+    BREAK           reduce using rule 1 (empty -> .)
+    INT             reduce using rule 1 (empty -> .)
+    CHAR            reduce using rule 1 (empty -> .)
+    SEMI            reduce using rule 1 (empty -> .)
+    RBRACE          reduce using rule 1 (empty -> .)
+
+    elsiflist                      shift and go to state 118
+    empty                          shift and go to state 119
+
+state 118
+
+    (62) elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .
+
+    WHILE           reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+    IF              reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+    RETURN          reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+    ID              reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+    LPAREN          reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+    GOTO            reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+    BREAK           reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+    INT             reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+    CHAR            reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+    SEMI            reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+    RBRACE          reduce using rule 62 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope elsiflist .)
+
+
+state 119
+
+    (63) elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .
+
+    WHILE           reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
+    IF              reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
+    RETURN          reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
+    ID              reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
+    LPAREN          reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
+    GOTO            reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
+    BREAK           reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
+    INT             reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
+    CHAR            reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
+    SEMI            reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
+    RBRACE          reduce using rule 63 (elsiflist -> ELSE IF LPAREN conditionals RPAREN scope empty .)
 
