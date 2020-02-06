@@ -9,12 +9,12 @@ from ply_scanner import tokens
 [/] Arithmetic expressions
 [/] Assignment
 [ ] Boolean expressions
-[ ] Goto statements
-[ ] If / Else control flow
-[ ] Unary operators
+[x] Goto statements
+[x] If / Else control flow
+[/] Unary operators
 [x] Return statements
-[ ] Break statements
-[ ] While loops
+[x] Break statements
+[x] While loops
 """
 #TODO: Preprocessing #include<> stuff
 start = 'funcDecl'
@@ -28,9 +28,12 @@ def p_statement_list(p):
     statement_list : empty
                    | statement SEMI statement_list
                    | whileLoop statement_list
+                   | if_stmt statement_list
     statement : return_stmt
               | var_decl
               | var_assign
+              | goto_stmt
+              | break_stmt
               | empty
     '''
 #TODO: Type cast in C
@@ -147,6 +150,7 @@ def p_compOps(p):
     '''
 def p_conditionals(p):
     '''
+<<<<<<< HEAD
     conditionals    : operand compOps operand
                     | TRUE
                     | FALSE
@@ -155,10 +159,45 @@ def p_conditionals(p):
 def p_whileLoop(p):
     '''
     whileLoop   : WHILE LPAREN conditionals RPAREN scope
+=======
+    conditionals    :  operand compOps operand
+
+    compOps :   LE
+                | GE
+                | EQ
+                | NE
     '''
+
+def p_breakStmt(p):
+    '''
+    break_stmt  : BREAK
+    '''
+def p_gotoStmt(p):
+>>>>>>> 39edd8c8cbda71f151ea4697c83b2f455d6edd52
+    '''
+    goto_stmt  : GOTO ID 
+    '''
+
+def p_ifStmt(p):
+    '''
+    if_stmt : IF LPAREN conditionals RPAREN scope
+            | IF LPAREN conditionals RPAREN scope elsiflist
+            
+            
+    elsiflist : ELSE IF LPAREN conditionals RPAREN scope elsiflist
+            | ELSE IF LPAREN conditionals RPAREN scope empty
+            | ELSE scope
+            
+    '''
+
 def p_error(t):
+<<<<<<< HEAD
     # print("Syntax error at '%s' line number: '%d'" % t.value, t.lineno)
     print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))
+=======
+    print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))
+    #print("Syntax error at '%s'" % t.value)
+>>>>>>> 39edd8c8cbda71f151ea4697c83b2f455d6edd52
 
 # Build the parser and pass lex into the parser
 def parser(lex):

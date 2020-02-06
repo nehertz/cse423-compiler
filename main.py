@@ -9,7 +9,7 @@ from ply_scanner import tokenizer
 from ply_parser import parser
 
 def printHelp():
-    print("usage: scanner.py [-t] [-p] filename")
+    print("usage: main.py [-t] [-p] filename")
     print("Scanner options and arguments: ")
     print("-t   :print the sequence of tokens and labels")
     print("-p   :print parse tree ")
