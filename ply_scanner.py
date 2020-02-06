@@ -69,12 +69,9 @@ operators = {
     '>' : 'RANGLE',
     '...' : 'ELLIPSIS',
 
-<<<<<<< HEAD
     # Boolean
     'true' : 'TRUE',
     'false' : 'FALSE',
-=======
->>>>>>> 39edd8c8cbda71f151ea4697c83b2f455d6edd52
 }
 
 # List of token names. Copy from TokenName.py 

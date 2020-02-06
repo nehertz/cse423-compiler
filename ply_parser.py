@@ -158,12 +158,6 @@ def p_conditionals(p):
 def p_whileLoop(p):
     '''
     whileLoop   : WHILE LPAREN conditionals RPAREN scope
-    conditionals    :  operand compOps operand
-
-    compOps :   LE
-                | GE
-                | EQ
-                | NE
     '''
 
 def p_breakStmt(p):
