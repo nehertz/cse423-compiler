@@ -150,7 +150,6 @@ def p_compOps(p):
     '''
 def p_conditionals(p):
     '''
-<<<<<<< HEAD
     conditionals    : operand compOps operand
                     | TRUE
                     | FALSE
@@ -159,7 +158,6 @@ def p_conditionals(p):
 def p_whileLoop(p):
     '''
     whileLoop   : WHILE LPAREN conditionals RPAREN scope
-=======
     conditionals    :  operand compOps operand
 
     compOps :   LE
@@ -173,7 +171,6 @@ def p_breakStmt(p):
     break_stmt  : BREAK
     '''
 def p_gotoStmt(p):
->>>>>>> 39edd8c8cbda71f151ea4697c83b2f455d6edd52
     '''
     goto_stmt  : GOTO ID 
     '''
@@ -191,13 +188,8 @@ def p_ifStmt(p):
     '''
 
 def p_error(t):
-<<<<<<< HEAD
-    # print("Syntax error at '%s' line number: '%d'" % t.value, t.lineno)
-    print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))
-=======
     print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))
     #print("Syntax error at '%s'" % t.value)
->>>>>>> 39edd8c8cbda71f151ea4697c83b2f455d6edd52
 
 # Build the parser and pass lex into the parser
 def parser(lex):
