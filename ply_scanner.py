@@ -103,6 +103,10 @@ def t_ID(t):
         t.type = t.value.upper()
     elif (t.value in type_specifier):
         t.type = t.value.upper()
+    elif (t.value == "true"):
+        t.type = t.value.upper()
+    elif (t.value == "false"):
+        t.type = t.value.upper()
     else:
         t.type = 'ID'
     return t
