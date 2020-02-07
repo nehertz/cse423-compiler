@@ -16,6 +16,16 @@ from ply_scanner import tokens
 [x] Break statements
 [x] While loops
 """
+
+class Node:
+    def __init__(self,type,children=None,leaf=None):
+        self.type = type
+        if children:
+            self.children = children
+        else:
+            self.children = [ ]
+        self.leaf = leaf
+
 #TODO: Preprocessing #include<> stuff
 start = 'funcDecl'
 
@@ -51,6 +61,7 @@ def p_expr(p):
     operand : ID
         | NUMCONST
     '''
+    
 # def p_bin_op(p):
 #     '''
 #     bin_op : PLUS
@@ -66,7 +77,7 @@ def p_return_stmt(p):
     return_stmt : RETURN expr
                 | RETURN var_assign
     '''
-
+    
 def p_var_decl(p):
     '''
     var_decl : type_spec ID
@@ -91,15 +102,21 @@ def p_var_assign(p):
                | ID OREQUAL expr 
                | ID XOREQUAL expr
     '''
-
-def p_typeSpec(p):
+   
+def p_typeSpecList(p):
     '''
     type_spec_list : type_spec_list COMMA type_spec ID
                    | type_spec ID
-    type_spec : INT
-              | CHAR
     '''
-
+    #print(p[1])
+    return p
+def p_typeSpec(p):
+    '''
+    type_spec : INT
+        | CHAR
+    '''
+    p[0] = p[1]
+    return p
 # AUTO 
 # | UNION 
 # | SHORT 
@@ -129,12 +146,26 @@ def p_scope(p):
     scope : LBRACE statement_list RBRACE
     '''
 
-def p_funcDeclaration(p):
+def p_args(p):
     '''
-    funcDecl : type_spec ID LPAREN args RPAREN scope
+   
     args : type_spec_list
          | empty
     '''
+
+def p_funcDeclaration(p):
+    '''
+    funcDecl : type_spec ID LPAREN args RPAREN scope
+    '''
+    k = p_typeSpec(p)
+
+    print(k)
+    print(p[1])
+    print(p[2])
+    print(p[3])
+    print(p[4])
+    print(p[5])
+
 def p_compOps(p):
     '''
     compOps     : LE
@@ -182,6 +213,8 @@ def p_error(t):
 # Build the parser and pass lex into the parser
 def parser(lex):
     parser = yacc.yacc()
-    result = parser.parse(lexer=lex)
-    #print(result)
+    parser.parse(lexer=lex)
+
+
+
     
