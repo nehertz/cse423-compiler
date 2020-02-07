@@ -3,20 +3,20 @@ int main()
         // char c = 'A';
         return (i = 1);
         
-        while (true) {
+        while (TRUE) {
                 i =3 ;
         }
 
         // char c = 'A';
         while (i == 1) {
                 if (i >= 1){
-                        
+                        int b = 1;
                 } else if (i <= 1) {
                         goto label;
                 } else if (i == 1){
                         break;
                 } else {
-
+                        int b = 1; 
                 }      
                 
         }

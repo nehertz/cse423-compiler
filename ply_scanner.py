@@ -70,8 +70,8 @@ operators = {
     '...' : 'ELLIPSIS',
 
     # Boolean
-    'true' : 'TRUE',
-    'false' : 'FALSE',
+    'TRUE' : 'TRUE',
+    'FALSE' : 'FALSE',
 }
 
 # List of token names. Copy from TokenName.py 
@@ -103,9 +103,9 @@ def t_ID(t):
         t.type = t.value.upper()
     elif (t.value in type_specifier):
         t.type = t.value.upper()
-    elif (t.value == "true"):
+    elif (t.value == "TRUE"):
         t.type = t.value.upper()
-    elif (t.value == "false"):
+    elif (t.value == "FALSE"):
         t.type = t.value.upper()
     else:
         t.type = 'ID'

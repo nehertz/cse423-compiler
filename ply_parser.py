@@ -39,13 +39,30 @@ def p_statement_list(p):
                    | statement SEMI statement_list
                    | whileLoop statement_list
                    | if_stmt statement_list
-    statement : return_stmt
-              | var_decl
-              | var_assign
-              | goto_stmt
-              | break_stmt
-              | empty
+
     '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    elif (len(p) == 3):
+        p[0] = (p[1], p[2])
+    elif (len(p) == 4):
+        p[0] = (p[1], p[2], p[3])
+    else: 
+        pass
+
+    return p
+def p_statement(p):
+    '''
+    statement : return_stmt
+            | var_decl
+            | var_assign
+            | goto_stmt
+            | break_stmt
+            | empty
+    '''
+    p[0] = p[1]
+    return p
+
 #TODO: Type cast in C
 #TODO: sizeof(), Pointers, dereferencing 
 #TODO: Structure ->, . operators to be added
@@ -54,36 +71,65 @@ def p_expr(p):
     expr : expr PLUS multiplicative_expr
          | expr MINUS multiplicative_expr
          | multiplicative_expr
+    '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    elif (len(p) == 4):
+        p[0] = (p[2], p[1], p[3])
+    else: 
+        pass
+
+    return p
+
+
+def p_multiplicative_expr(p):
+    '''
     multiplicative_expr : multiplicative_expr TIMES operand 
-                        | multiplicative_expr DIVIDE operand 
-                        | multiplicative_expr MODULO operand   
-                        | operand
-    operand : ID
-        | NUMCONST
+                    | multiplicative_expr DIVIDE operand 
+                    | multiplicative_expr MODULO operand   
+                    | operand
     '''
     
-# def p_bin_op(p):
-#     '''
-#     bin_op : PLUS
-#            | MINUS
-#            | TIMES
-#            | DIVIDE
-#            | MODULO
-#     '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    elif (len(p) == 4):
+        p[0] = (p[2], p[1], p[3])
+    else: 
+        pass 
+    return p
+
+
+def p_operand(p):
+    ''' 
+    operand : ID
+            | NUMCONST
+    '''
+
+    p[0] = p[1]
+    return p
+    
 # TODO: Add RETURN func_call later
 # TODO: Add other types
+
+
 def p_return_stmt(p):
     '''
     return_stmt : RETURN expr
                 | RETURN var_assign
     '''
     
+    p[0] = (p[1], p[2])
+    return p
+    
+
 def p_var_decl(p):
     '''
     var_decl : type_spec ID
              | type_spec var_assign 
     '''
-
+    p[0] = ('ASSIGN', p[1], p[2])
+    return p
+    
 # TODO: Finish char impl in scanner and add it here (| ID EQUALS CHAR SEMI)
 # TODO: Add support for +=, -=, etc.
 def p_var_assign(p):
@@ -102,18 +148,26 @@ def p_var_assign(p):
                | ID OREQUAL expr 
                | ID XOREQUAL expr
     '''
+    p[0] = (p[2], p[1], p[3])
+    return p
    
+
 def p_typeSpecList(p):
     '''
     type_spec_list : type_spec_list COMMA type_spec ID
                    | type_spec ID
     '''
-    #print(p[1])
+    if(len(p) == 2):
+        p[0] = p[1]
+    else:
+        p[0] = (p[3],p[2],p[1])
     return p
+
+
 def p_typeSpec(p):
     '''
     type_spec : INT
-        | CHAR
+                | CHAR
     '''
     p[0] = p[1]
     return p
@@ -145,26 +199,24 @@ def p_scope(p):
     '''
     scope : LBRACE statement_list RBRACE
     '''
+    p[0] = ('LBRACE', p[2], 'RBRACE')
+    return p
 
 def p_args(p):
     '''
-   
     args : type_spec_list
          | empty
     '''
+    p[0] = p[1]
+    return p
 
 def p_funcDeclaration(p):
     '''
     funcDecl : type_spec ID LPAREN args RPAREN scope
     '''
-    k = p_typeSpec(p)
-
-    print(k)
-    print(p[1])
-    print(p[2])
-    print(p[3])
-    print(p[4])
-    print(p[5])
+    p[0] = ('Function', p[1], p[2], p[3], p[4], p[5], p[6])
+    return p
+    
 
 def p_compOps(p):
     '''
@@ -173,6 +225,8 @@ def p_compOps(p):
                 | EQ
                 | NE
     '''
+    p[0] = p[1]
+    return p
 def p_conditionals(p):
     '''
     conditionals    : operand compOps operand
@@ -180,32 +234,60 @@ def p_conditionals(p):
                     | FALSE
                     | LPAREN conditionals RPAREN
     '''
+    
+    if (len(p) == 2):
+        p[0] = p[1]
+    elif (len(p) == 4):
+        p[0] = (p[1], p[2], p[3])
+    return p
 def p_whileLoop(p):
     '''
     whileLoop   : WHILE LPAREN conditionals RPAREN scope
     '''
+    p[0] = ('WHILE', p[3], p[5])
+    return p
 
 def p_breakStmt(p):
     '''
     break_stmt  : BREAK
     '''
+    p[0] = p[1]
+    return p
+
 def p_gotoStmt(p):
     '''
     goto_stmt  : GOTO ID 
     '''
-
+    p[0] = ('GOTO', p[1], p[2])
+    return p
+    
 def p_ifStmt(p):
     '''
     if_stmt : IF LPAREN conditionals RPAREN scope
             | IF LPAREN conditionals RPAREN scope elsiflist
-            
-            
-    elsiflist : ELSE IF LPAREN conditionals RPAREN scope elsiflist
-            | ELSE IF LPAREN conditionals RPAREN scope empty
-            | ELSE scope
-            
     '''
-
+    if (len(p) == 5):
+        print("length 5")
+        p[0] = ('IF', p[3], p[5])
+    else: 
+        print("length 6")
+        p[0] = ('IF', p[3], p[5], p[6])
+    return p
+        
+def p_elseIfList(p):
+    '''
+    elsiflist : ELSE IF LPAREN conditionals RPAREN scope elsiflist
+            | ELSE IF LPAREN conditionals RPAREN scope
+            | ELSE scope     
+    '''
+    if(len(p) == 3):
+        p[0] = ('ElSE', p[2])
+    elif (len(p) == 6):
+        p[0] = ('ELSE IF', p[4], p[6])
+    elif (len(p) == 7):
+        p[0] = ('ELSE IF', p[4], p[6], p[7])
+    return p
+    
 def p_error(t):
     print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))
     #print("Syntax error at '%s'" % t.value)
@@ -213,8 +295,8 @@ def p_error(t):
 # Build the parser and pass lex into the parser
 def parser(lex):
     parser = yacc.yacc()
-    parser.parse(lexer=lex)
-
+    result = parser.parse(lexer=lex)
+    print(result)
 
 
     
