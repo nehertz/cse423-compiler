@@ -68,28 +68,73 @@ def p_statement(p):
 #TODO: Structure ->, . operators to be added
 def p_expr(p):
     '''
-    expr : expr PLUS multiplicative_expr
-         | expr MINUS multiplicative_expr
-         | multiplicative_expr
+    expr : logical_expr
+    '''
+    p[0] = p[1]
+    return p
+
+def p_logical_expr(p):
+    '''
+    logical_expr : compOps
+                | logical_expr LOR compOps
+                | logical_expr LAND compOps
+                | logical_expr OR compOps
+                | logical_expr XOR compOps
+                | logical_expr AND compOps
     '''
     if (len(p) == 2):
         p[0] = p[1]
-    elif (len(p) == 4):
+    else:
         p[0] = (p[2], p[1], p[3])
-    else: 
-        pass
-
     return p
 
+def p_compOps(p):
+    '''
+    compOps : shift_expr
+            | compOps EQ shift_expr 
+            | compOps NE shift_expr
+            | compOps LE shift_expr
+            | compOps GE shift_expr
+            | compOps LANGLE shift_expr
+            | compOps RANGLE shift_expr 
+    '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    else: 
+        p[0] = (p[2], p[1], p[3])
+    return p
+
+def p_shift_expr(p):
+    '''
+    shift_expr : additive_expr
+            | shift_expr LSHIFT additive_expr
+            | shift_expr RSHIFT additive_expr
+    '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    else: 
+        p[0] = (p[2], p[1], p[3])
+    return p
+def p_additive_expr(p):
+    '''
+    additive_expr : additive_expr PLUS multiplicative_expr
+         | additive_expr MINUS multiplicative_expr
+         | multiplicative_expr
+
+    '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    else: 
+        p[0] = (p[2], p[1], p[3])
+    return p
 
 def p_multiplicative_expr(p):
     '''
-    multiplicative_expr : multiplicative_expr TIMES operand 
-                    | multiplicative_expr DIVIDE operand 
-                    | multiplicative_expr MODULO operand   
+    multiplicative_expr : multiplicative_expr TIMES cast_expr
+                    | multiplicative_expr DIVIDE cast_expr 
+                    | multiplicative_expr MODULO cast_expr   
                     | operand
     '''
-    
     if (len(p) == 2):
         p[0] = p[1]
     elif (len(p) == 4):
@@ -97,8 +142,55 @@ def p_multiplicative_expr(p):
     else: 
         pass 
     return p
+def p_cast_expr(p):
+    '''
+    cast_expr : unary_expr 
+            | type_spec cast_expr 
+    '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    else: 
+        p[0] = (p[1], p[2])
+    return p    
 
+def p_unary_expr(p):
+    '''
+    unary_expr : postfix_expr
+                | INCREMENT unary_expr
+                | DECREMENT unary_expr
+                | unary_expr cast_expr
+                | SIZEOF LPAREN unary_expr RPAREN
+                | SIZEOF LPAREN type_spec RPAREN
+    '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    elif (len(p) == 3):
+        p[0] = ('Prefix', p[1], p[2])
+    else:
+        p[0] = (p[1], p[3])
+    return p
 
+#TODO: Check the if conditions
+def p_postfix_expr(p):
+    '''
+    postfix_expr : operand 
+                | postfix_expr INCREMENT
+                | postfix_expr DECREMENT
+                | postfix_expr PERIOD ID 
+                | postfix_expr ARROW ID
+                | postfix_expr LBRACKET expr RBRACKET
+    '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    elif (len(p) == 3):
+        p[0] = ('Postfix', p[1], p[2])
+    elif (len(p) == 5):
+        p[0] = ('ArrayElement', p[1], p[3])
+    else: 
+        pass
+    
+
+#TODO: String
 def p_operand(p):
     ''' 
     operand : ID
@@ -218,18 +310,9 @@ def p_funcDeclaration(p):
     return p
     
 
-def p_compOps(p):
-    '''
-    compOps     : LE
-                | GE
-                | EQ
-                | NE
-    '''
-    p[0] = p[1]
-    return p
 def p_conditionals(p):
     '''
-    conditionals    : operand compOps operand
+    conditionals    : expr
                     | TRUE
                     | FALSE
                     | LPAREN conditionals RPAREN

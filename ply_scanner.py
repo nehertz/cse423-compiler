@@ -72,6 +72,8 @@ operators = {
     # Boolean
     'TRUE' : 'TRUE',
     'FALSE' : 'FALSE',
+
+    # sizeof operator
 }
 
 # List of token names. Copy from TokenName.py 
