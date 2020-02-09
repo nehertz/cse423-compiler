@@ -218,6 +218,8 @@ def p_var_decl(p):
     '''
     var_decl : type_spec ID
              | type_spec var_assign 
+             | EXTERN typeSpecPostfix ID
+             | CONST EXTERN typeSpecPostfix ID
     '''
     p[0] = ('ASSIGN', p[1], p[2])
     return p
@@ -256,36 +258,59 @@ def p_typeSpecList(p):
     return p
 
 
-def p_typeSpec(p):
+#TOTAKECAREOF: register keyword can only be used within scope
+# global variables are not allowed yet
+# typedef not working yet
+# Extern keyword can not have definition. That's why var_decl
+# has EXTERN 
+def p_type_spec(p):
+    ''' 
+    type_spec   : AUTO typeSpecPostfix
+                | VOLATILE typeSpecPostfix
+                | VOLATILE STATIC typeSpecPostfix
+                | STATIC typeSpecPostfix
+                | CONST typeSpecPostfix
+                | REGISTER typeSpecPostfix
+                | REGISTER STATIC typeSpecPostfix
+                | typeSpecPostfix
     '''
-    type_spec : INT
-                | CHAR
-    '''
-    p[0] = p[1]
+    if (len(p) == 2):
+        p[0] = p[1]
+    elif (len(p) == 3): 
+        p[0] = (p[1], p[2])
+    elif (len(p) == 4):
+        p[0] = (p[1] +' ' + p[2], p[3])
     return p
-# AUTO 
-# | UNION 
-# | SHORT 
-# | DOUBLE 
-# | LONG 
-# | UNSIGNED 
-# | INT 
-# | CHAR 
-# | STATIC 
-# | VOLATILE 
-# | STRUCT 
-# | EXTERN 
-# | SIGNED 
-# | CONST 
-# | ENUM 
-# | VOID 
-# | FLOAT
 
-# def p_types(p):
-#     '''
-#     int : INT
-#     char : CHAR
-#     '''
+#TODO: union/struct, 
+#Warning: float, double can't be signed/unsigned
+def p_typeSpecPostfix(p):
+    '''
+    typeSpecPostfix   : INT
+                    | CHAR
+                    | SHORT
+                    | LONG
+                    | FLOAT
+                    | DOUBLE
+                    | UNSIGNED INT
+                    | SIGNED INT
+                    | SHORT INT
+                    | LONG INT
+                    | LONG LONG INT
+                    | UNSIGNED CHAR
+                    | SIGNED CHAR 
+                    | LONG LONG 
+                    | SIGNED LONG 
+                    | UNSIGNED LONG 
+                    | LONG DOUBLE
+                    | SIGNED SHORT
+                    | UNSIGNED SHORT     
+    '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    else: 
+        p[0] = (p[1], p[2])
+    return p
 
 def p_scope(p):
     '''
