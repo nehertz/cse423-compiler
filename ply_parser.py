@@ -39,7 +39,6 @@ def p_statement_list(p):
                    | statement SEMI statement_list
                    | whileLoop statement_list
                    | if_stmt statement_list
-
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -54,11 +53,11 @@ def p_statement_list(p):
 def p_statement(p):
     '''
     statement : return_stmt
-            | var_decl
-            | var_assign
-            | goto_stmt
-            | break_stmt
-            | empty
+              | var_decl
+              | var_assign
+              | goto_stmt
+              | break_stmt
+              | empty
     '''
     p[0] = p[1]
     return p
@@ -76,11 +75,11 @@ def p_expr(p):
 def p_logical_expr(p):
     '''
     logical_expr : compOps
-                | logical_expr LOR compOps
-                | logical_expr LAND compOps
-                | logical_expr OR compOps
-                | logical_expr XOR compOps
-                | logical_expr AND compOps
+                 | logical_expr LOR compOps
+                 | logical_expr LAND compOps
+                 | logical_expr OR compOps
+                 | logical_expr XOR compOps
+                 | logical_expr AND compOps
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -107,19 +106,20 @@ def p_compOps(p):
 def p_shift_expr(p):
     '''
     shift_expr : additive_expr
-            | shift_expr LSHIFT additive_expr
-            | shift_expr RSHIFT additive_expr
+               | shift_expr LSHIFT additive_expr
+               | shift_expr RSHIFT additive_expr
     '''
     if (len(p) == 2):
         p[0] = p[1]
     else: 
         p[0] = (p[2], p[1], p[3])
     return p
+
 def p_additive_expr(p):
     '''
     additive_expr : additive_expr PLUS multiplicative_expr
-         | additive_expr MINUS multiplicative_expr
-         | multiplicative_expr
+                  | additive_expr MINUS multiplicative_expr
+                  | multiplicative_expr
 
     '''
     if (len(p) == 2):
@@ -131,9 +131,9 @@ def p_additive_expr(p):
 def p_multiplicative_expr(p):
     '''
     multiplicative_expr : multiplicative_expr TIMES cast_expr
-                    | multiplicative_expr DIVIDE cast_expr 
-                    | multiplicative_expr MODULO cast_expr   
-                    | operand
+                        | multiplicative_expr DIVIDE cast_expr 
+                        | multiplicative_expr MODULO cast_expr   
+                        | operand
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -142,10 +142,11 @@ def p_multiplicative_expr(p):
     else: 
         pass 
     return p
+
 def p_cast_expr(p):
     '''
     cast_expr : unary_expr 
-            | type_spec cast_expr 
+              | type_spec cast_expr 
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -156,11 +157,11 @@ def p_cast_expr(p):
 def p_unary_expr(p):
     '''
     unary_expr : postfix_expr
-                | INCREMENT unary_expr
-                | DECREMENT unary_expr
-                | unary_expr cast_expr
-                | SIZEOF LPAREN unary_expr RPAREN
-                | SIZEOF LPAREN type_spec RPAREN
+               | INCREMENT unary_expr
+               | DECREMENT unary_expr
+               | unary_expr cast_expr
+               | SIZEOF LPAREN unary_expr RPAREN
+               | SIZEOF LPAREN type_spec RPAREN
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -174,11 +175,11 @@ def p_unary_expr(p):
 def p_postfix_expr(p):
     '''
     postfix_expr : operand 
-                | postfix_expr INCREMENT
-                | postfix_expr DECREMENT
-                | postfix_expr PERIOD ID 
-                | postfix_expr ARROW ID
-                | postfix_expr LBRACKET expr RBRACKET
+                 | postfix_expr INCREMENT
+                 | postfix_expr DECREMENT
+                 | postfix_expr PERIOD ID 
+                 | postfix_expr ARROW ID
+                 | postfix_expr LBRACKET expr RBRACKET
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -189,7 +190,6 @@ def p_postfix_expr(p):
     else: 
         pass
     
-
 #TODO: String
 def p_operand(p):
     ''' 
@@ -202,8 +202,6 @@ def p_operand(p):
     
 # TODO: Add RETURN func_call later
 # TODO: Add other types
-
-
 def p_return_stmt(p):
     '''
     return_stmt : RETURN expr
@@ -212,16 +210,36 @@ def p_return_stmt(p):
     
     p[0] = (p[1], p[2])
     return p
-    
 
 def p_var_decl(p):
     '''
     var_decl : type_spec ID
-             | type_spec var_assign 
+             | combine_type ID
+             | combine_type_spec
+             | combine_type_spec ID
+             | type_spec var_assign
+             | TYPEDEF type_spec ID
+             | TYPEDEF combine_type_spec ID
              | EXTERN typeSpecPostfix ID
              | CONST EXTERN typeSpecPostfix ID
     '''
-    p[0] = ('ASSIGN', p[1], p[2])
+    if (len(p) == 2):
+        p[0] = p[1]
+    elif (p[1] == 'typedef'):
+        p[0] = ('TYPEDEF', p[2], p[3])
+    else:
+        p[0] = ('ASSIGN', p[1], p[2])
+    return p
+
+def p_var_decl_list(p):
+    '''
+    var_decl_list : var_decl_list var_decl SEMI
+                  | var_decl SEMI
+    '''
+    if (len(p) == 4):
+        p[0] = (p[1], p[2])
+    else:
+        p[0] = p[1]
     return p
     
 # TODO: Finish char impl in scanner and add it here (| ID EQUALS CHAR SEMI)
@@ -245,7 +263,6 @@ def p_var_assign(p):
     p[0] = (p[2], p[1], p[3])
     return p
    
-
 def p_typeSpecList(p):
     '''
     type_spec_list : type_spec_list COMMA type_spec ID
@@ -257,7 +274,6 @@ def p_typeSpecList(p):
         p[0] = (p[3],p[2],p[1])
     return p
 
-
 #TOTAKECAREOF: register keyword can only be used within scope
 # global variables are not allowed yet
 # typedef not working yet
@@ -265,28 +281,46 @@ def p_typeSpecList(p):
 # has EXTERN 
 def p_type_spec(p):
     ''' 
-    type_spec   : AUTO typeSpecPostfix
-                | VOLATILE typeSpecPostfix
-                | VOLATILE STATIC typeSpecPostfix
-                | STATIC typeSpecPostfix
-                | CONST typeSpecPostfix
-                | REGISTER typeSpecPostfix
-                | REGISTER STATIC typeSpecPostfix
-                | typeSpecPostfix
+    type_spec : AUTO typeSpecPostfix
+              | VOLATILE typeSpecPostfix
+              | VOLATILE STATIC typeSpecPostfix
+              | STATIC typeSpecPostfix
+              | CONST typeSpecPostfix
+              | REGISTER typeSpecPostfix
+              | REGISTER STATIC typeSpecPostfix
+              | typeSpecPostfix
     '''
     if (len(p) == 2):
         p[0] = p[1]
     elif (len(p) == 3): 
         p[0] = (p[1], p[2])
     elif (len(p) == 4):
-        p[0] = (p[1] +' ' + p[2], p[3])
+        p[0] = (p[1] + ' ' + p[2], p[3])
+    return p
+
+def p_combine_type_spec(p):
+    '''
+    combine_type_spec : combine_type LBRACE var_decl_list RBRACE
+    '''
+    if (len(p) == 5):
+        p[0] = (p[1], p[2], p[3], p[4])
+    else:
+        p[0] = (p[1], p[5], p[2], p[3], p[4])
+    return p
+
+def p_combine_type(p):
+    '''
+    combine_type : STRUCT ID
+                 | UNION ID
+    '''
+    p[0] = (p[1], p[2])
     return p
 
 #TODO: union/struct, 
 #Warning: float, double can't be signed/unsigned
 def p_typeSpecPostfix(p):
     '''
-    typeSpecPostfix   : INT
+    typeSpecPostfix : INT
                     | CHAR
                     | SHORT
                     | LONG
@@ -304,7 +338,7 @@ def p_typeSpecPostfix(p):
                     | UNSIGNED LONG 
                     | LONG DOUBLE
                     | SIGNED SHORT
-                    | UNSIGNED SHORT     
+                    | UNSIGNED SHORT 
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -312,59 +346,16 @@ def p_typeSpecPostfix(p):
         p[0] = (p[1], p[2])
     return p
 
-def p_scope(p):
-    '''
-    scope : LBRACE statement_list RBRACE
-    '''
-    p[0] = ('LBRACE', p[2], 'RBRACE')
-    return p
-
-def p_args(p):
-    '''
-    args : type_spec_list
-         | empty
-    '''
-    p[0] = p[1]
-    return p
-
-def p_funcDeclaration(p):
-    '''
-    funcDecl : type_spec ID LPAREN args RPAREN scope
-    '''
-    p[0] = ('Function', p[1], p[2], p[3], p[4], p[5], p[6])
-    return p
-    
-
-def p_conditionals(p):
-    '''
-    conditionals    : expr
-                    | TRUE
-                    | FALSE
-                    | LPAREN conditionals RPAREN
-    '''
-    
-    if (len(p) == 2):
-        p[0] = p[1]
-    elif (len(p) == 4):
-        p[0] = (p[1], p[2], p[3])
-    return p
-def p_whileLoop(p):
-    '''
-    whileLoop   : WHILE LPAREN conditionals RPAREN scope
-    '''
-    p[0] = ('WHILE', p[3], p[5])
-    return p
-
 def p_breakStmt(p):
     '''
-    break_stmt  : BREAK
+    break_stmt : BREAK
     '''
     p[0] = p[1]
     return p
 
 def p_gotoStmt(p):
     '''
-    goto_stmt  : GOTO ID 
+    goto_stmt : GOTO ID 
     '''
     p[0] = ('GOTO', p[1], p[2])
     return p
@@ -395,6 +386,48 @@ def p_elseIfList(p):
     elif (len(p) == 7):
         p[0] = ('ELSE IF', p[4], p[6], p[7])
     return p
+
+def p_scope(p):
+    '''
+    scope : LBRACE statement_list RBRACE
+    '''
+    p[0] = ('LBRACE', p[2], 'RBRACE')
+    return p
+
+def p_args(p):
+    '''
+    args : type_spec_list
+         | empty
+    '''
+    p[0] = p[1]
+    return p
+
+def p_funcDeclaration(p):
+    '''
+    funcDecl : type_spec ID LPAREN args RPAREN scope
+    '''
+    p[0] = ('Function', p[1], p[2], p[3], p[4], p[5], p[6])
+    return p
+    
+def p_conditionals(p):
+    '''
+    conditionals : expr
+                 | TRUE
+                 | FALSE
+                 | LPAREN conditionals RPAREN
+    '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    elif (len(p) == 4):
+        p[0] = (p[1], p[2], p[3])
+    return p
+
+def p_whileLoop(p):
+    '''
+    whileLoop : WHILE LPAREN conditionals RPAREN scope
+    '''
+    p[0] = ('WHILE', p[3], p[5])
+    return p
     
 def p_error(t):
     print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))
@@ -405,6 +438,3 @@ def parser(lex):
     parser = yacc.yacc()
     result = parser.parse(lexer=lex)
     print(result)
-
-
-    
