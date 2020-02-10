@@ -142,20 +142,19 @@ def p_multiplicative_expr(p):
 def p_cast_expr(p):
     '''
     cast_expr : unary_expr 
-              | type_spec cast_expr 
+              | LPAREN type_spec RPAREN cast_expr 
     '''
     if (len(p) == 2):
         p[0] = p[1]
     else: 
         p[0] = (p[1], p[2])
     return p    
-
+# Any unary operator and casting are not supported together.
 def p_unary_expr(p):
     '''
     unary_expr : postfix_expr
                | INCREMENT unary_expr
                | DECREMENT unary_expr
-               | unary_expr cast_expr
                | SIZEOF LPAREN unary_expr RPAREN
                | SIZEOF LPAREN type_spec RPAREN
     '''
@@ -285,6 +284,7 @@ def p_type_spec(p):
               | REGISTER typeSpecPostfix
               | REGISTER STATIC typeSpecPostfix
               | typeSpecPostfix
+              | combine_type
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -338,8 +338,10 @@ def p_typeSpecPostfix(p):
     '''
     if (len(p) == 2):
         p[0] = p[1]
-    else: 
+    elif (len(p) == 3): 
         p[0] = (p[1], p[2])
+    else: 
+        p[0] = (p[1], p[2], p[3])
     return p
 
 def p_gotoStmt(p):
@@ -370,9 +372,9 @@ def p_elseIfList(p):
     '''
     if(len(p) == 3):
         p[0] = ('ElSE', p[2])
-    elif (len(p) == 6):
-        p[0] = ('ELSE IF', p[4], p[6])
     elif (len(p) == 7):
+        p[0] = ('ELSE IF', p[4], p[6])
+    elif (len(p) == 8):
         p[0] = ('ELSE IF', p[4], p[6], p[7])
     return p
 

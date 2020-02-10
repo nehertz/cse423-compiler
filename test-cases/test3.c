@@ -1,10 +1,8 @@
-#include <stdio.h>
-
 int main()
 {
     int a = 3;
     int b = 12;
-    printf("it worked");
+    // printf("it worked");
 
     // hello, I am comment
 
@@ -13,11 +11,11 @@ int main()
     */
 
     if (a==3) {
-        print("yeah");
+        // print("yeah");
     }
     else if (b == 14)
     {
-        print("very cool");
+        // print("very cool");
     }
     return 1;
 }
