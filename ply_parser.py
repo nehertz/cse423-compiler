@@ -17,17 +17,9 @@ from ply_scanner import tokens
 [x] While loops
 """
 
-class Node:
-    def __init__(self,type,children=None,leaf=None):
-        self.type = type
-        if children:
-            self.children = children
-        else:
-            self.children = [ ]
-        self.leaf = leaf
 
 #TODO: Preprocessing #include<> stuff
-start = 'funcDecl'
+start = 'program'
 
 def p_empty(p):
     'empty :'
@@ -399,13 +391,21 @@ def p_args(p):
     p[0] = p[1]
     return p
 
+def p_program(p):
+    '''
+    program : funclist
+    '''
+    p[0] = p[1]
+    return p
+
 def p_funcDeclaration(p):
     '''
-    funcDecl : type_spec ID LPAREN args RPAREN scope
+    funclist : type_spec ID LPAREN args RPAREN scope funclist
+            | type_spec ID LPAREN args RPAREN scope
     '''
     p[0] = ('Function', p[1], p[2], p[3], p[4], p[5], p[6])
     return p
-    
+  
 def p_conditionals(p):
     '''
     conditionals : expr
