@@ -39,6 +39,9 @@ def p_statement_list(p):
                    | statement SEMI statement_list
                    | whileLoop statement_list
                    | if_stmt statement_list
+                   | dowhile statement_list
+                   | forloop statement_list
+                   | switch statement_list
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -57,6 +60,7 @@ def p_statement(p):
               | var_assign
               | goto_stmt
               | break_stmt
+              | expr
               | empty
     '''
     p[0] = p[1]
@@ -346,13 +350,6 @@ def p_typeSpecPostfix(p):
         p[0] = (p[1], p[2])
     return p
 
-def p_breakStmt(p):
-    '''
-    break_stmt : BREAK
-    '''
-    p[0] = p[1]
-    return p
-
 def p_gotoStmt(p):
     '''
     goto_stmt : GOTO ID 
@@ -428,7 +425,88 @@ def p_whileLoop(p):
     '''
     p[0] = ('WHILE', p[3], p[5])
     return p
+
+def p_dowhile(p):
+    '''
+    dowhile : DO scope WHILE LPAREN conditionals RPAREN
+    '''
+    p[0] = ('DOWHILE', p[2], p[5])
+    return p
+
+def p_forInit(p):
+
+    '''
+    init : type_spec var_assign
+        | var_assign
+    '''
+    if(len(p) == 3):
+        p[0] = (p[1], p[2])
+    else:
+        p[0] = p[1]
+    return p
+
+def p_forIncrement(p):
+    '''
+    increment : var_assign
+                | INCREMENT ID
+                | DECREMENT ID
+                | ID INCREMENT
+                | ID DECREMENT 
+    '''
+    if(len(p) == 2):
+        p[0] = p[1]
+    else:
+        p[0] = (p[1], p[2])
+    return p
+
+
+def p_forloop(p):
+    '''
+    forloop : FOR LPAREN empty SEMI compOps SEMI empty RPAREN scope
+            | FOR LPAREN init SEMI compOps SEMI empty RPAREN scope
+            | FOR LPAREN empty SEMI compOps SEMI increment RPAREN scope
+            | FOR LPAREN init SEMI compOps SEMI increment RPAREN scope
+    '''
+    p[0] = ("FOR", p[3],p[5],p[7],p[9])
+    return p
+
+def p_breakStmt(p):
+    '''
+    break_stmt : BREAK
+    '''
+    p[0] = p[1]
+    return p
+
+def p_caseList(p):
+
+    '''
+    caselist : CASE operand COLON statement_list caselist
+            | CASE operand COLON statement_list 
+            | DEFAULT COLON statement_list
+    '''
+    if(len(p) == 6):
+        p[0] = ('CASE', p[2], p[4], p[5])
+    if(len(p) == 5):
+        p[0] = ('CASE', p[2], p[4])
+    if(len(p) == 4):
+        p[0] = ('DEFAULT', p[3])
+    return p
     
+def p_switchScope(p):
+    '''
+    switchscope : LBRACE caselist RBRACE
+    '''
+    p[0] = p[2] 
+    return p
+
+def p_switch(p):
+
+    '''
+    switch : SWITCH LPAREN expr RPAREN switchscope 
+    '''
+    p[0] = ('SWITCH', p[3], p[5])
+    return p
+
 def p_error(t):
     print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))
     #print("Syntax error at '%s'" % t.value)
