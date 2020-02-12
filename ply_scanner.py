@@ -146,7 +146,7 @@ def t_hex(t):
 
 # Floating Point Number
 def t_float(t):
-    r'[0-9]*\.[0-9]*'
+    r'[0-9]+\.[0-9]+'
     t.value = float(t.value)
     t.type = 'NUMCONST'
     return t
