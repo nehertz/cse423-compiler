@@ -1,7 +1,7 @@
 import re
 import ply.lex as lex
 
-keywords = ['else', 'register','do','goto','continue','if','sizeof','switch', 'for', 'case','while','break','default','return', 'typedef']
+keywords = ['else', 'register','do','goto','continue','if','sizeof','switch', 'for', 'case','while','break','default','return', 'typedef', 'define', 'include']
 type_specifier = ['auto', 'union', 'short', 'double','long', 'unsigned','int','char','static','volatile','struct','extern','signed','const','enum','void','float']
 operators = {
     # Arithmetic operators 
@@ -77,7 +77,7 @@ operators = {
 }
 
 # List of token names. Copy from TokenName.py 
-tokens = ['STRING','CHARACTER','ID', 'NUMCONST'] + [keyword.upper() for keyword in keywords] + [t.upper() for t in type_specifier] + list(operators.values())
+tokens = ['STRING','CHARACTER','ID', 'NUMCONST', 'PREPROC'] + [keyword.upper() for keyword in keywords] + [t.upper() for t in type_specifier] + list(operators.values())
 
 # Ignore whitespace and tabs
 t_ignore  = ' \t'
@@ -96,6 +96,11 @@ def t_comments(t):
 def t_blockComments(t):
     r'(\/\*)[\s\S]*(\*\/)'
     pass
+
+# def t_preproc(t):
+#     r'\#include<[a-zA-Z]+\.\w>|\#include\"[a-zA-Z]+\.\w\"'
+#     t.type = 'PREPROC'
+#     return t
 
 # Identifiers
 def t_ID(t):

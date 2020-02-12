@@ -4,7 +4,9 @@ import re
 from os import path
 import time
 from io import BytesIO
-#from scanner import *
+from io import StringIO
+from skbio import read
+from skbio.tree import TreeNode
 from ply_scanner import tokenizer
 from ply_parser import parser
 
@@ -20,6 +22,12 @@ def printTokens(lexer):
     for tok in lexer:
         print("Token['" + str(tok.value)+ "' , '" + tok.type + "']")
         #print(tok.type, tok.value, tok.lineno, tok.lexpos)
+
+def printAST(ast):
+    f = StringIO(ast)
+    tree = read(f, format="newick",into=TreeNode)
+    f.close
+    print(tree.ascii_art())
 
 if __name__ == "__main__":
 
@@ -77,4 +85,5 @@ if __name__ == "__main__":
         printTokens(lexer)
     if (flag & 10):
         # goes to parser
-        parser(lexer)     
+        ast = parser(lexer)
+        printAST(ast)

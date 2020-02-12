@@ -1,5 +1,8 @@
 import ply.yacc as yacc
 from ply_scanner import tokens
+from skbio import read
+from skbio.tree import TreeNode
+
 
 """
 [x] Identifiers
@@ -35,16 +38,15 @@ def p_statement_list(p):
                    | forloop statement_list
                    | switch statement_list
     '''
-    if (len(p) == 2):
+    if(len(p) == 4 and p[3] != None):
+        p[0] = '(' + str(p[1]) + ')' + ',' + str(p[3]) 
+    elif(len(p) == 3 and p[2] != None):
+        p[0] = '(' + str(p[1]) + ')'  + ',' + str(p[2])
+    else:
         p[0] = p[1]
-    elif (len(p) == 3):
-        p[0] = (p[1], p[2])
-    elif (len(p) == 4):
-        p[0] = (p[1], p[2], p[3])
-    else: 
-        pass
-
+    
     return p
+
 def p_statement(p):
     '''
     statement : return_stmt
@@ -55,6 +57,7 @@ def p_statement(p):
               | expr
               | empty
     '''
+    
     p[0] = p[1]
     return p
 
@@ -80,7 +83,7 @@ def p_logical_expr(p):
     if (len(p) == 2):
         p[0] = p[1]
     else:
-        p[0] = (p[2], p[1], p[3])
+        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
     return p
 
 def p_compOps(p):
@@ -96,7 +99,7 @@ def p_compOps(p):
     if (len(p) == 2):
         p[0] = p[1]
     else: 
-        p[0] = (p[2], p[1], p[3])
+        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
     return p
 
 def p_shift_expr(p):
@@ -108,7 +111,7 @@ def p_shift_expr(p):
     if (len(p) == 2):
         p[0] = p[1]
     else: 
-        p[0] = (p[2], p[1], p[3])
+        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
     return p
 
 def p_additive_expr(p):
@@ -121,7 +124,7 @@ def p_additive_expr(p):
     if (len(p) == 2):
         p[0] = p[1]
     else: 
-        p[0] = (p[2], p[1], p[3])
+        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
     return p
 
 def p_multiplicative_expr(p):
@@ -134,7 +137,7 @@ def p_multiplicative_expr(p):
     if (len(p) == 2):
         p[0] = p[1]
     elif (len(p) == 4):
-        p[0] = (p[2], p[1], p[3])
+        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
     else: 
         pass 
     return p
@@ -147,8 +150,9 @@ def p_cast_expr(p):
     if (len(p) == 2):
         p[0] = p[1]
     else: 
-        p[0] = (p[1], p[2])
+        p[0] = '(' + str(p[2]) +')' + str(p[1])
     return p    
+
 # Any unary operator and casting are not supported together.
 def p_unary_expr(p):
     '''
@@ -161,10 +165,11 @@ def p_unary_expr(p):
     if (len(p) == 2):
         p[0] = p[1]
     elif (len(p) == 3):
-        p[0] = ('Prefix', p[1], p[2])
+        p[0] = '(' + str(p[1]) + ')' + str(p[2])
     else:
-        p[0] = (p[1], p[3])
+        p[0] = str(p[3])
     return p
+
 
 #TODO: Check the if conditions
 def p_postfix_expr(p):
@@ -179,9 +184,11 @@ def p_postfix_expr(p):
     if (len(p) == 2):
         p[0] = p[1]
     elif (len(p) == 3):
-        p[0] = ('Postfix', p[1], p[2])
+        p[0] = '(' + str(p[1]) + ')' + str(p[2])
+    elif (len(p) == 4):
+        p[0] = '(' + str(p[1]) + ',' + str(p[3] )+ ')' + str(p[2])
     elif (len(p) == 5):
-        p[0] = ('ArrayElement', p[1], p[3])
+        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')'
     else: 
         pass
     
@@ -203,27 +210,30 @@ def p_return_stmt(p):
                 | RETURN var_assign
     '''
     
-    p[0] = (p[1], p[2])
+    p[0] = str(p[1]) + '-' + str(p[2])
     return p
 
 def p_var_decl(p):
     '''
-    var_decl : type_spec ID
-             | combine_type ID
-             | combine_type_spec
-             | combine_type_spec ID
+    var_decl : combine_type_spec
+             | type_spec ID
              | type_spec var_assign
+             | combine_type_spec ID    
              | TYPEDEF type_spec ID
              | TYPEDEF combine_type_spec ID
              | EXTERN typeSpecPostfix ID
              | CONST EXTERN typeSpecPostfix ID
     '''
+
     if (len(p) == 2):
         p[0] = p[1]
-    elif (p[1] == 'typedef'):
-        p[0] = ('TYPEDEF', p[2], p[3])
-    else:
-        p[0] = ('ASSIGN', p[1], p[2])
+    elif (len(p) == 3):
+        p[0] = str(p[1]) + ',' + str(p[2]) 
+    elif (len(p) == 4):
+        p[0] = '(' + str(p[2]) + ',' + str(p[3]) + ')' + str(p[1]) 
+    elif (len(p) == 5):
+        p[0] = '(' + str(p[3]) + ',' + str(p[4]) + ')' + str(p[1])+'-'+str(p[2])
+    
     return p
 
 def p_var_decl_list(p):
@@ -232,9 +242,9 @@ def p_var_decl_list(p):
                   | var_decl SEMI
     '''
     if (len(p) == 4):
-        p[0] = (p[1], p[2])
+        p[0] =  str(p[1])  + ',' + '(' +  str(p[2]) + ')'
     else:
-        p[0] = p[1]
+        p[0] = '(' +  str(p[1]) + ')'
     return p
     
 # TODO: Finish char impl in scanner and add it here (| ID EQUALS CHAR SEMI)
@@ -255,18 +265,19 @@ def p_var_assign(p):
                | ID OREQUAL expr 
                | ID XOREQUAL expr
     '''
-    p[0] = (p[2], p[1], p[3])
+    p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
     return p
-   
+
+
 def p_typeSpecList(p):
     '''
     type_spec_list : type_spec_list COMMA type_spec ID
                    | type_spec ID
     '''
-    if(len(p) == 2):
-        p[0] = p[1]
+    if(len(p) == 3):
+        p[0] = str(p[2]) + ',' + str(p[1])
     else:
-        p[0] = (p[3],p[2],p[1])
+        p[0] =  p[1] + ',' + '(' + str(p[3]) + ',' + str(p[4]) + ')' 
     return p
 
 #TOTAKECAREOF: register keyword can only be used within scope
@@ -289,9 +300,9 @@ def p_type_spec(p):
     if (len(p) == 2):
         p[0] = p[1]
     elif (len(p) == 3): 
-        p[0] = (p[1], p[2])
+        p[0] = str(p[1]) +'-'+ str(p[2])
     elif (len(p) == 4):
-        p[0] = (p[1] + ' ' + p[2], p[3])
+        p[0] = str(p[1]) +'-'+ str(p[2]) + '-' + str(p[3]) 
     return p
 
 def p_combine_type_spec(p):
@@ -299,9 +310,7 @@ def p_combine_type_spec(p):
     combine_type_spec : combine_type LBRACE var_decl_list RBRACE
     '''
     if (len(p) == 5):
-        p[0] = (p[1], p[2], p[3], p[4])
-    else:
-        p[0] = (p[1], p[5], p[2], p[3], p[4])
+        p[0] = '(' + str(p[3]) + ')' + str(p[1])
     return p
 
 def p_combine_type(p):
@@ -309,7 +318,7 @@ def p_combine_type(p):
     combine_type : STRUCT ID
                  | UNION ID
     '''
-    p[0] = (p[1], p[2])
+    p[0] = str(p[1]) +'-'+ str(p[2])
     return p
 
 #TODO: union/struct, 
@@ -339,16 +348,16 @@ def p_typeSpecPostfix(p):
     if (len(p) == 2):
         p[0] = p[1]
     elif (len(p) == 3): 
-        p[0] = (p[1], p[2])
+        p[0] = str(p[1]) + '-' + str(p[2])
     else: 
-        p[0] = (p[1], p[2], p[3])
+        p[0] = str(p[1]) + '-' + str(p[2]) + '-' + str(p[3])
     return p
 
 def p_gotoStmt(p):
     '''
     goto_stmt : GOTO ID 
     '''
-    p[0] = ('GOTO', p[1], p[2])
+    p[0] = 'goto' + '-' + str(p[2])
     return p
     
 def p_ifStmt(p):
@@ -356,12 +365,11 @@ def p_ifStmt(p):
     if_stmt : IF LPAREN conditionals RPAREN scope
             | IF LPAREN conditionals RPAREN scope elsiflist
     '''
-    if (len(p) == 5):
-        print("length 5")
-        p[0] = ('IF', p[3], p[5])
+    if (len(p) == 6):
+        p[0] = '(' + '(' + str(p[3]) + ',' + str(p[5]) + ')' + 'if' + ')ifstmt'
     else: 
-        print("length 6")
-        p[0] = ('IF', p[3], p[5], p[6])
+        p[0] = '(' + '(' + str(p[3]) + ',' + str(p[5]) + ')' + 'if' + ',' + str(p[6]) + ')ifstmt'
+
     return p
         
 def p_elseIfList(p):
@@ -371,18 +379,18 @@ def p_elseIfList(p):
             | ELSE scope     
     '''
     if(len(p) == 3):
-        p[0] = ('ElSE', p[2])
+        p[0] = '(' + str(p[2]) + ')else'
     elif (len(p) == 7):
-        p[0] = ('ELSE IF', p[4], p[6])
+        p[0] = '(' + str(p[4]) + ',' + str(p[6]) + ')elsif'
     elif (len(p) == 8):
-        p[0] = ('ELSE IF', p[4], p[6], p[7])
+        p[0] = '(' + str(p[4]) + ',' + str(p[6]) + ')elsif' + ',' + p[7]
     return p
 
 def p_scope(p):
     '''
     scope : LBRACE statement_list RBRACE
     '''
-    p[0] = ('LBRACE', p[2], 'RBRACE')
+    p[0] = '(' + str(p[2]) + ')' + 'stmt'
     return p
 
 def p_args(p):
@@ -390,7 +398,7 @@ def p_args(p):
     args : type_spec_list
          | empty
     '''
-    p[0] = p[1]
+    p[0] = '(' + str(p[1]) + ')' + 'args'
     return p
 
 def p_program(p):
@@ -405,7 +413,14 @@ def p_funcDeclaration(p):
     funclist : type_spec ID LPAREN args RPAREN scope funclist
             | type_spec ID LPAREN args RPAREN scope
     '''
-    p[0] = ('Function', p[1], p[2], p[3], p[4], p[5], p[6])
+    typeSpecID = str(p[2] + '"' + p[1] + '"')
+    arg = str(p[4])
+    scope = str(p[6])
+
+    if (len(p) == 7):
+        p[0] = '(' + arg + ',' + scope + ')' +  typeSpecID
+    else:
+        p[0] = '(' + arg + ',' + scope + ')' +  typeSpecID + ',' + p[7]
     return p
   
 def p_conditionals(p):
@@ -418,31 +433,31 @@ def p_conditionals(p):
     if (len(p) == 2):
         p[0] = p[1]
     elif (len(p) == 4):
-        p[0] = (p[1], p[2], p[3])
+        p[0] = p[2]
     return p
 
 def p_whileLoop(p):
     '''
     whileLoop : WHILE LPAREN conditionals RPAREN scope
     '''
-    p[0] = ('WHILE', p[3], p[5])
+    p[0] = '(' + str(p[3]) + ',' + str(p[5]) + ')while'
     return p
 
 def p_dowhile(p):
     '''
     dowhile : DO scope WHILE LPAREN conditionals RPAREN
     '''
-    p[0] = ('DOWHILE', p[2], p[5])
+    p[0] = '(' + str(p[2]) + ',' + str(p[5]) + ')dowhile'
+
     return p
 
 def p_forInit(p):
-
     '''
     init : type_spec var_assign
         | var_assign
     '''
     if(len(p) == 3):
-        p[0] = (p[1], p[2])
+        p[0] = str(p[1]) + ',' + str(p[2])
     else:
         p[0] = p[1]
     return p
@@ -458,7 +473,7 @@ def p_forIncrement(p):
     if(len(p) == 2):
         p[0] = p[1]
     else:
-        p[0] = (p[1], p[2])
+        p[0] = str(p[1]) + ',' + str(p[2])
     return p
 
 
@@ -469,7 +484,7 @@ def p_forloop(p):
             | FOR LPAREN empty SEMI compOps SEMI increment RPAREN scope
             | FOR LPAREN init SEMI compOps SEMI increment RPAREN scope
     '''
-    p[0] = ("FOR", p[3],p[5],p[7],p[9])
+    p[0] = '(' + '(' + '(' + str(p[3]) + ')' + 'init)' + ',' + '(' + '(' + str(p[5]) + ')' + 'test)' + ',' + '(' + '(' + str(p[7]) + ')' + 'increment)' + ',' + str(p[9]) + ')forloop'
     return p
 
 def p_breakStmt(p):
@@ -480,33 +495,34 @@ def p_breakStmt(p):
     return p
 
 def p_caseList(p):
-
     '''
     caselist : CASE operand COLON statement_list caselist
+            | CASE CHARACTER COLON statement_list caselist
             | CASE operand COLON statement_list 
+            | CASE CHARACTER COLON statement_list 
             | DEFAULT COLON statement_list
     '''
+    case = 'case' + '-' + str(p[2])
     if(len(p) == 6):
-        p[0] = ('CASE', p[2], p[4], p[5])
+        p[0] = '(' + str(p[4]) + ')'+ case + ',' +  str(p[5])
     if(len(p) == 5):
-        p[0] = ('CASE', p[2], p[4])
+        p[0] = '(' + str(p[4]) + ')'+ case
     if(len(p) == 4):
-        p[0] = ('DEFAULT', p[3])
+        p[0] = '(' + str(p[3]) + ')'+ 'default'
     return p
     
 def p_switchScope(p):
     '''
     switchscope : LBRACE caselist RBRACE
     '''
-    p[0] = p[2] 
+    p[0] = '(' + str(p[2]) + ')cases'
     return p
 
 def p_switch(p):
-
     '''
     switch : SWITCH LPAREN expr RPAREN switchscope 
     '''
-    p[0] = ('SWITCH', p[3], p[5])
+    p[0] = '(' + str(p[3]) + ',' + str(p[5]) + ')switch'
     return p
 
 def p_error(t):
@@ -518,3 +534,5 @@ def parser(lex):
     parser = yacc.yacc()
     result = parser.parse(lexer=lex)
     print(result)
+    s = '(' + str(result) + ')Program;'
+    return s
