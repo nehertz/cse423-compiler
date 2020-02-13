@@ -2,6 +2,7 @@ import ply.yacc as yacc
 from ply_scanner import tokens
 from skbio import read
 from skbio.tree import TreeNode
+from syntaxTree import astConstrut
 
 start = 'program'
 
@@ -9,26 +10,20 @@ def p_empty(p):
     'empty :'
     pass
 
-
 # Start of the program
 # Handles preprocessor, Global variable, and functions 
 def p_program(p):
     '''
     program : declarationList
     '''
-    p[0] = p[1]
-    return p
+    return astConstrut(p, 'program')
 
 def p_declarationList(p):
     '''
     declarationList : declarationList declaration 
                     | declaration
     '''
-    if(len(p) == 2):
-        p[0] = p[1]
-    else:
-        p[0] =  p[1]  +  ',' + '(' + p[2] + ')'
-    return p
+    return astConstrut(p, 'declarationList')
 
 def p_declaration(p):
     '''
@@ -36,20 +31,16 @@ def p_declaration(p):
                 | varDecl SEMI
                 | funcList
     '''
-    p[0] =  str(p[1]) 
-    return p
+    return astConstrut(p, 'declaration')
+
+
 
 # Function Declaration  
 def p_funcDeclaration(p):
     '''
     funcList : typeSpec ID LPAREN args RPAREN scope
     '''
-    typeSpecID = str(p[2] + '"' + p[1] + '"')
-    arg = str(p[4])
-    scope = str(p[6])
-
-    p[0] = '(' + arg + ',' + scope + ')' +  typeSpecID
-    return p
+    return astConstrut(p, 'funcList')
 
 def p_args(p):
     '''
@@ -57,25 +48,20 @@ def p_args(p):
          | idList
          | empty
     '''
-    p[0] = '(' + str(p[1]) + ')' + 'args'
-    return p
+    return astConstrut(p, 'args')
 
 def p_idList(p):
     '''
     idList : idList COMMA ID
            | ID
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    else:
-        p[0] = str(p[1]) + ',' + str(p[3])
+    return astConstrut(p, 'idList')
 
 def p_scope(p):
     '''
     scope : LBRACE statementList RBRACE
     '''
-    p[0] = '(' + str(p[2]) + ')' + 'stmt'
-    return p
+    return astConstrut(p, 'scope')
 
 
 
@@ -85,11 +71,7 @@ def p_varDeclList(p):
     varDeclList : varDeclList varDecl SEMI
                 | varDecl SEMI
     '''
-    if (len(p) == 4):
-        p[0] =  '(' + str(p[1])  + ','  +  str(p[2]) + ')'
-    else:
-        p[0] = str(p[1]) 
-    return p
+    return astConstrut(p, 'varDeclList')
 
 def p_varDecl(p):
     '''
@@ -102,16 +84,8 @@ def p_varDecl(p):
             | EXTERN typeSpecPostfix ID
             | CONST EXTERN typeSpecPostfix ID
     '''
+    return astConstrut(p, 'varDecl')
 
-    if (len(p) == 2):
-        p[0] = p[1]
-    elif (len(p) == 3):
-        p[0] = str(p[1]) + ',' + str(p[2]) 
-    elif (len(p) == 4):
-        p[0] = '(' + str(p[2]) + ',' + str(p[3]) + ')' + str(p[1]) 
-    elif (len(p) == 5):
-        p[0] = '(' + str(p[3]) + ',' + str(p[4]) + ')' + str(p[1])+'-'+str(p[2])
-    return p
 
 
 #TypeSpecifier Related Grammar 
@@ -120,11 +94,7 @@ def p_typeSpecList(p):
     typeSpecList : typeSpecList COMMA typeSpec ID
                  | typeSpec ID
     '''
-    if(len(p) == 3):
-        p[0] ='(' + str(p[1]) + ',' + str(p[2]) + ')'
-    else:
-        p[0] =  p[1] + ',' + '(' + str(p[3]) + ',' + str(p[4]) + ')' 
-    return p
+    return astConstrut(p, 'typeSpecList')
 
 ### TOTAKECAREOF: register keyword can only be used within scope
 ### global variables are not allowed yet
@@ -143,29 +113,20 @@ def p_typeSpec(p):
              | typeSpecPostfix
              | combineType
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    elif (len(p) == 3): 
-        p[0] = str(p[1]) +'-'+ str(p[2])
-    elif (len(p) == 4):
-        p[0] = str(p[1]) +'-'+ str(p[2]) + '-' + str(p[3]) 
-    return p
+    return astConstrut(p, 'typeSpec')
 
 def p_combineTypeSpec(p):
     '''
     combineTypeSpec : combineType LBRACE varDeclList RBRACE
     '''
-    if (len(p) == 5):
-        p[0] = '(' + str(p[3]) + ')' + str(p[1])
-    return p
+    return astConstrut(p, 'combineTypeSpec')
 
 def p_combineType(p):
     '''
     combineType : STRUCT ID
                 | UNION ID
     '''
-    p[0] = str(p[1]) +'-'+ str(p[2])
-    return p
+    return astConstrut(p, 'combineType')
 
 def p_typeSpecPostfix(p):
     '''
@@ -189,13 +150,8 @@ def p_typeSpecPostfix(p):
                     | SIGNED SHORT
                     | UNSIGNED SHORT 
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    elif (len(p) == 3): 
-        p[0] = str(p[1]) + '-' + str(p[2])
-    else: 
-        p[0] = str(p[1]) + '-' + str(p[2]) + '-' + str(p[3])
-    return p
+    return astConstrut(p, 'typeSpecPostfix')
+
 
 
 # Statement Related Garmmars 
@@ -209,14 +165,7 @@ def p_statementList(p):
                   | forLoop statementList
                   | switch statementList
     '''
-    if(len(p) == 4 and p[3] != None):
-        p[0] = '(' + str(p[1]) + ')' + ',' + str(p[3]) 
-    elif(len(p) == 3 and p[2] != None):
-        p[0] = '(' + str(p[1]) + ')'  + ',' + str(p[2])
-    else:
-        p[0] = p[1]
-    
-    return p
+    return astConstrut(p, 'statementList')
 
 def p_statement(p):
     '''
@@ -229,27 +178,20 @@ def p_statement(p):
               | funcCall
               | empty
     '''
-    p[0] = p[1]
-    return p
+    return astConstrut(p, 'statement')
 
 def p_whileLoop(p):
     '''
     whileLoop : WHILE LPAREN conditionals RPAREN scope
     '''
-    p[0] = '(' + str(p[3]) + ',' + str(p[5]) + ')while'
-    return p
+    return astConstrut(p, 'whileLoop')
 
 def p_ifStmt(p):
     '''
     ifStmt : IF LPAREN conditionals RPAREN scope
            | IF LPAREN conditionals RPAREN scope elseIfList
     '''
-    if (len(p) == 6):
-        p[0] = '(' + '(' + str(p[3]) + ',' + str(p[5]) + ')' + 'if' + ')ifstmt'
-    else: 
-        p[0] = '(' + '(' + str(p[3]) + ',' + str(p[5]) + ')' + 'if' + ',' + str(p[6]) + ')ifstmt'
-
-    return p
+    return astConstrut(p, 'ifStmt')
         
 def p_elseIfList(p):
     '''
@@ -257,21 +199,13 @@ def p_elseIfList(p):
                | ELSE IF LPAREN conditionals RPAREN scope
                | ELSE scope     
     '''
-    if(len(p) == 3):
-        p[0] = '(' + str(p[2]) + ')else'
-    elif (len(p) == 7):
-        p[0] = '(' + str(p[4]) + ',' + str(p[6]) + ')elsif'
-    elif (len(p) == 8):
-        p[0] = '(' + str(p[4]) + ',' + str(p[6]) + ')elsif' + ',' + p[7]
-    return p
+    return astConstrut(p, 'elseIfList')
 
 def p_doWhile(p):
     '''
     doWhile : DO scope WHILE LPAREN conditionals RPAREN
     '''
-    p[0] = '(' + str(p[2]) + ',' + str(p[5]) + ')doWhile'
-
-    return p
+    return astConstrut(p, 'doWhile')
 
 def p_forLoop(p):
     '''
@@ -280,19 +214,14 @@ def p_forLoop(p):
             | FOR LPAREN empty SEMI compOps SEMI increment RPAREN scope
             | FOR LPAREN init SEMI compOps SEMI increment RPAREN scope
     '''
-    p[0] = '(' + '(' + '(' + str(p[3]) + ')' + 'init)' + ',' + '(' + '(' + str(p[5]) + ')' + 'test)' + ',' + '(' + '(' + str(p[7]) + ')' + 'increment)' + ',' + str(p[9]) + ')forLoop'
-    return p
+    return astConstrut(p, 'forLoop')
 
 def p_forInit(p):
     '''
     init : typeSpec varAssign
          | varAssign
     '''
-    if(len(p) == 3):
-        p[0] = str(p[1]) + ',' + str(p[2])
-    else:
-        p[0] = p[1]
-    return p
+    return astConstrut(p, 'init')
 
 def p_forIncrement(p):
     '''
@@ -302,25 +231,19 @@ def p_forIncrement(p):
               | ID INCREMENT
               | ID DECREMENT 
     '''
-    if(len(p) == 2):
-        p[0] = p[1]
-    else:
-        p[0] = str(p[1]) + ',' + str(p[2])
-    return p
+    return astConstrut(p, 'increment')
 
 def p_switch(p):
     '''
     switch : SWITCH LPAREN expr RPAREN switchscope 
     '''
-    p[0] = '(' + str(p[3]) + ',' + str(p[5]) + ')switch'
-    return p
+    return astConstrut(p, 'switch')
 
 def p_switchScope(p):
     '''
     switchscope : LBRACE caseList RBRACE
     '''
-    p[0] = '(' + str(p[2]) + ')cases'
-    return p
+    return astConstrut(p, 'switchscope')
 
 def p_caseList(p):
     '''
@@ -330,14 +253,7 @@ def p_caseList(p):
              | CASE CHARACTER COLON statementList 
              | DEFAULT COLON statementList
     '''
-    case = 'case' + '-' + str(p[2])
-    if(len(p) == 6):
-        p[0] = '(' + str(p[4]) + ')'+ case + ',' +  str(p[5])
-    if(len(p) == 5):
-        p[0] = '(' + str(p[4]) + ')'+ case
-    if(len(p) == 4):
-        p[0] = '(' + str(p[3]) + ')'+ 'default'
-    return p
+    return astConstrut(p, 'caseList')
 
 # TODO: Add other types
 def p_returnStmt(p):
@@ -346,31 +262,26 @@ def p_returnStmt(p):
                | RETURN varAssign
                | RETURN funcCall
     '''
-    
-    p[0] =  '(' + str(p[1]) + ',' + str(p[2]) + ')'
-    return p
+    return astConstrut(p, 'returnStmt')
 
 def p_gotoStmt(p):
     '''
     gotoStmt : GOTO ID 
     '''
-    p[0] = 'goto' + '-' + str(p[2])
-    return p
+    return astConstrut(p, 'gotoStmt')
 
 def p_breakStmt(p):
     '''
     breakStmt : BREAK
     '''
-    p[0] = p[1]
-    return p
+    return astConstrut(p, 'breakStmt')
 
 def p_funcCall(p):
     '''
     funcCall : ID LPAREN args RPAREN
     '''
+    return astConstrut(p, 'funcCall')
 
-    p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')'
-    return p
 
 
 # Expression Related Grammars
@@ -382,8 +293,7 @@ def p_expr(p):
     '''
     expr : logicalExpr
     '''
-    p[0] = p[1]
-    return p
+    return astConstrut(p, 'expr')
 
 def p_logicalExpr(p):
     '''
@@ -394,11 +304,7 @@ def p_logicalExpr(p):
                 | logicalExpr XOR compOps
                 | logicalExpr AND compOps
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    else:
-        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
-    return p
+    return astConstrut(p, 'logicalExpr')
 
 def p_compOps(p):
     '''
@@ -410,11 +316,7 @@ def p_compOps(p):
             | compOps LANGLE shiftExpr
             | compOps RANGLE shiftExpr 
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    else: 
-        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
-    return p
+    return astConstrut(p, 'compOps')
 
 def p_shiftExpr(p):
     '''
@@ -422,11 +324,7 @@ def p_shiftExpr(p):
               | shiftExpr LSHIFT additiveExpr
               | shiftExpr RSHIFT additiveExpr
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    else: 
-        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
-    return p
+    return astConstrut(p, 'shiftExpr')
 
 def p_additiveExpr(p):
     '''
@@ -434,11 +332,7 @@ def p_additiveExpr(p):
                  | additiveExpr MINUS multiplicativeExpr
                  | multiplicativeExpr
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    else: 
-        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
-    return p
+    return astConstrut(p, 'additiveExpr')
 
 def p_multiplicativeExpr(p):
     '''
@@ -447,24 +341,14 @@ def p_multiplicativeExpr(p):
                        | multiplicativeExpr MODULO castExpr   
                        | operand
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    elif (len(p) == 4):
-        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
-    else: 
-        pass 
-    return p
+    return astConstrut(p, 'multiplicativeExpr')
 
 def p_castExpr(p):
     '''
     castExpr : unaryExpr 
              | LPAREN typeSpec RPAREN castExpr 
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    else: 
-        p[0] = '(' + str(p[2]) +')' + str(p[1])
-    return p    
+    return astConstrut(p, 'castExpr') 
 
 # Any unary operator and casting are not supported together.
 def p_unaryExpr(p):
@@ -475,14 +359,7 @@ def p_unaryExpr(p):
               | SIZEOF LPAREN unaryExpr RPAREN
               | SIZEOF LPAREN typeSpec RPAREN
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    elif (len(p) == 3):
-        p[0] = '(' + str(p[1]) + ')' + str(p[2])
-    else:
-        p[0] = str(p[3])
-    return p
-
+    return astConstrut(p, 'unaryExpr') 
 
 #TODO: Check the if conditions
 def p_postfixExpr(p):
@@ -494,26 +371,15 @@ def p_postfixExpr(p):
                 | postfixExpr ARROW ID
                 | postfixExpr LBRACKET expr RBRACKET
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    elif (len(p) == 3):
-        p[0] = '(' + str(p[1]) + ')' + str(p[2])
-    elif (len(p) == 4):
-        p[0] = '(' + str(p[1]) + ',' + str(p[3] )+ ')' + str(p[2])
-    elif (len(p) == 5):
-        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')'
-    else: 
-        pass
-    
+    return astConstrut(p, 'postfixExpr') 
+
 #TODO: String
 def p_operand(p):
     ''' 
     operand : ID
             | NUMCONST
     '''
-
-    p[0] = p[1]
-    return p
+    return astConstrut(p, 'operand') 
 
 # TODO: Finish char impl in scanner and add it here (| ID EQUALS CHAR SEMI)
 # TODO: Add support for +=, -=, etc.
@@ -534,8 +400,7 @@ def p_varAssign(p):
               | ID OREQUAL expr 
               | ID XOREQUAL expr
     '''
-    p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
-    return p
+    return astConstrut(p, 'varAssign') 
 
 def p_conditionals(p):
     '''
@@ -544,11 +409,7 @@ def p_conditionals(p):
                  | FALSE
                  | LPAREN conditionals RPAREN
     '''
-    if (len(p) == 2):
-        p[0] = p[1]
-    elif (len(p) == 4):
-        p[0] = p[2]
-    return p
+    return astConstrut(p, 'conditionals')
 
 # Error Handling 
 def p_error(t):
