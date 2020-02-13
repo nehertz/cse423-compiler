@@ -13,12 +13,12 @@ def p_empty(p):
 def p_statementList(p):
     '''
     statementList : empty
-                   | statement SEMI statementList
-                   | whileLoop statementList
-                   | ifStmt statementList
-                   | doWhile statementList
-                   | forLoop statementList
-                   | switch statementList
+                  | statement SEMI statementList
+                  | whileLoop statementList
+                  | ifStmt statementList
+                  | doWhile statementList
+                  | forLoop statementList
+                  | switch statementList
     '''
     if(len(p) == 4 and p[3] != None):
         p[0] = '(' + str(p[1]) + ')' + ',' + str(p[3]) 
@@ -65,11 +65,11 @@ def p_expr(p):
 def p_logicalExpr(p):
     '''
     logicalExpr : compOps
-                 | logicalExpr LOR compOps
-                 | logicalExpr LAND compOps
-                 | logicalExpr OR compOps
-                 | logicalExpr XOR compOps
-                 | logicalExpr AND compOps
+                | logicalExpr LOR compOps
+                | logicalExpr LAND compOps
+                | logicalExpr OR compOps
+                | logicalExpr XOR compOps
+                | logicalExpr AND compOps
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -96,8 +96,8 @@ def p_compOps(p):
 def p_shiftExpr(p):
     '''
     shiftExpr : additiveExpr
-               | shiftExpr LSHIFT additiveExpr
-               | shiftExpr RSHIFT additiveExpr
+              | shiftExpr LSHIFT additiveExpr
+              | shiftExpr RSHIFT additiveExpr
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -108,8 +108,8 @@ def p_shiftExpr(p):
 def p_additiveExpr(p):
     '''
     additiveExpr : additiveExpr PLUS multiplicativeExpr
-                  | additiveExpr MINUS multiplicativeExpr
-                  | multiplicativeExpr
+                 | additiveExpr MINUS multiplicativeExpr
+                 | multiplicativeExpr
 
     '''
     if (len(p) == 2):
@@ -121,9 +121,9 @@ def p_additiveExpr(p):
 def p_multiplicativeExpr(p):
     '''
     multiplicativeExpr : multiplicativeExpr TIMES castExpr
-                        | multiplicativeExpr DIVIDE castExpr 
-                        | multiplicativeExpr MODULO castExpr   
-                        | operand
+                       | multiplicativeExpr DIVIDE castExpr 
+                       | multiplicativeExpr MODULO castExpr   
+                       | operand
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -136,7 +136,7 @@ def p_multiplicativeExpr(p):
 def p_castExpr(p):
     '''
     castExpr : unaryExpr 
-              | LPAREN typeSpec RPAREN castExpr 
+             | LPAREN typeSpec RPAREN castExpr 
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -148,10 +148,10 @@ def p_castExpr(p):
 def p_unaryExpr(p):
     '''
     unaryExpr : postfixExpr
-               | INCREMENT unaryExpr
-               | DECREMENT unaryExpr
-               | SIZEOF LPAREN unaryExpr RPAREN
-               | SIZEOF LPAREN typeSpec RPAREN
+              | INCREMENT unaryExpr
+              | DECREMENT unaryExpr
+              | SIZEOF LPAREN unaryExpr RPAREN
+              | SIZEOF LPAREN typeSpec RPAREN
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -166,11 +166,11 @@ def p_unaryExpr(p):
 def p_postfixExpr(p):
     '''
     postfixExpr : operand 
-                 | postfixExpr INCREMENT
-                 | postfixExpr DECREMENT
-                 | postfixExpr PERIOD ID 
-                 | postfixExpr ARROW ID
-                 | postfixExpr LBRACKET expr RBRACKET
+                | postfixExpr INCREMENT
+                | postfixExpr DECREMENT
+                | postfixExpr PERIOD ID 
+                | postfixExpr ARROW ID
+                | postfixExpr LBRACKET expr RBRACKET
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -193,12 +193,12 @@ def p_operand(p):
     p[0] = p[1]
     return p
     
-# TODO: Add RETURN func_call later
 # TODO: Add other types
 def p_returnStmt(p):
     '''
     returnStmt : RETURN expr
-                | RETURN varAssign
+               | RETURN varAssign
+               | RETURN funcCall
     '''
     
     p[0] = str(p[1]) + '-' + str(p[2])
@@ -207,13 +207,13 @@ def p_returnStmt(p):
 def p_varDecl(p):
     '''
     varDecl : combineTypeSpec
-             | typeSpec ID
-             | typeSpec varAssign
-             | combineTypeSpec ID    
-             | TYPEDEF typeSpec ID
-             | TYPEDEF combineTypeSpec ID
-             | EXTERN typeSpecPostfix ID
-             | CONST EXTERN typeSpecPostfix ID
+            | typeSpec ID
+            | typeSpec varAssign
+            | combineTypeSpec ID    
+            | TYPEDEF typeSpec ID
+            | TYPEDEF combineTypeSpec ID
+            | EXTERN typeSpecPostfix ID
+            | CONST EXTERN typeSpecPostfix ID
     '''
 
     if (len(p) == 2):
@@ -230,7 +230,7 @@ def p_varDecl(p):
 def p_varDeclList(p):
     '''
     varDeclList : varDeclList varDecl SEMI
-                  | varDecl SEMI
+                | varDecl SEMI
     '''
     if (len(p) == 4):
         p[0] =  str(p[1])  + ',' + '(' +  str(p[2]) + ')'
@@ -264,7 +264,7 @@ def p_varAssign(p):
 def p_typeSpecList(p):
     '''
     typeSpecList : typeSpecList COMMA typeSpec ID
-                   | typeSpec ID
+                 | typeSpec ID
     '''
     if(len(p) == 3):
         p[0] = str(p[2]) + ',' + str(p[1])
@@ -290,14 +290,14 @@ def p_idList(p):
 def p_typeSpec(p):
     ''' 
     typeSpec : AUTO typeSpecPostfix
-              | VOLATILE typeSpecPostfix
-              | VOLATILE STATIC typeSpecPostfix
-              | STATIC typeSpecPostfix
-              | CONST typeSpecPostfix
-              | REGISTER typeSpecPostfix
-              | REGISTER STATIC typeSpecPostfix
-              | typeSpecPostfix
-              | combineType
+             | VOLATILE typeSpecPostfix
+             | VOLATILE STATIC typeSpecPostfix
+             | STATIC typeSpecPostfix
+             | CONST typeSpecPostfix
+             | REGISTER typeSpecPostfix
+             | REGISTER STATIC typeSpecPostfix
+             | typeSpecPostfix
+             | combineType
     '''
     if (len(p) == 2):
         p[0] = p[1]
@@ -364,7 +364,7 @@ def p_gotoStmt(p):
 def p_ifStmt(p):
     '''
     ifStmt : IF LPAREN conditionals RPAREN scope
-            | IF LPAREN conditionals RPAREN scope elseIfList
+           | IF LPAREN conditionals RPAREN scope elseIfList
     '''
     if (len(p) == 6):
         p[0] = '(' + '(' + str(p[3]) + ',' + str(p[5]) + ')' + 'if' + ')ifstmt'
@@ -376,8 +376,8 @@ def p_ifStmt(p):
 def p_elseIfList(p):
     '''
     elseIfList : ELSE IF LPAREN conditionals RPAREN scope elseIfList
-            | ELSE IF LPAREN conditionals RPAREN scope
-            | ELSE scope     
+               | ELSE IF LPAREN conditionals RPAREN scope
+               | ELSE scope     
     '''
     if(len(p) == 3):
         p[0] = '(' + str(p[2]) + ')else'
@@ -413,7 +413,7 @@ def p_program(p):
 def p_funcDeclaration(p):
     '''
     funcList : typeSpec ID LPAREN args RPAREN scope funcList
-            | typeSpec ID LPAREN args RPAREN scope
+             | typeSpec ID LPAREN args RPAREN scope
     '''
     typeSpecID = str(p[2] + '"' + p[1] + '"')
     arg = str(p[4])
@@ -499,10 +499,10 @@ def p_breakStmt(p):
 def p_caseList(p):
     '''
     caseList : CASE operand COLON statementList caseList
-            | CASE CHARACTER COLON statementList caseList
-            | CASE operand COLON statementList 
-            | CASE CHARACTER COLON statementList 
-            | DEFAULT COLON statementList
+             | CASE CHARACTER COLON statementList caseList
+             | CASE operand COLON statementList 
+             | CASE CHARACTER COLON statementList 
+             | DEFAULT COLON statementList
     '''
     case = 'case' + '-' + str(p[2])
     if(len(p) == 6):
