@@ -37,10 +37,19 @@ def p_statement(p):
               | gotoStmt
               | breakStmt
               | expr
+              | funcCall
               | empty
     '''
     
     p[0] = p[1]
+    return p
+
+def p_funcCall(p):
+    '''
+    funcCall : ID LPAREN args RPAREN
+    '''
+
+    p[0] = str(p[1]) + '(' + str(p[3]) + ')'
     return p
 
 #TODO: Type cast in C
@@ -235,6 +244,7 @@ def p_varAssign(p):
     '''
     varAssign : ID EQUALS expr
               | ID EQUALS STRING
+              | ID EQUALS funcCall
               | LPAREN varAssign RPAREN
               | ID TIMESEQUAL expr
               | ID DIVEQUAL expr 
@@ -261,6 +271,16 @@ def p_typeSpecList(p):
     else:
         p[0] =  p[1] + ',' + '(' + str(p[3]) + ',' + str(p[4]) + ')' 
     return p
+
+def p_idList(p):
+    '''
+    idList : idList COMMA ID
+           | ID
+    '''
+    if (len(p) == 2):
+        p[0] = p[1]
+    else:
+        p[0] = p[1] + ',' + str(p[3])
 
 #TOTAKECAREOF: register keyword can only be used within scope
 # global variables are not allowed yet
@@ -303,7 +323,6 @@ def p_combineType(p):
     p[0] = str(p[1]) +'-'+ str(p[2])
     return p
 
-#TODO: union/struct, 
 #Warning: float, double can't be signed/unsigned
 def p_typeSpecPostfix(p):
     '''
@@ -378,6 +397,7 @@ def p_scope(p):
 def p_args(p):
     '''
     args : typeSpecList
+         | idList
          | empty
     '''
     p[0] = '(' + str(p[1]) + ')' + 'args'
