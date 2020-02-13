@@ -97,10 +97,10 @@ def t_blockComments(t):
     r'(\/\*)[\s\S]*(\*\/)'
     pass
 
-# def t_preproc(t):
-#     r'\#include<[a-zA-Z]+\.\w>|\#include\"[a-zA-Z]+\.\w\"'
-#     t.type = 'PREPROC'
-#     return t
+def t_preproc(t):
+    r'\#include<[a-zA-Z]+\.\w>|\#include\"[a-zA-Z]+\.\w\"'
+    t.type = 'PREPROC'
+    return t
 
 # Identifiers
 def t_ID(t):

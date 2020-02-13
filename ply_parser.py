@@ -201,7 +201,7 @@ def p_returnStmt(p):
                | RETURN funcCall
     '''
     
-    p[0] = str(p[1]) + '-' + str(p[2])
+    p[0] =  str(p[1]) + ',' + str(p[2]) 
     return p
 
 def p_varDecl(p):
@@ -233,9 +233,10 @@ def p_varDeclList(p):
                 | varDecl SEMI
     '''
     if (len(p) == 4):
-        p[0] =  str(p[1])  + ',' + '(' +  str(p[2]) + ')'
+        #p[0] =  str(p[1])  + ','  +  str(p[2])
+        p[0] =  '(' + str(p[1])  + ','  +  str(p[2]) + ')'
     else:
-        p[0] = '(' +  str(p[1]) + ')'
+        p[0] = str(p[1]) 
     return p
     
 # TODO: Finish char impl in scanner and add it here (| ID EQUALS CHAR SEMI)
@@ -280,7 +281,7 @@ def p_idList(p):
     if (len(p) == 2):
         p[0] = p[1]
     else:
-        p[0] = p[1] + ',' + str(p[3])
+        p[0] = str(p[1]) + ',' + str(p[3])
 
 #TOTAKECAREOF: register keyword can only be used within scope
 # global variables are not allowed yet
@@ -405,15 +406,34 @@ def p_args(p):
 
 def p_program(p):
     '''
-    program : funcList
+    program : declarationList
     '''
     p[0] = p[1]
     return p
 
+def p_declarationList(p):
+    '''
+    declarationList : declarationList declaration 
+                    | declaration
+    '''
+    if(len(p) == 2):
+        p[0] = p[1]
+    else:
+        p[0] =  p[1]  +  ',' + '(' + p[2] + ')'
+    return p
+
+def p_declaration(p):
+    '''
+    declaration : PREPROC 
+                | varDecl SEMI
+                | funcList
+    '''
+    p[0] =  str(p[1]) 
+    return p
+
 def p_funcDeclaration(p):
     '''
-    funcList : typeSpec ID LPAREN args RPAREN scope funcList
-             | typeSpec ID LPAREN args RPAREN scope
+    funcList : typeSpec ID LPAREN args RPAREN scope
     '''
     typeSpecID = str(p[2] + '"' + p[1] + '"')
     arg = str(p[4])

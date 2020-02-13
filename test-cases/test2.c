@@ -38,7 +38,7 @@ void func(int param1, int param2) {
 
         //test Special operators
         int size = sizeof(aa);
-        char *apple = "apple!";
+        //char *apple = "apple!";
         int where = &apple;
 
         return;
