@@ -9,19 +9,14 @@
 # Overview -
 This goal of this project is to create a compiler for a subset of the C programming language, which will translate that subset of C into assembly language. The project will be written in Python.
 
-# Milestones
-Start date: January 13, 2020
-
-- Milestone 1 - Begin work on parser: TBD
-- Milestone 2 - Complete parser: TBD
-
-Due date: April 2X, 2020? Don't know exact date.
-
 # Existing Solution
 1. Read from file
-2. Parse input
-3. Tokenize parsed input
-4. Convert tokenized input into parse tree
+2. Scan and tokenize input using lex (PLY Project)
+3. Parse tokenized input using yacc (PLY Project)
+4. Convert parsed input into parse tree format using skbio
+
+### Working features
+- TODO: after testing which features exactly work and which don't, add them here
 
 # Design Discussion
 - Command line user input (in main):
@@ -33,79 +28,20 @@ Due date: April 2X, 2020? Don't know exact date.
     - [x] Use conditional statements to determine option(s) selected
 
 - Scanner(string input):
-    - Notes:
-        - Assume file is in UNIX format
-        - [x] Initially remove trailing whitespace and leading whitespace
-        - [x] Assign useful regex sequences to variables
-        - [x] Loop through list of lines
-        1. Loop through line character-by-character:
-            - Advantages: Simple, maybe, kinda brute force
-            - Disadvantages: Slow and annoying
-
-            - Read a character, determine what character it is using regex
-            - Based on what character is read, keep reading until a certain condition is met:
-                - If a character is found, keep reading until a non-appropriate character is found, save full word as a token
-                    - Check word against list of keywords
-                - If a number is found, keep reading until a non-number character is found, save full number as token
-                - If a special character is found
-                    - If the special character could be a multi-character operator
-                        - Check if it's a 3-character operator, if it is assign to a token
-                        - Check if it's a 2-character operator, if it is assign to a token
-                        - Assign as 1-character operator
-                    - If not, simply assign single special character as a token
-                - If "//" is found, keep reading until "\n" is found and assign entire line as token
-                - If "/*" is found, keep reading until "*/" is found and assign entire section as token
-                - If '"' is found, keep reading until '"' is found again and assign entire section as token
-                - if "'" is found, keep reading until "'" is found again and assign entire section as token
-        2. Check line with regexes:
-            - Regexes for each possible syntax case
-            - Order of operations:
-                - Binary ops before unary ops
-
-            - Multi-character operators
-            - Strings
-            - Comments
-        - Now we have list of tokens
-        - Assign each token its label within a list of tuples:
-            - Regex determines if token is sequence of alphanumeric characters:
-                - Keyword
-                - Identifier
-            - Regex determines if token is sequence of numeric characters:
-                1. [x] **whole number**
-                2. decimal number
-                3. bin, hex, etc. representation
-            - Else:
-                1. [x] Equals sign
-                2. [x] Binary operator
-                3. [x] Unary operator
-                4. [x] Comparison operators (do not include < and >)
-                5. [x] Bitwise operators
-                6. [x] Semicolons
-                7. [x] Lparen
-                8. [x] Rparen
-                9. [x] Lbracket
-                10. [x] Rbracket
-                11. [x] Lcurly
-                12. [x] Rcurly
-                13. [x] Langle
-                14. [x] Rangle
-
-        - Output list of tuples
+    - Implemented using lex from the PLY Project
+    - Acceptable tokens are defined and compiled into single 'tokens' list
+    - Ignored input characters are specified
+    - For each token, a function is defined
+        - Function identifies a token based on a given regex
+        - Token may be further modified using Python code
+    - tokenizer() function calls the appropriate PLY functions and returns the labeled token list
 
 - Parser:
-    - Error checking for valid C syntax:
-        1. ~~Pre-processor shenanigans (include statements, etc.)~~
-        2. Global variables
-        3. Functions
-            - Variable declaration
-            - Variable declaration and definition
-            - Existing variable definition
-            - While loops
-            - ~~For loops~~
-            - Conditionals
-            - ~~Switch~~
-            - Goto statements
-            - Continue/break
-            - Function calls
-            - Return statements
-            
+    - Implemented using yacc from the PLY Project
+    - For each grammar rule, a function is defined
+        - The grammar rule takes in a Python docstring with the rule specified within (syntax: ''' ruleName : rule1 | rule2 ''')
+        - Below, Python code is used to format the parsed input (to be placed into the AST)
+    - Additionally, a start symbol and error function are defined
+        - The error function is called whenever the parser runs into input that is not handled by a grammar rule; returns the value and line number of the token that threw the error
+    - parser() calls the appropriate PLY functions that parse the output based on the defined grammar rules and returns
+    - The output is formatted into an AST using skbio
