@@ -2,7 +2,7 @@ import ply.yacc as yacc
 from ply_scanner import tokens
 from skbio import read
 from skbio.tree import TreeNode
-from syntaxTree import astConstrut
+from syntaxTree import astConstruct
 
 start = 'program'
 
@@ -16,31 +16,43 @@ def p_program(p):
     '''
     program : declarationList
     '''
-    return astConstrut(p, 'program')
+    return astConstruct(p, 'program')
 
 def p_declarationList(p):
     '''
     declarationList : declarationList declaration 
                     | declaration
     '''
-    return astConstrut(p, 'declarationList')
+    return astConstruct(p, 'declarationList')
 
 def p_declaration(p):
     '''
     declaration : PREPROC 
                 | varDecl SEMI
-                | funcList
+                | enumDeclaration
     '''
-    return astConstrut(p, 'declaration')
+    return astConstruct(p, 'declaration')
 
+def p_enumDeclaration(p):
+    '''
+    enumDeclaration :  funcList
+                    | ENUM ID LBRACE enumArgs RBRACE SEMI
+    '''
+    return astConstruct(p, 'enumDeclaration')
 
+def p_enumArgs(p):
+    '''
+    enumArgs    :  ID COMMA enumArgs
+                | ID
+    '''
+    return astConstruct(p, 'enumArgs')
 
 # Function Declaration  
 def p_funcDeclaration(p):
     '''
     funcList : typeSpec ID LPAREN args RPAREN scope
     '''
-    return astConstrut(p, 'funcList')
+    return astConstruct(p, 'funcList')
 
 def p_args(p):
     '''
@@ -48,20 +60,20 @@ def p_args(p):
          | idList
          | empty
     '''
-    return astConstrut(p, 'args')
+    return astConstruct(p, 'args')
 
 def p_idList(p):
     '''
     idList : idList COMMA ID
            | ID
     '''
-    return astConstrut(p, 'idList')
+    return astConstruct(p, 'idList')
 
 def p_scope(p):
     '''
     scope : LBRACE statementList RBRACE
     '''
-    return astConstrut(p, 'scope')
+    return astConstruct(p, 'scope')
 
 
 
@@ -71,7 +83,7 @@ def p_varDeclList(p):
     varDeclList : varDeclList varDecl SEMI
                 | varDecl SEMI
     '''
-    return astConstrut(p, 'varDeclList')
+    return astConstruct(p, 'varDeclList')
 
 def p_varDecl(p):
     '''
@@ -84,7 +96,7 @@ def p_varDecl(p):
             | EXTERN typeSpecPostfix ID
             | CONST EXTERN typeSpecPostfix ID
     '''
-    return astConstrut(p, 'varDecl')
+    return astConstruct(p, 'varDecl')
 
 
 
@@ -94,7 +106,7 @@ def p_typeSpecList(p):
     typeSpecList : typeSpecList COMMA typeSpec ID
                  | typeSpec ID
     '''
-    return astConstrut(p, 'typeSpecList')
+    return astConstruct(p, 'typeSpecList')
 
 ### TOTAKECAREOF: register keyword can only be used within scope
 ### global variables are not allowed yet
@@ -113,20 +125,20 @@ def p_typeSpec(p):
              | typeSpecPostfix
              | combineType
     '''
-    return astConstrut(p, 'typeSpec')
+    return astConstruct(p, 'typeSpec')
 
 def p_combineTypeSpec(p):
     '''
     combineTypeSpec : combineType LBRACE varDeclList RBRACE
     '''
-    return astConstrut(p, 'combineTypeSpec')
+    return astConstruct(p, 'combineTypeSpec')
 
 def p_combineType(p):
     '''
     combineType : STRUCT ID
                 | UNION ID
     '''
-    return astConstrut(p, 'combineType')
+    return astConstruct(p, 'combineType')
 
 def p_typeSpecPostfix(p):
     '''
@@ -150,7 +162,7 @@ def p_typeSpecPostfix(p):
                     | SIGNED SHORT
                     | UNSIGNED SHORT 
     '''
-    return astConstrut(p, 'typeSpecPostfix')
+    return astConstruct(p, 'typeSpecPostfix')
 
 
 
@@ -165,7 +177,7 @@ def p_statementList(p):
                   | forLoop statementList
                   | switch statementList
     '''
-    return astConstrut(p, 'statementList')
+    return astConstruct(p, 'statementList')
 
 def p_statement(p):
     '''
@@ -178,20 +190,20 @@ def p_statement(p):
               | funcCall
               | empty
     '''
-    return astConstrut(p, 'statement')
+    return astConstruct(p, 'statement')
 
 def p_whileLoop(p):
     '''
     whileLoop : WHILE LPAREN conditionals RPAREN scope
     '''
-    return astConstrut(p, 'whileLoop')
+    return astConstruct(p, 'whileLoop')
 
 def p_ifStmt(p):
     '''
     ifStmt : IF LPAREN conditionals RPAREN scope
            | IF LPAREN conditionals RPAREN scope elseIfList
     '''
-    return astConstrut(p, 'ifStmt')
+    return astConstruct(p, 'ifStmt')
         
 def p_elseIfList(p):
     '''
@@ -199,13 +211,13 @@ def p_elseIfList(p):
                | ELSE IF LPAREN conditionals RPAREN scope
                | ELSE scope     
     '''
-    return astConstrut(p, 'elseIfList')
+    return astConstruct(p, 'elseIfList')
 
 def p_doWhile(p):
     '''
     doWhile : DO scope WHILE LPAREN conditionals RPAREN
     '''
-    return astConstrut(p, 'doWhile')
+    return astConstruct(p, 'doWhile')
 
 def p_forLoop(p):
     '''
@@ -214,14 +226,14 @@ def p_forLoop(p):
             | FOR LPAREN empty SEMI compOps SEMI increment RPAREN scope
             | FOR LPAREN init SEMI compOps SEMI increment RPAREN scope
     '''
-    return astConstrut(p, 'forLoop')
+    return astConstruct(p, 'forLoop')
 
 def p_forInit(p):
     '''
     init : typeSpec varAssign
          | varAssign
     '''
-    return astConstrut(p, 'init')
+    return astConstruct(p, 'init')
 
 def p_forIncrement(p):
     '''
@@ -231,19 +243,19 @@ def p_forIncrement(p):
               | ID INCREMENT
               | ID DECREMENT 
     '''
-    return astConstrut(p, 'increment')
+    return astConstruct(p, 'increment')
 
 def p_switch(p):
     '''
     switch : SWITCH LPAREN expr RPAREN switchscope 
     '''
-    return astConstrut(p, 'switch')
+    return astConstruct(p, 'switch')
 
 def p_switchScope(p):
     '''
     switchscope : LBRACE caseList RBRACE
     '''
-    return astConstrut(p, 'switchscope')
+    return astConstruct(p, 'switchscope')
 
 def p_caseList(p):
     '''
@@ -253,7 +265,7 @@ def p_caseList(p):
              | CASE CHARACTER COLON statementList 
              | DEFAULT COLON statementList
     '''
-    return astConstrut(p, 'caseList')
+    return astConstruct(p, 'caseList')
 
 # TODO: Add other types
 def p_returnStmt(p):
@@ -262,25 +274,25 @@ def p_returnStmt(p):
                | RETURN varAssign
                | RETURN funcCall
     '''
-    return astConstrut(p, 'returnStmt')
+    return astConstruct(p, 'returnStmt')
 
 def p_gotoStmt(p):
     '''
     gotoStmt : GOTO ID 
     '''
-    return astConstrut(p, 'gotoStmt')
+    return astConstruct(p, 'gotoStmt')
 
 def p_breakStmt(p):
     '''
     breakStmt : BREAK
     '''
-    return astConstrut(p, 'breakStmt')
+    return astConstruct(p, 'breakStmt')
 
 def p_funcCall(p):
     '''
     funcCall : ID LPAREN args RPAREN
     '''
-    return astConstrut(p, 'funcCall')
+    return astConstruct(p, 'funcCall')
 
 
 
@@ -293,7 +305,7 @@ def p_expr(p):
     '''
     expr : logicalExpr
     '''
-    return astConstrut(p, 'expr')
+    return astConstruct(p, 'expr')
 
 def p_logicalExpr(p):
     '''
@@ -304,7 +316,7 @@ def p_logicalExpr(p):
                 | logicalExpr XOR compOps
                 | logicalExpr AND compOps
     '''
-    return astConstrut(p, 'logicalExpr')
+    return astConstruct(p, 'logicalExpr')
 
 def p_compOps(p):
     '''
@@ -316,7 +328,7 @@ def p_compOps(p):
             | compOps LANGLE shiftExpr
             | compOps RANGLE shiftExpr 
     '''
-    return astConstrut(p, 'compOps')
+    return astConstruct(p, 'compOps')
 
 def p_shiftExpr(p):
     '''
@@ -324,7 +336,7 @@ def p_shiftExpr(p):
               | shiftExpr LSHIFT additiveExpr
               | shiftExpr RSHIFT additiveExpr
     '''
-    return astConstrut(p, 'shiftExpr')
+    return astConstruct(p, 'shiftExpr')
 
 def p_additiveExpr(p):
     '''
@@ -332,7 +344,7 @@ def p_additiveExpr(p):
                  | additiveExpr MINUS multiplicativeExpr
                  | multiplicativeExpr
     '''
-    return astConstrut(p, 'additiveExpr')
+    return astConstruct(p, 'additiveExpr')
 
 def p_multiplicativeExpr(p):
     '''
@@ -341,14 +353,14 @@ def p_multiplicativeExpr(p):
                        | multiplicativeExpr MODULO castExpr   
                        | operand
     '''
-    return astConstrut(p, 'multiplicativeExpr')
+    return astConstruct(p, 'multiplicativeExpr')
 
 def p_castExpr(p):
     '''
     castExpr : unaryExpr 
              | LPAREN typeSpec RPAREN castExpr 
     '''
-    return astConstrut(p, 'castExpr') 
+    return astConstruct(p, 'castExpr') 
 
 # Any unary operator and casting are not supported together.
 def p_unaryExpr(p):
@@ -359,7 +371,7 @@ def p_unaryExpr(p):
               | SIZEOF LPAREN unaryExpr RPAREN
               | SIZEOF LPAREN typeSpec RPAREN
     '''
-    return astConstrut(p, 'unaryExpr') 
+    return astConstruct(p, 'unaryExpr') 
 
 #TODO: Check the if conditions
 def p_postfixExpr(p):
@@ -371,7 +383,7 @@ def p_postfixExpr(p):
                 | postfixExpr ARROW ID
                 | postfixExpr LBRACKET expr RBRACKET
     '''
-    return astConstrut(p, 'postfixExpr') 
+    return astConstruct(p, 'postfixExpr') 
 
 #TODO: String
 def p_operand(p):
@@ -379,7 +391,7 @@ def p_operand(p):
     operand : ID
             | NUMCONST
     '''
-    return astConstrut(p, 'operand') 
+    return astConstruct(p, 'operand') 
 
 # TODO: Finish char impl in scanner and add it here (| ID EQUALS CHAR SEMI)
 # TODO: Add support for +=, -=, etc.
@@ -400,7 +412,7 @@ def p_varAssign(p):
               | ID OREQUAL expr 
               | ID XOREQUAL expr
     '''
-    return astConstrut(p, 'varAssign') 
+    return astConstruct(p, 'varAssign') 
 
 def p_conditionals(p):
     '''
@@ -409,7 +421,7 @@ def p_conditionals(p):
                  | FALSE
                  | LPAREN conditionals RPAREN
     '''
-    return astConstrut(p, 'conditionals')
+    return astConstruct(p, 'conditionals')
 
 # Error Handling 
 def p_error(t):

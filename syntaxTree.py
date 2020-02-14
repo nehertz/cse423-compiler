@@ -1,4 +1,4 @@
-def astConstrut(p, type):
+def astConstruct(p, type):
     if(type == 'program' or type == 'declaration' or type == 'statement' or type == 'operand' or type == 'expr' or type == 'breakStmt'):
         p[0] = p[1]
 
@@ -7,6 +7,20 @@ def astConstrut(p, type):
             p[0] = p[1]
         else:
             p[0] =  p[1]  +  ',' + '(' + p[2] + ')'
+    elif (type == 'enumDeclaration'):
+        if (len(p) == 2):
+            p[0] = p[1]
+        elif (len(p) == 7):
+            p[0] = str(p[4]) + '(' + str(p[4]) + ')'
+        else: 
+            pass
+    elif (type == 'enumArgs'):
+        if (len(p) == 2):
+            p[0] = p[1]
+        elif (len(p) == 4):
+            p[0] = str(p[1]) + ' , ' + str(p[3])
+        else: 
+            pass
 
     elif(type == 'funcList'):
         typeSpecID = str(p[2] + '"' + p[1] + '"')
