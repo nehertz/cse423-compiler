@@ -6,6 +6,8 @@ def astConstruct(p, type):
     elif (type == 'operand'):
         if(len(p) == 2):
             p[0] = p[1]
+        elif (len(p) == 3):
+            p[0] = '"' + str(p[1]) + str(p[2]) + '"'
         else:
             p[0] = p[2]
 
@@ -13,7 +15,7 @@ def astConstruct(p, type):
         if(len(p) == 2):
             p[0] = p[1]
         else:
-            p[0] =  p[1]  +  ',' + '(' + p[2] + ')'
+            p[0] = p[1]  +  ',' + '(' + p[2] + ')'
 
     elif (type == 'enumDeclaration'):
         if (len(p) == 2):
@@ -221,14 +223,23 @@ def astConstruct(p, type):
     elif(type == 'unaryExpr'):
         if (len(p) == 2):
             p[0] = p[1]
+        elif (p[2] == '++' or p[2] == '--'):
+            p[0] = '"' + p[1] + p[2] + '"'
+        elif (p[1] == '!' or p[1] == '~'):
+            p[0] = '"' + p[1] + p[2] + '"'
         elif (len(p) == 3):
-            p[0] = '(' + '"' + str(p[1]) + '"' +  ')' + str(p[2])
+            p[0] = '(' + '"' + str(p[1]) + '"' + ')' + str(p[2])
+            
+        elif (len(p) == 5):
+            p[0] = '(' + str(p[1])  + '"' + str(p[3]) + '"' + ')'
         else:
             p[0] = str(p[3])
 
     elif(type == 'postfixExpr'):
         if (len(p) == 2):
             p[0] = p[1]
+        elif (p[1] == '++' or p[1] == '--'):
+            p[0] = '"' + p[1] + p[2] + '"'
         elif (len(p) == 3):
             p[0] = '('  + '"' + str(p[1]) + '"' + ')' +  str(p[2])
         elif (len(p) == 4):

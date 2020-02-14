@@ -29,16 +29,16 @@ KEY | | |
 - [X] Assignment
 - [X] Boolean expressions
 - [X] Goto statements
-- [ ] If/else control flow: One-line loops/conditionals aren't currently supported
-- [ ] Unary operators
+- [X] If/else control flow: One-line loops/conditionals aren't currently supported
+- [X] Unary operators (unary minus (`-`), NOT (`!`), `sizeof()`)
 - [X] Return statements
-- [ ] Break statements
-- [ ] While loops: One-line loops/conditionals aren't currently supported
+- [/] Break statements: Break can currently be placed outside of loops and switches
+- [X] While/do-while loops: One-line loops/conditionals aren't currently supported
 
 **Optional:**
 - [X] Floats
 - [X] Characters
-- [/] ++/--/-=/+=/*=//=: Increment and decrement are not currently working
+- [X] ++/--/-=/+=/*=//=
 - [X] For loops: One-line loops/conditionals aren't currently supported
 - [X] Binary operators
 - [X] Switch statements
@@ -82,3 +82,4 @@ KEY | | |
     - The output is formatted into an AST using skbio
 
 # Known Errors
+- Our grammar will throw shift/reduce conflict warnings occasionally; we are working on fixing them

@@ -1,7 +1,7 @@
 int
 main()
 {
-	int x, *p;
+	int x, p;
 
 	if (sizeof(0) < 2)
 		return 1;

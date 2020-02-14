@@ -11,6 +11,8 @@ operators = {
     '&&' : 'LAND',
 
     # Bitwise operators
+    '<<=' : 'LSHIFTEQUAL',
+    '>>=' : 'RSHIFTEQUAL',
 
     '<<' : 'LSHIFT',
     '>>' : 'RSHIFT',
@@ -32,8 +34,8 @@ operators = {
     '%=' : 'MODEQUAL',
     '+=' : 'PLUSEQUAL',
     '-=' : 'MINUSEQUAL',
-    '<<=' : 'LSHIFTEQUAL',
-    '>>=' : 'RSHIFTEQUAL',
+   
+   
     '&=' : 'ANDEQUAL',
     '|=' : 'OREQUAL',
     '^=' : 'XOREQUAL',
@@ -68,6 +70,7 @@ operators = {
     '*' : 'TIMES',
     '/' : 'DIVIDE',
     '%' : 'MODULO',
+
     # Boolean
     'TRUE' : 'TRUE',
     'FALSE' : 'FALSE',
@@ -98,8 +101,10 @@ def t_comments(t):
 # Block comments
 def t_blockComments(t):
     r'(\/\*)[\s\S]*(\*\/)'
+    # TODO: newlines inside of block comments will mess with following line numbers
     pass
 
+# Preprocessors
 def t_preproc(t):
     r'\#include<[a-zA-Z]+\.\w>|\#include\"[a-zA-Z]+\.\w\"'
     t.type = 'PREPROC'
@@ -161,12 +166,22 @@ def t_number(t):
     t.type = 'NUMCONST'
     return t
 
+
+
+
+
 # ComparisonOperator
 def t_compOps(t):
     r"(==)|(\!=)|(>=)|(<=)"
     t.type = operators.get(t.value)
     return t
 
+# AssignmentOperator
+def t_assignOps(t):
+    r"(=)|(\+=)|(-=)|(\*=)|(/=)|(%=)|(<<=)|(>>=)|(&=)|(\^=)|(\|=)"   
+    t.type = operators.get(t.value)
+    return t
+    
 # Logic Operator
 def t_logicOps(t):
     r"(\|\|)|(&&)|(\!)"
@@ -179,11 +194,7 @@ def t_bitOps(t):
     t.type = operators.get(t.value)
     return t
 
-# AssignmentOperator
-def t_assignOps(t):
-    r"(=)|(\+=)|(-=)|(\*=)|(/=)|(%=)|(<<=)|(>>=)|(&=)|(\^=)|(\|=)"   
-    t.type = operators.get(t.value)
-    return t
+
 
 # Increment and Decrement 
 def t_increment(t):
