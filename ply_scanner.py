@@ -4,23 +4,14 @@ import ply.lex as lex
 keywords = ['else', 'register','do','goto','continue','if','sizeof','switch', 'for', 'case','while','break','default','return', 'typedef', 'define', 'include']
 type_specifier = ['auto', 'union', 'short', 'double','long', 'unsigned','int','char','static','volatile','struct','extern','signed','const','enum','void','float']
 operators = {
-    # Arithmetic operators 
-    '+' : 'PLUS',
-    '-' : 'MINUS',
-    '*' : 'TIMES',
-    '/' : 'DIVIDE',
-    '%' : 'MODULO',
+
     
     # Logical operators
     '||' : 'LOR',
     '&&' : 'LAND',
-    '!' : 'LNOT',
 
     # Bitwise operators
-    '|' : 'OR',
-    '&' : 'AND',
-    '~' : 'NOT',
-    '^' : 'XOR',
+
     '<<' : 'LSHIFT',
     '>>' : 'RSHIFT',
     
@@ -31,6 +22,8 @@ operators = {
     '>=' : 'GE',
     '==' : 'EQ',
     '!=' : 'NE',
+    '!' : 'LNOT',
+
 
     # Assignment operators
     '=' : 'EQUALS',
@@ -69,10 +62,20 @@ operators = {
     '>' : 'RANGLE',
     '...' : 'ELLIPSIS',
 
+    # Arithmetic operators 
+    '+' : 'PLUS',
+    '-' : 'MINUS',
+    '*' : 'TIMES',
+    '/' : 'DIVIDE',
+    '%' : 'MODULO',
     # Boolean
     'TRUE' : 'TRUE',
     'FALSE' : 'FALSE',
 
+    '|' : 'OR',
+    '&' : 'AND',
+    '~' : 'NOT',
+    '^' : 'XOR',
     # sizeof operator
 }
 
@@ -158,6 +161,12 @@ def t_number(t):
     t.type = 'NUMCONST'
     return t
 
+# ComparisonOperator
+def t_compOps(t):
+    r"(==)|(\!=)|(>=)|(<=)"
+    t.type = operators.get(t.value)
+    return t
+
 # Logic Operator
 def t_logicOps(t):
     r"(\|\|)|(&&)|(\!)"
@@ -167,12 +176,6 @@ def t_logicOps(t):
 # BitwiseOperator
 def t_bitOps(t):
     r"(<<)|(>>)|(&)|(\|)|(\^)|(~)"
-    t.type = operators.get(t.value)
-    return t
-
-# ComparisonOperator
-def t_compOps(t):
-    r"(==)|(\!=)|(>=)|(<=)"
     t.type = operators.get(t.value)
     return t
 

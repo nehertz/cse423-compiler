@@ -11,16 +11,19 @@ main() {
 		t = 2;
 		p = 1;
 		while (t*t <= n) {
-			if (n % t == 0)
+			if (n % t == 0){
 				p = 0;
+			}
 			t++;
 		}
 		n++;
-		if (p)
+		if (p){
 			c++;
+		}
 	}
-	if (c != 669)
+	if (c != 669) {
 		return 1;
+	}
 	return 0;
 }
 

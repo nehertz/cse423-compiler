@@ -37,15 +37,25 @@ def p_enumDeclaration(p):
     '''
     enumDeclaration :  funcList
                     | ENUM ID LBRACE enumArgs RBRACE SEMI
+                    | ENUM LBRACE enumArgs RBRACE SEMI
+                    | ENUM ID SEMI
     '''
     return astConstruct(p, 'enumDeclaration')
 
 def p_enumArgs(p):
     '''
-    enumArgs    :  ID COMMA enumArgs
-                | ID
+    enumArgs    : enumIDList
+                | enumArgs COMMA enumIDList
     '''
     return astConstruct(p, 'enumArgs')
+
+def p_enumIDList(p):
+    '''
+    enumIDList : ID 
+                | ID EQUALS NUMCONST
+    '''
+    return astConstruct(p, 'enumIDList')
+
 
 # Function Declaration  
 def p_funcDeclaration(p):
@@ -54,20 +64,38 @@ def p_funcDeclaration(p):
     '''
     return astConstruct(p, 'funcList')
 
+# TODO: Create operandList rule and add it here
 def p_args(p):
     '''
     args : typeSpecList
-         | idList
+         | operandList
          | empty
     '''
     return astConstruct(p, 'args')
 
-def p_idList(p):
+def p_operandList(p):
     '''
-    idList : idList COMMA ID
-           | ID
+    operandList : operandList COMMA operand
+                | operand
     '''
-    return astConstruct(p, 'idList')
+    return astConstruct(p, 'operandList')
+
+#TODO: String
+def p_operand(p):
+    ''' 
+    operand : ID
+            | NUMCONST
+            | funcCall
+            | LPAREN expr RPAREN
+    '''
+    return astConstruct(p, 'operand')
+
+# def p_idList(p):
+#     '''
+#     idList : idList COMMA ID
+#            | ID
+#     '''
+#     return astConstruct(p, 'idList')
 
 def p_scope(p):
     '''
@@ -192,6 +220,8 @@ def p_statement(p):
     '''
     return astConstruct(p, 'statement')
 
+# TODO: while loop scope supports break, continue, etc. 
+# separate scope needs to be defined
 def p_whileLoop(p):
     '''
     whileLoop : WHILE LPAREN conditionals RPAREN scope
@@ -366,8 +396,10 @@ def p_castExpr(p):
 def p_unaryExpr(p):
     '''
     unaryExpr : postfixExpr
-              | INCREMENT unaryExpr
-              | DECREMENT unaryExpr
+              | unaryExpr INCREMENT
+              | unaryExpr DECREMENT
+              | LNOT  unaryExpr
+              | NOT unaryExpr
               | SIZEOF LPAREN unaryExpr RPAREN
               | SIZEOF LPAREN typeSpec RPAREN
     '''
@@ -377,24 +409,14 @@ def p_unaryExpr(p):
 def p_postfixExpr(p):
     '''
     postfixExpr : operand 
-                | postfixExpr INCREMENT
-                | postfixExpr DECREMENT
+                | INCREMENT postfixExpr
+                | DECREMENT postfixExpr
                 | postfixExpr PERIOD ID 
                 | postfixExpr ARROW ID
                 | postfixExpr LBRACKET expr RBRACKET
     '''
     return astConstruct(p, 'postfixExpr') 
 
-#TODO: String
-def p_operand(p):
-    ''' 
-    operand : ID
-            | NUMCONST
-    '''
-    return astConstruct(p, 'operand') 
-
-# TODO: Finish char impl in scanner and add it here (| ID EQUALS CHAR SEMI)
-# TODO: Add support for +=, -=, etc.
 def p_varAssign(p):
     '''
     varAssign : ID EQUALS expr
@@ -432,6 +454,5 @@ def p_error(t):
 def parser(lex):
     parser = yacc.yacc()
     result = parser.parse(lexer=lex)
-    print(result)
     s = '(' + str(result) + ')Program;'
     return s
