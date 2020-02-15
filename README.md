@@ -10,5 +10,5 @@
 * python3 main.py -options filename
 * options: 
 * -h : print the usage information
-* -t : print the sequence of tokens and labels (Finished)
-* -p : print parse tree (In Progress)
+* -t : print the sequence of tokens and labels 
+* -p : print parse tree 
