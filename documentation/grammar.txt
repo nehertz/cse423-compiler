@@ -1,103 +1,93 @@
+program         : declarationList
+declarationList : declarationList declaration | declaration
+declaration     : PREPROC  | varDecl SEMI | enumDeclaration
+enumDeclaration : funcList | ENUM ID LBRACE enumArgs RBRACE SEMI
+                | ENUM LBRACE enumArgs RBRACE SEMI | ENUM ID SEMI
+enumArgs        : enumIDList | enumArgs COMMA enumIDList
+enumIDList      : ID | ID EQUALS NUMCONST
 
-program ->  declarationList
 
-declarationList -> declarationList declaration | declaration
+funcList        : typeSpec ID LPAREN args RPAREN scope
+args            : typeSpecList | operandList | empty
+operandList     : operandList COMMA operand | operand
+operand         : ID | NUMCONST | funcCall | LPAREN expr RPAREN | MINUS NUMCONST
+scope           : LBRACE statementList RBRACE
 
-declaration -> var_declaration | fun_declaration  [##Added this to support global variable]
 
-------------------------------------------------------------------------
-var_declaration -> type_spec ID 
-                    | type_spec var_assign 
-                    | type_spec ID LBRACKET NUMCONST RBRACKET  [##Added this to support Array decl]
+varDeclList     : varDeclList varDecl SEMI | varDecl SEMI
+varDecl         : combineTypeSpec | typeSpec ID | typeSpec varAssign
+                | combineTypeSpec ID | TYPEDEF typeSpec ID | TYPEDEF combineTypeSpec ID
+                | EXTERN typeSpecPostfix ID | CONST EXTERN typeSpecPostfix ID
+typeSpecList    : typeSpecList COMMA typeSpec ID | typeSpec ID
+typeSpec        : AUTO typeSpecPostfix | VOLATILE typeSpecPostfix
+                | VOLATILE STATIC typeSpecPostfix | STATIC typeSpecPostfix
+                | CONST typeSpecPostfix | REGISTER typeSpecPostfix
+                | REGISTER STATIC typeSpecPostfix | typeSpecPostfix
+                | combineType
+combineTypeSpec : combineType LBRACE varDeclList RBRACE
+combineType     : STRUCT ID | UNION ID
+typeSpecPostfix : INT | CHAR | SHORT | LONG | FLOAT | DOUBLE | UNSIGNED INT | SIGNED INT | SHORT INT | LONG INT
+                | LONG LONG INT | UNSIGNED CHAR | SIGNED CHAR | LONG LONG | SIGNED LONG | UNSIGNED LONG  
+                | LONG DOUBLE | SIGNED SHORT | UNSIGNED SHORT 
 
-type_spec -> INT 
-            | CHAR 
-            | FLOAT 
-            | DOUBLE 
 
-------------------------------------------------------------------------
+statementList   : empty | statement SEMI statementList 
+                | whileLoop statementList | switch statementList
+                | ifStmt statementList | forLoop statementList
+statement       : returnStmt | varDecl | varAssign | gotoStmt | breakStmt
+                | expr | empty | doWhile
+whileLoop       : WHILE LPAREN conditionals RPAREN scope
+ifStmt          : IF LPAREN conditionals RPAREN scope
+                | IF LPAREN conditionals RPAREN scope elseIfList
+elseIfList      : ELSE IF LPAREN conditionals RPAREN scope elseIfList
+                | ELSE IF LPAREN conditionals RPAREN scope
+                | ELSE scope  
+doWhile         : DO scope WHILE LPAREN conditionals RPAREN
+forLoop         : FOR LPAREN empty SEMI compOps SEMI empty RPAREN scope
+                | FOR LPAREN init SEMI compOps SEMI empty RPAREN scope
+                | FOR LPAREN empty SEMI compOps SEMI increase RPAREN scope
+                | FOR LPAREN init SEMI compOps SEMI increase RPAREN scope
+init            : typeSpec varAssign | varAssign
+increase        : varAssign | INCREMENT ID | DECREMENT ID | ID INCREMENT | ID DECREMENT 
+switch          : SWITCH LPAREN expr RPAREN switchscope 
+switchscope     : LBRACE caseList RBRACE
+caseList        : CASE operand COLON statementList caseList
+                | CASE CHARACTER COLON statementList caseList
+                | CASE operand COLON statementList 
+                | CASE CHARACTER COLON statementList 
+                | DEFAULT COLON statementList
+returnStmt      : RETURN expr | RETURN varAssign
+gotoStmt        : GOTO ID 
+breakStmt       : BREAK
+funcCall        : ID LPAREN args RPAREN
 
-funcDecl -> type_spec ID LPAREN args RPAREN scope 
 
-args -> type_spec_list | empty | VOID  [##Added this to support 'int main(void)']
+expr            : logicalExpr
+logicalExpr     : compOps | logicalExpr LOR compOps
+                | logicalExpr LAND compOps | logicalExpr OR compOps
+                | logicalExpr XOR compOps  | logicalExpr AND compOps
+compOps         : shiftExpr | compOps EQ shiftExpr 
+                | compOps NE shiftExpr | compOps LE shiftExpr
+                | compOps GE shiftExpr | compOps LANGLE shiftExpr
+                | compOps RANGLE shiftExpr 
+shiftExpr       : additiveExpr | shiftExpr LSHIFT additiveExpr
+                | shiftExpr RSHIFT additiveExpr
+additiveExpr    : additiveExpr PLUS multiplicativeExpr | additiveExpr MINUS multiplicativeExpr 
+                | multiplicativeExpr
+multiplicativeExpr : multiplicativeExpr TIMES castExpr | multiplicativeExpr DIVIDE castExpr  
+                | multiplicativeExpr MODULO castExpr | castExpr
+castExpr        : unaryExpr | LPAREN typeSpec RPAREN castExpr 
+unaryExpr       : postfixExpr | LNOT unaryExpr | NOT unaryExpr
+                | SIZEOF LPAREN unaryExpr RPAREN | SIZEOF LPAREN typeSpec RPAREN
+                | unaryExpr INCREMENT | unaryExpr DECREMENT
+postfixExpr     : operand  | postfixExpr PERIOD ID
+                | postfixExpr LBRACKET expr RBRACKET
+                | INCREMENT postfixExpr | DECREMENT postfixExpr  
+varAssign       : ID EQUALS expr | ID EQUALS STRING | LPAREN varAssign RPAREN
+                | ID TIMESEQUAL expr | ID DIVEQUAL expr | ID MODEQUAL expr 
+                | ID PLUSEQUAL expr  | ID MINUSEQUAL expr | ID LSHIFTEQUAL expr 
+                | ID RSHIFTEQUAL expr | ID ANDEQUAL expr | ID OREQUAL expr 
+                | ID XOREQUAL expr      
+conditionals    : expr | TRUE | FALSE  | LPAREN conditionals RPAREN        
 
-type_spec_list -> type_spec_list COMMA type_spec ID | type_spec ID
-
-scope -> LBRACE statement_list RBRACE
-
-statement_list -> empty | statement SEMI statement_list
-
-statement -> expression_stmt 
-            | selection_stmt 
-            | iteration_stmt
-            | return_stmt 
-            | break_stmt 
-            | goto_stmt
-            | var_decl 
-            | var_assign 
-            | empty
-
-------------------------------------------------------------------------
-
-expression_stmt -> var bin_op var
-
-var -> ID | NUMCONST
-
-bin_op : PLUS
-        | MINUS
-        | TIMES
-        | DIVIDE
-        | MODULO
-
-------------------------------------------------------------------------
-
-selection_stmt ->
-
-------------------------------------------------------------------------
-
-iteration_stmt -> 
-
-------------------------------------------------------------------------
-
-break_stmt -> BREAK SIMI
-
-------------------------------------------------------------------------
-
-goto_stmt -> GOTO ID SIMI 
-
-------------------------------------------------------------------------
-
-return_stmt -> RETURN var | RETURN expression_stmt | RETURN var_assign
-
-------------------------------------------------------------------------
-
-var_decl -> type_spec ID 
-            | type_spec var_assign 
-
-------------------------------------------------------------------------
-var_assign -> ID EQUALS var 
-            | ID EQUALS expression_stmt 
-            | ID EQUALS STRING 
-            | LPAREN var_assign RPAREN
-
-------------------------------------------------------------------------
-
-expr -> expr PLUS multiplicative_expr
-        | expr MINUS multiplicative_expr 
-
-multiplicative_expr -> multiplicative_expr TIMES unary_expr
-                     | multiplicative_expr DIVIDE unary_expr 
-                     | multiplicative_expr MODULO unary_expr 
-
-unary_expr -> INCREMENT operand
-            | DECREMENT operand
-            | MINUS operand
-            | operand INCREMENT
-            | operand DECREMENT
-
-------------------------------------------------------------------------
-whileLoop -> WHILE LPAREN CONDITIONALS RPAREN scope
-
-CONDITIONALS -> var compOps var 
--------------------------------------------------------------------------
 
