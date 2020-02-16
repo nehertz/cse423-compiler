@@ -33,12 +33,18 @@ def p_declaration(p):
     '''
     return astConstruct(p, 'declaration')
 
+def p_enumInScope(p):
+    '''
+    enumInScope : ENUM ID ID SEMI
+    '''
+    return astConstruct(p, 'enumInScope')
+
 def p_enumDeclaration(p):
     '''
     enumDeclaration :  funcList
                     | ENUM ID LBRACE enumArgs RBRACE SEMI
                     | ENUM LBRACE enumArgs RBRACE SEMI
-                    | ENUM ID SEMI
+                    | ENUM ID ID SEMI
     '''
     return astConstruct(p, 'enumDeclaration')
 
@@ -205,6 +211,7 @@ def p_statementList(p):
                   | ifStmt statementList
                   | forLoop statementList
                   | switch statementList
+                  | enumInScope statementList
     '''
     return astConstruct(p, 'statementList')
 

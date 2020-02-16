@@ -14,8 +14,9 @@ pip3 install -r requirements.txt
 ```
 
 # How to Use
-
-* python3 main.py -options filename
+```
+python3 main.py -options filename
+```
 * options: 
 * -h : print the usage information
 * -t : print the sequence of tokens and labels 
