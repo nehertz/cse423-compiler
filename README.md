@@ -5,6 +5,14 @@
 * Wing Ho Lin (github ID: Wing Lin)
 * Anhao Xiang (github ID: AndyXiang945)
 
+# How to install Python dependencies
+
+* Run this in your terminal: Tested on Ubuntu bionic
+
+```
+pip3 install -r requirements.txt
+```
+
 # How to Use
 
 * python3 main.py -options filename
