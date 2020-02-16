@@ -17,8 +17,10 @@ main()
 		return 1;
 	if (1000 == f())
 		return 1;
-	if (100 != f())
+	else if (100 != f())
 		return 1;
+	else
+		
 	return 0;
 }
 

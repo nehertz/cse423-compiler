@@ -1,240 +1,4 @@
 Test File Name: 'add.c'
-********************************************************'
-Test File Name: 'and_false.c'
-********************************************************'
-Test File Name: 'and_true.c'
-********************************************************'
-Test File Name: 'assign.c'
-********************************************************'
-Test File Name: 'assign_ternary.c'
-********************************************************'
-Test File Name: 'assign_val.c'
-********************************************************'
-Test File Name: 'associativity_2.c'
-********************************************************'
-Test File Name: 'associativity.c'
-********************************************************'
-Test File Name: 'bitwise.c'
-********************************************************'
-Test File Name: 'bitwise_zero.c'
-********************************************************'
-Test File Name: 'break.c'
-********************************************************'
-Test File Name: 'consecutive_blocks.c'
-********************************************************'
-Test File Name: 'consecutive_declarations.c'
-********************************************************'
-Test File Name: 'continue.c'
-********************************************************'
-Test File Name: 'continue_empty_post.c'
-********************************************************'
-Test File Name: 'declare_after_block.c'
-********************************************************'
-Test File Name: 'declare_block.c'
-********************************************************'
-Test File Name: 'declare_late.c'
-********************************************************'
-Test File Name: 'div.c'
-********************************************************'
-Test File Name: 'div_neg.c'
-********************************************************'
-Test File Name: 'do_while.c'
-********************************************************'
-Test File Name: 'else.c'
-********************************************************'
-Test File Name: 'empty_expression.c'
-********************************************************'
-Test File Name: 'eq_false.c'
-********************************************************'
-Test File Name: 'eq_true.c'
-********************************************************'
-Test File Name: 'expression_args.c'
-********************************************************'
-Test File Name: 'exp_return_val.c'
-********************************************************'
-Test File Name: 'fib.c'
-********************************************************'
-Test File Name: 'for.c'
-********************************************************'
-Test File Name: 'for_decl.c'
-********************************************************'
-Test File Name: 'for_empty.c'
-********************************************************'
-Test File Name: 'for_nested_scope.c'
-********************************************************'
-Test File Name: 'for_variable_shadow.c'
-********************************************************'
-Test File Name: 'forward_declaration.c'
-********************************************************'
-Test File Name: 'forward_decl_args.c'
-********************************************************'
-Test File Name: 'forward_decl.c'
-********************************************************'
-Test File Name: 'forward_decl_multi_arg.c'
-********************************************************'
-Test File Name: 'fun_in_expr.c'
-********************************************************'
-Test File Name: 'fun_shadowed_by_variable.c'
-********************************************************'
-Test File Name: 'ge_false.c'
-********************************************************'
-Test File Name: 'ge_true.c'
-********************************************************'
-Test File Name: 'global.c'
-********************************************************'
-Test File Name: 'global_not_initialized.c'
-********************************************************'
-Test File Name: 'global_shadowed.c'
-********************************************************'
-Test File Name: 'gt_false.c'
-********************************************************'
-Test File Name: 'gt_true.c'
-********************************************************'
-Test File Name: 'hello_world.c'
-********************************************************'
-Test File Name: 'if_nested_2.c'
-********************************************************'
-Test File Name: 'if_nested_3.c'
-********************************************************'
-Test File Name: 'if_nested_4.c'
-********************************************************'
-Test File Name: 'if_nested_5.c'
-********************************************************'
-Test File Name: 'if_nested.c'
-********************************************************'
-Test File Name: 'if_not_taken.c'
-********************************************************'
-Test File Name: 'if_taken.c'
-********************************************************'
-Test File Name: 'initialize.c'
-********************************************************'
-Test File Name: 'later_decl.c'
-********************************************************'
-Test File Name: 'le_false.c'
-********************************************************'
-Test File Name: 'le_true.c'
-********************************************************'
-Test File Name: 'lt_false.c'
-********************************************************'
-Test File Name: 'lt_true.c'
-********************************************************'
-Test File Name: 'missing_return.c'
-********************************************************'
-Test File Name: 'mult.c'
-********************************************************'
-Test File Name: 'multi_arg.c'
-********************************************************'
-Test File Name: 'multi_digit.c'
-********************************************************'
-Test File Name: 'multi_nesting.c'
-********************************************************'
-Test File Name: 'multiple_global.c'
-********************************************************'
-Test File Name: 'multiple_if.c'
-********************************************************'
-Test File Name: 'multiple_ternary.c'
-********************************************************'
-Test File Name: 'multiple_vars.c'
-********************************************************'
-Test File Name: 'mutual_recursion.c'
-********************************************************'
-Test File Name: 'ne_false.c'
-********************************************************'
-Test File Name: 'neg.c'
-********************************************************'
-Test File Name: 'nested_break.c'
-********************************************************'
-Test File Name: 'nested_if.c'
-********************************************************'
-Test File Name: 'nested_ops_2.c'
-********************************************************'
-Test File Name: 'nested_ops.c'
-********************************************************'
-Test File Name: 'nested_scope.c'
-********************************************************'
-Test File Name: 'nested_ternary_2.c'
-********************************************************'
-Test File Name: 'nested_ternary.c'
-********************************************************'
-Test File Name: 'nested_while.c'
-********************************************************'
-Test File Name: 'ne_true.c'
-********************************************************'
-Test File Name: 'newlines.c'
-********************************************************'
-Test File Name: 'no_arg.c'
-********************************************************'
-Test File Name: 'no_initialize.c'
-********************************************************'
-Test File Name: 'no_newlines.c'
-********************************************************'
-Test File Name: 'not_five.c'
-********************************************************'
-Test File Name: 'not_zero.c'
-********************************************************'
-Test File Name: 'or_false.c'
-********************************************************'
-Test File Name: 'or_true.c'
-********************************************************'
-Test File Name: 'parens.c'
-********************************************************'
-Test File Name: 'precedence_2.c'
-********************************************************'
-Test File Name: 'precedence2.c'
-********************************************************'
-Test File Name: 'precedence_3.c'
-********************************************************'
-Test File Name: 'precedence3.c'
-********************************************************'
-Test File Name: 'precedence_4.c'
-********************************************************'
-Test File Name: 'precedence.c'
-********************************************************'
-Test File Name: 'refer.c'
-********************************************************'
-Test File Name: 'rename_function_param.c'
-********************************************************'
-Test File Name: 'return_0.c'
-********************************************************'
-Test File Name: 'return_2.c'
-********************************************************'
-Test File Name: 'return_in_while.c'
-********************************************************'
-Test File Name: 'rh_assignment.c'
-********************************************************'
-Test File Name: 'single_arg.c'
-********************************************************'
-Test File Name: 'skip_on_failure_multi_short_circuit.c'
-********************************************************'
-Test File Name: 'skip_on_failure_short_circuit_and.c'
-********************************************************'
-Test File Name: 'skip_on_failure_short_circuit_or.c'
-********************************************************'
-Test File Name: 'spaces.c'
-********************************************************'
-Test File Name: 'sub.c'
-********************************************************'
-Test File Name: 'sub_neg.c'
-********************************************************'
-Test File Name: 'ternary.c'
-********************************************************'
-Test File Name: 'ternary_short_circuit_2.c'
-********************************************************'
-Test File Name: 'ternary_short_circuit.c'
-********************************************************'
-Test File Name: 'unop_add.c'
-********************************************************'
-Test File Name: 'unop_parens.c'
-********************************************************'
-Test File Name: 'unused_exp.c'
-********************************************************'
-Test File Name: 'variable_as_arg.c'
-********************************************************'
-Test File Name: 'while_multi_statement.c'
-********************************************************'
-Test File Name: 'while_single_statement.c'
-********************************************************'
-Test File Name: 'add.c'
 ((None)args,((return,(1,2)+))stmt)main"int"
                     /args---- /-None
 -Program- /main"int"
@@ -286,18 +50,6 @@ Syntax error at =: Line Number: 3
 None
 -Program- /-None
 ********************************************************'
-Test File Name: 'associativity_2.c'
-((None)args,((return,((6,3)/,2)/))stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                    /-return
-                   |                   |
-                    \stmt---- /--------|                    /-6
-                                       |          //-------|
-                                        \/-------|          \-3
-                                                 |
-                                                  \-2
-********************************************************'
 Test File Name: 'associativity.c'
 ((None)args,((return,((1,2)-,3)-))stmt)main"int"
                     /args---- /-None
@@ -309,6 +61,18 @@ Test File Name: 'associativity.c'
                                         \--------|          \-2
                                                  |
                                                   \-3
+********************************************************'
+Test File Name: 'associativity_2.c'
+((None)args,((return,((6,3)/,2)/))stmt)main"int"
+                    /args---- /-None
+                   |
+-Program- /main"int"                    /-return
+                   |                   |
+                    \stmt---- /--------|                    /-6
+                                       |          //-------|
+                                        \/-------|          \-3
+                                                 |
+                                                  \-2
 ********************************************************'
 Test File Name: 'bitwise.c'
 Syntax error at !: Line Number: 2
@@ -448,13 +212,13 @@ Test File Name: 'eq_true.c'
                                         \==------|
                                                   \-1
 ********************************************************'
-Test File Name: 'expression_args.c'
-Syntax error at 1: Line Number: 6
+Test File Name: 'exp_return_val.c'
+Syntax error at =: Line Number: 4
 None
 -Program- /-None
 ********************************************************'
-Test File Name: 'exp_return_val.c'
-Syntax error at =: Line Number: 4
+Test File Name: 'expression_args.c'
+Syntax error at 1: Line Number: 6
 None
 -Program- /-None
 ********************************************************'
@@ -555,38 +319,6 @@ Syntax error at j: Line Number: 7
 None
 -Program- /-None
 ********************************************************'
-Test File Name: 'forward_declaration.c'
-int,foo,(((None)args,((return,foo))stmt)main"int"),(int,(foo,3)=)
-          /-int
-         |
-         |--foo
-         |
-         |                    /args---- /-None
--Program-|--------- /main"int"
-         |                   |                    /-return
-         |                    \stmt---- /--------|
-         |                                        \-foo
-         |
-         |          /-int
-          \--------|
-                   |          /-foo
-                    \=-------|
-                              \-3
-********************************************************'
-Test File Name: 'forward_decl_args.c'
-Syntax error at ;: Line Number: 1
-Syntax error at 3: Line Number: 4
-(((int,a))args,((return,(a,1)+))stmt)foo"int"
-                                        /-int
-                    /args---- /--------|
-                   |                    \-a
--Program- /foo"int"|
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-a
-                                        \+-------|
-                                                  \-1
-********************************************************'
 Test File Name: 'forward_decl.c'
 Syntax error at ;: Line Number: 1
 ((None)args,((return,(foo,(None)args)))stmt)main"int",(((None)args,((return,3))stmt)foo"int")
@@ -603,6 +335,20 @@ Syntax error at ;: Line Number: 1
                              |                    /-return
                               \stmt---- /--------|
                                                   \-3
+********************************************************'
+Test File Name: 'forward_decl_args.c'
+Syntax error at ;: Line Number: 1
+Syntax error at 3: Line Number: 4
+(((int,a))args,((return,(a,1)+))stmt)foo"int"
+                                        /-int
+                    /args---- /--------|
+                   |                    \-a
+-Program- /foo"int"|
+                   |                    /-return
+                    \stmt---- /--------|
+                                       |          /-a
+                                        \+-------|
+                                                  \-1
 ********************************************************'
 Test File Name: 'forward_decl_multi_arg.c'
 Syntax error at ;: Line Number: 1
@@ -621,6 +367,24 @@ Syntax error at 1: Line Number: 4
                                        |          /-x
                                         \--------|
                                                   \-y
+********************************************************'
+Test File Name: 'forward_declaration.c'
+int,foo,(((None)args,((return,foo))stmt)main"int"),(int,(foo,3)=)
+          /-int
+         |
+         |--foo
+         |
+         |                    /args---- /-None
+-Program-|--------- /main"int"
+         |                   |                    /-return
+         |                    \stmt---- /--------|
+         |                                        \-foo
+         |
+         |          /-int
+          \--------|
+                   |          /-foo
+                    \=-------|
+                              \-3
 ********************************************************'
 Test File Name: 'fun_in_expr.c'
 Syntax error at 1: Line Number: 6
@@ -747,6 +511,11 @@ Syntax error at 72: Line Number: 4
 None
 -Program- /-None
 ********************************************************'
+Test File Name: 'if_nested.c'
+Syntax error at b: Line Number: 5
+None
+-Program- /-None
+********************************************************'
 Test File Name: 'if_nested_2.c'
 Syntax error at b: Line Number: 5
 None
@@ -764,11 +533,6 @@ None
 ********************************************************'
 Test File Name: 'if_nested_5.c'
 Syntax error at if: Line Number: 4
-None
--Program- /-None
-********************************************************'
-Test File Name: 'if_nested.c'
-Syntax error at b: Line Number: 5
 None
 -Program- /-None
 ********************************************************'
@@ -943,6 +707,11 @@ Syntax error at !: Line Number: 2
 None
 -Program- /-None
 ********************************************************'
+Test File Name: 'ne_true.c'
+Syntax error at -: Line Number: 2
+None
+-Program- /-None
+********************************************************'
 Test File Name: 'neg.c'
 Syntax error at -: Line Number: 2
 None
@@ -998,19 +767,26 @@ Test File Name: 'nested_if.c'
                               \--------|
                                         \-a
 ********************************************************'
-Test File Name: 'nested_ops_2.c'
-Syntax error at -: Line Number: 2
+Test File Name: 'nested_ops.c'
+Syntax error at !: Line Number: 2
 None
 -Program- /-None
 ********************************************************'
-Test File Name: 'nested_ops.c'
-Syntax error at !: Line Number: 2
+Test File Name: 'nested_ops_2.c'
+Syntax error at -: Line Number: 2
 None
 -Program- /-None
 ********************************************************'
 Test File Name: 'nested_scope.c'
 Syntax error at {: Line Number: 4
 Syntax error at b: Line Number: 6
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'nested_ternary.c'
+Illegal character '?'
+Syntax error at 5: Line Number: 6
+Illegal character '?'
 None
 -Program- /-None
 ********************************************************'
@@ -1024,20 +800,8 @@ Illegal character '?'
 None
 -Program- /-None
 ********************************************************'
-Test File Name: 'nested_ternary.c'
-Illegal character '?'
-Syntax error at 5: Line Number: 6
-Illegal character '?'
-None
--Program- /-None
-********************************************************'
 Test File Name: 'nested_while.c'
 Syntax error at b: Line Number: 7
-None
--Program- /-None
-********************************************************'
-Test File Name: 'ne_true.c'
-Syntax error at -: Line Number: 2
 None
 -Program- /-None
 ********************************************************'
@@ -1119,728 +883,6 @@ Test File Name: 'parens.c'
 Syntax error at 3: Line Number: 2
 None
 -Program- /-None
-********************************************************'
-Test File Name: 'precedence_2.c'
-********************************************************'
-Test File Name: 'precedence2.c'
-((None)args,((return,((1,0)||,2)&&))stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                    /-return
-                   |                   |
-                    \stmt---- /--------|                    /-1
-                                       |          /||------|
-                                        \&&------|          \-0
-                                                 |
-                                                  \-2
-********************************************************'
-Test File Name: 'precedence_3.c'
-((None)args,((return,((2,2)==,0)>))stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                    /-return
-                   |                   |
-                    \stmt---- /--------|                    /-2
-                                       |          /==------|
-                                        \>-------|          \-2
-                                                 |
-                                                  \-0
-********************************************************'
-Test File Name: 'precedence3.c'
-********************************************************'
-Test File Name: 'precedence_4.c'
-********************************************************'
-Test File Name: 'precedence.c'
-********************************************************'
-Test File Name: 'refer.c'
-********************************************************'
-Test File Name: 'rename_function_param.c'
-********************************************************'
-Test File Name: 'return_0.c'
-********************************************************'
-Test File Name: 'return_2.c'
-********************************************************'
-Test File Name: 'return_in_while.c'
-********************************************************'
-Test File Name: 'rh_assignment.c'
-********************************************************'
-Test File Name: 'single_arg.c'
-********************************************************'
-Test File Name: 'skip_on_failure_multi_short_circuit.c'
-********************************************************'
-Test File Name: 'skip_on_failure_short_circuit_and.c'
-********************************************************'
-Test File Name: 'skip_on_failure_short_circuit_or.c'
-********************************************************'
-Test File Name: 'spaces.c'
-********************************************************'
-Test File Name: 'sub.c'
-********************************************************'
-Test File Name: 'sub_neg.c'
-Test File Name: 'add.c'
-((None)args,((return,(1,2)+))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-1
-                                        \+-------|
-                                                  \-2
-********************************************************'
-Test File Name: 'and_false.c'
-((None)args,((return,(1,0)&&))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-1
-                                        \&&------|
-                                                  \-0
-********************************************************'
-Test File Name: 'and_true.c'
-Syntax error at -: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'assign.c'
-((None)args,((int,a),((a,2)=),(return,a))stmt)main"int"
-                    /args---- /-None
-                   |
-                   |                    /-int
--Program- /main"int"          /--------|
-                   |         |          \-a
-                   |         |
-                   |         |                    /-a
-                    \stmt----|--------- /=-------|
-                             |                    \-2
-                             |
-                             |          /-return
-                              \--------|
-                                        \-a
-********************************************************'
-Test File Name: 'assign_ternary.c'
-Illegal character '?'
-Syntax error at 2: Line Number: 3
-None
--Program- /-None
-********************************************************'
-Test File Name: 'assign_val.c'
-Syntax error at =: Line Number: 3
-None
--Program- /-None
-********************************************************'
-Test File Name: 'associativity_2.c'
-((None)args,((return,((6,3)/,2)/))stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                    /-return
-                   |                   |
-                    \stmt---- /--------|                    /-6
-                                       |          //-------|
-                                        \/-------|          \-3
-                                                 |
-                                                  \-2
-********************************************************'
-Test File Name: 'associativity.c'
-********************************************************'
-Test File Name: 'bitwise.c'
-Syntax error at !: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'bitwise_zero.c'
-Syntax error at ~: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'break.c'
-********************************************************'
-Test File Name: 'consecutive_blocks.c'
-********************************************************'
-Test File Name: 'consecutive_declarations.c'
-********************************************************'
-Test File Name: 'continue.c'
-********************************************************'
-Test File Name: 'continue_empty_post.c'
-********************************************************'
-Test File Name: 'declare_after_block.c'
-Syntax error at {: Line Number: 3
-Syntax error at }: Line Number: 5
-Syntax error at return: Line Number: 7
-None
--Program- /-None
-********************************************************'
-Test File Name: 'declare_block.c'
-((None)args,(((5,((int,(i,0)=),(return,i))stmt)if)ifstmt)stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                              /-5
-                   |                             |
-                   |                             |                    /-int
-                    \stmt---- /ifstmt-- /if------|          /--------|
-                                                 |         |         |          /-i
-                                                 |         |          \=-------|
-                                                  \stmt----|                    \-0
-                                                           |
-                                                           |          /-return
-                                                            \--------|
-                                                                      \-i
-********************************************************'
-Test File Name: 'declare_late.c'
-Syntax error at {: Line Number: 3
-Syntax error at }: Line Number: 6
-None
--Program- /-None
-********************************************************'
-Test File Name: 'div.c'
-((None)args,((return,(4,2)/))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-4
-                                        \/-------|
-                                                  \-2
-********************************************************'
-Test File Name: 'div_neg.c'
-Syntax error at -: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'do_while.c'
-((None)args,((int,(a,1)=),((((a,(a,2)*)=)stmt,(a,11)<)doWhile),(None),(return,a))stmt)main"int"
-                    /args---- /-None
-                   |
-                   |                    /-int
-                   |          /--------|
-                   |         |         |          /-a
-                   |         |          \=-------|
--Program- /main"int"         |                    \-1
-                   |         |
-                   |         |                                        /-a
-                   |         |                    /stmt---- /=-------|
-                   |         |                   |                   |          /-a
-                   |         |                   |                    \*-------|
-                    \stmt----|--------- /doWhile-|                              \-2
-                             |                   |
-                             |                   |          /-a
-                             |                    \<-------|
-                             |                              \-11
-                             |
-                             |--------- /-None
-                             |
-                             |          /-return
-                              \--------|
-                                        \-a
-********************************************************'
-Test File Name: 'else.c'
-Syntax error at return: Line Number: 4
-None
--Program- /-None
-********************************************************'
-Test File Name: 'empty_expression.c'
-Syntax error at ;: Line Number: 5
-None
--Program- /-None
-********************************************************'
-Test File Name: 'eq_false.c'
-((None)args,((return,(1,2)==))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-1
-                                        \==------|
-                                                  \-2
-********************************************************'
-Test File Name: 'eq_true.c'
-((None)args,((return,(1,1)==))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-1
-                                        \==------|
-                                                  \-1
-********************************************************'
-Test File Name: 'expression_args.c'
-Syntax error at 1: Line Number: 6
-None
--Program- /-None
-********************************************************'
-Test File Name: 'exp_return_val.c'
-Syntax error at =: Line Number: 4
-None
--Program- /-None
-********************************************************'
-Test File Name: 'fib.c'
-Syntax error at -: Line Number: 5
-((None)args,((int,(n,5)=),(return,(fib,(n)args)))stmt)main"int"
-                    /args---- /-None
-                   |
-                   |                    /-int
--Program- /main"int"          /--------|
-                   |         |         |          /-n
-                   |         |          \=-------|
-                    \stmt----|                    \-5
-                             |
-                             |          /-return
-                              \--------|
-                                       |          /-fib
-                                        \--------|
-                                                  \args---- /-n
-********************************************************'
-Test File Name: 'for.c'
-Syntax error at a: Line Number: 5
-None
--Program- /-None
-********************************************************'
-Test File Name: 'for_decl.c'
-********************************************************'
-Test File Name: 'for_empty.c'
-********************************************************'
-Test File Name: 'for_nested_scope.c'
-********************************************************'
-Test File Name: 'for_variable_shadow.c'
-********************************************************'
-Test File Name: 'forward_declaration.c'
-********************************************************'
-Test File Name: 'forward_decl_args.c'
-********************************************************'
-Test File Name: 'forward_decl.c'
-********************************************************'
-Test File Name: 'forward_decl_multi_arg.c'
-********************************************************'
-Test File Name: 'fun_in_expr.c'
-********************************************************'
-Test File Name: 'fun_shadowed_by_variable.c'
-********************************************************'
-Test File Name: 'ge_false.c'
-********************************************************'
-Test File Name: 'ge_true.c'
-********************************************************'
-Test File Name: 'global.c'
-********************************************************'
-Test File Name: 'global_not_initialized.c'
-********************************************************'
-Test File Name: 'global_shadowed.c'
-********************************************************'
-Test File Name: 'gt_false.c'
-********************************************************'
-Test File Name: 'gt_true.c'
-********************************************************'
-Test File Name: 'hello_world.c'
-Syntax error at ;: Line Number: 1
-Syntax error at 72: Line Number: 4
-None
--Program- /-None
-********************************************************'
-Test File Name: 'if_nested_2.c'
-Syntax error at b: Line Number: 5
-None
--Program- /-None
-********************************************************'
-Test File Name: 'if_nested_3.c'
-Syntax error at if: Line Number: 4
-None
--Program- /-None
-********************************************************'
-Test File Name: 'if_nested_4.c'
-Syntax error at if: Line Number: 4
-None
--Program- /-None
-********************************************************'
-Test File Name: 'if_nested_5.c'
-********************************************************'
-Test File Name: 'if_nested.c'
-Syntax error at b: Line Number: 5
-None
--Program- /-None
-********************************************************'
-Test File Name: 'if_not_taken.c'
-Syntax error at b: Line Number: 5
-None
--Program- /-None
-********************************************************'
-Test File Name: 'if_taken.c'
-Syntax error at b: Line Number: 5
-None
--Program- /-None
-********************************************************'
-Test File Name: 'initialize.c'
-((None)args,((int,(a,2)=),(return,0))stmt)main"int"
-                    /args---- /-None
-                   |
-                   |                    /-int
--Program- /main"int"          /--------|
-                   |         |         |          /-a
-                   |         |          \=-------|
-                    \stmt----|                    \-2
-                             |
-                             |          /-return
-                              \--------|
-                                        \-0
-********************************************************'
-Test File Name: 'later_decl.c'
-Syntax error at 4: Line Number: 6
-Syntax error at ;: Line Number: 9
-None
--Program- /-None
-********************************************************'
-Test File Name: 'le_false.c'
-Syntax error at -: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'le_true.c'
-((None)args,((return,(0,2)<=))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-0
-                                        \<=------|
-                                                  \-2
-********************************************************'
-Test File Name: 'lt_false.c'
-((None)args,((return,(2,1)<))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-2
-                                        \<-------|
-                                                  \-1
-********************************************************'
-Test File Name: 'lt_true.c'
-((None)args,((return,(1,2)<))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-1
-                                        \<-------|
-                                                  \-2
-********************************************************'
-Test File Name: 'missing_return.c'
-((None)args,(None)stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                    \stmt---- /-None
-********************************************************'
-Test File Name: 'mult.c'
-((None)args,((return,(2,3)*))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-2
-                                        \*-------|
-                                                  \-3
-********************************************************'
-Test File Name: 'multi_arg.c'
-Syntax error at 10: Line Number: 6
-None
--Program- /-None
-********************************************************'
-Test File Name: 'multi_digit.c'
-((None)args,((return,100))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                        \-100
-********************************************************'
-Test File Name: 'multi_nesting.c'
-Syntax error at {: Line Number: 4
-Syntax error at return: Line Number: 6
-None
--Program- /-None
-********************************************************'
-Test File Name: 'multiple_global.c'
-int,(a,3)=,(int,(b,4)=),(((None)args,((return,(a,b)*))stmt)main"int")
-          /-int
-         |
-         |          /-a
-         |-=-------|
-         |          \-3
-         |
--Program-|          /-int
-         |---------|
-         |         |          /-b
-         |          \=-------|
-         |                    \-4
-         |
-         |                    /args---- /-None
-          \-------- /main"int"
-                             |                    /-return
-                              \stmt---- /--------|
-                                                 |          /-a
-                                                  \*-------|
-                                                            \-b
-********************************************************'
-Test File Name: 'multiple_if.c'
-Syntax error at a: Line Number: 6
-None
--Program- /-None
-********************************************************'
-Test File Name: 'multiple_ternary.c'
-Illegal character '?'
-Syntax error at 3: Line Number: 2
-Illegal character '?'
-Syntax error at 5: Line Number: 3
-None
--Program- /-None
-********************************************************'
-Test File Name: 'multiple_vars.c'
-((None)args,((int,(a,1)=),(int,(b,2)=),(return,(a,b)+))stmt)main"int"
-                    /args---- /-None
-                   |
-                   |                    /-int
-                   |          /--------|
--Program- /main"int"         |         |          /-a
-                   |         |          \=-------|
-                   |         |                    \-1
-                   |         |
-                   |         |          /-int
-                    \stmt----|---------|
-                             |         |          /-b
-                             |          \=-------|
-                             |                    \-2
-                             |
-                             |          /-return
-                              \--------|
-                                       |          /-a
-                                        \+-------|
-                                                  \-b
-********************************************************'
-Test File Name: 'mutual_recursion.c'
-Syntax error at ;: Line Number: 1
-Syntax error at ;: Line Number: 2
-Syntax error at 5: Line Number: 5
-Syntax error at (: Line Number: 13
-Syntax error at (: Line Number: 21
-None
--Program- /-None
-********************************************************'
-Test File Name: 'ne_false.c'
-Syntax error at !: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'neg.c'
-Syntax error at -: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'nested_break.c'
-Syntax error at for: Line Number: 4
-Syntax error at j: Line Number: 4
-None
--Program- /-None
-********************************************************'
-Test File Name: 'nested_if.c'
-((None)args,((int,(a,0)=),(((a,((int,(b,2)=),(return,b))stmt)if,(((int,(c,3)=),(((a,c)<,((return,4))stmt)if,(((return,5))stmt)else)ifstmt)stmt)else)ifstmt),(return,a))stmt)main"int"
-                    /args---- /-None
-                   |
-                   |                    /-int
-                   |          /--------|
-                   |         |         |          /-a
-                   |         |          \=-------|
-                   |         |                    \-0
-                   |         |
-                   |         |                              /-a
-                   |         |                             |
--Program- /main"int"         |                             |                    /-int
-                   |         |                    /if------|          /--------|
-                   |         |                   |         |         |         |          /-b
-                   |         |                   |         |         |          \=-------|
-                   |         |                   |          \stmt----|                    \-2
-                   |         |                   |                   |
-                   |         |                   |                   |          /-return
-                   |         |                   |                    \--------|
-                   |         |--------- /ifstmt--|                              \-b
-                   |         |                   |
-                   |         |                   |                              /-int
-                    \stmt----|                   |                    /--------|
-                             |                   |                   |         |          /-c
-                             |                   |                   |          \=-------|
-                             |                   |                   |                    \-3
-                             |                   |                   |
-                             |                    \else---- /stmt----|                              /-a
-                             |                                       |                    /<-------|
-                             |                                       |                   |          \-c
-                             |                                       |          /if------|
-                             |                                       |         |         |                    /-return
-                             |                                       |         |          \stmt---- /--------|
-                             |                                        \ifstmt--|                              \-4
-                             |                                                 |
-                             |                                                 |                              /-return
-                             |                                                  \else---- /stmt---- /--------|
-                             |                                                                                \-5
-                             |
-                             |          /-return
-                              \--------|
-                                        \-a
-********************************************************'
-Test File Name: 'nested_ops_2.c'
-Syntax error at -: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'nested_ops.c'
-Syntax error at !: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'nested_scope.c'
-Syntax error at {: Line Number: 4
-Syntax error at b: Line Number: 6
-None
--Program- /-None
-********************************************************'
-Test File Name: 'nested_ternary_2.c'
-Illegal character '?'
-Syntax error at 2: Line Number: 2
-Illegal character '?'
-Illegal character '?'
-Syntax error at 2: Line Number: 3
-Illegal character '?'
-None
--Program- /-None
-********************************************************'
-Test File Name: 'nested_ternary.c'
-Illegal character '?'
-Syntax error at 5: Line Number: 6
-Illegal character '?'
-None
--Program- /-None
-********************************************************'
-Test File Name: 'nested_while.c'
-Syntax error at b: Line Number: 7
-None
--Program- /-None
-********************************************************'
-Test File Name: 'ne_true.c'
-Syntax error at -: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'newlines.c'
-((None)args,((return,0))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                        \-0
-********************************************************'
-Test File Name: 'no_arg.c'
-((None)args,((return,3))stmt)three"int",(((None)args,((return,(three,(None)args)))stmt)main"int")
-                    /args---- /-None
-          /three"int"
-         |         |                    /-return
-         |          \stmt---- /--------|
--Program-|                              \-3
-         |
-         |                    /args---- /-None
-          \-------- /main"int"
-                             |                    /-return
-                              \stmt---- /--------|
-                                                 |          /-three
-                                                  \--------|
-                                                            \args---- /-None
-********************************************************'
-Test File Name: 'no_initialize.c'
-((None)args,((int,a),(return,0))stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                    /-int
-                   |          /--------|
-                   |         |          \-a
-                    \stmt----|
-                             |          /-return
-                              \--------|
-                                        \-0
-********************************************************'
-Test File Name: 'no_newlines.c'
-((None)args,((return,0))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                        \-0
-********************************************************'
-Test File Name: 'not_five.c'
-Syntax error at !: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'not_zero.c'
-Syntax error at !: Line Number: 2
-None
--Program- /-None
-********************************************************'
-Test File Name: 'or_false.c'
-((None)args,((return,(0,0)||))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-0
-                                        \||------|
-                                                  \-0
-********************************************************'
-Test File Name: 'or_true.c'
-((None)args,((return,(1,0)||))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-1
-                                        \||------|
-                                                  \-0
-********************************************************'
-Test File Name: 'parens.c'
-********************************************************'
-Test File Name: 'precedence_2.c'
-********************************************************'
-Test File Name: 'precedence2.c'
-((None)args,((return,((1,0)||,2)&&))stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                    /-return
-                   |                   |
-                    \stmt---- /--------|                    /-1
-                                       |          /||------|
-                                        \&&------|          \-0
-                                                 |
-                                                  \-2
-********************************************************'
-Test File Name: 'precedence_3.c'
-((None)args,((return,((2,2)==,0)>))stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                    /-return
-                   |                   |
-                    \stmt---- /--------|                    /-2
-                                       |          /==------|
-                                        \>-------|          \-2
-                                                 |
-                                                  \-0
-********************************************************'
-Test File Name: 'precedence3.c'
-********************************************************'
-Test File Name: 'precedence_4.c'
-((None)args,((return,((2,2)==,0)||))stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                    /-return
-                   |                   |
-                    \stmt---- /--------|                    /-2
-                                       |          /==------|
-                                        \||------|          \-2
-                                                 |
-                                                  \-0
 ********************************************************'
 Test File Name: 'precedence.c'
 ((None)args,((return,(2,(3,4)*)+))stmt)main"int"
@@ -1853,6 +895,52 @@ Test File Name: 'precedence.c'
                                                  |          /-3
                                                   \*-------|
                                                             \-4
+********************************************************'
+Test File Name: 'precedence2.c'
+((None)args,((return,((1,0)||,2)&&))stmt)main"int"
+                    /args---- /-None
+                   |
+-Program- /main"int"                    /-return
+                   |                   |
+                    \stmt---- /--------|                    /-1
+                                       |          /||------|
+                                        \&&------|          \-0
+                                                 |
+                                                  \-2
+********************************************************'
+Test File Name: 'precedence3.c'
+Syntax error at !: Line Number: 6
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'precedence_2.c'
+Syntax error at 1: Line Number: 2
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'precedence_3.c'
+((None)args,((return,((2,2)==,0)>))stmt)main"int"
+                    /args---- /-None
+                   |
+-Program- /main"int"                    /-return
+                   |                   |
+                    \stmt---- /--------|                    /-2
+                                       |          /==------|
+                                        \>-------|          \-2
+                                                 |
+                                                  \-0
+********************************************************'
+Test File Name: 'precedence_4.c'
+((None)args,((return,((2,2)==,0)||))stmt)main"int"
+                    /args---- /-None
+                   |
+-Program- /main"int"                    /-return
+                   |                   |
+                    \stmt---- /--------|                    /-2
+                                       |          /==------|
+                                        \||------|          \-2
+                                                 |
+                                                  \-0
 ********************************************************'
 Test File Name: 'refer.c'
 ((None)args,((int,(a,2)=),(return,a))stmt)main"int"
@@ -1907,84 +995,160 @@ Test File Name: 'return_in_while.c'
                                        |                    /-return
                                         \stmt---- /--------|
                                                             \-2
-Test File Name: 'add.c'
-((None)args,((return,(1,2)+))stmt)main"int"
+********************************************************'
+Test File Name: 'rh_assignment.c'
+Illegal character '?'
+Syntax error at a: Line Number: 4
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'single_arg.c'
+Syntax error at 3: Line Number: 6
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'skip_on_failure_multi_short_circuit.c'
+Syntax error at (: Line Number: 3
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'skip_on_failure_short_circuit_and.c'
+Syntax error at (: Line Number: 4
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'skip_on_failure_short_circuit_or.c'
+Syntax error at (: Line Number: 4
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'spaces.c'
+((None)args,((return,0))stmt)main"int"
+                    /args---- /-None
+-Program- /main"int"
+                   |                    /-return
+                    \stmt---- /--------|
+                                        \-0
+********************************************************'
+Test File Name: 'sub.c'
+((None)args,((return,(1,2)-))stmt)main"int"
                     /args---- /-None
 -Program- /main"int"
                    |                    /-return
                     \stmt---- /--------|
                                        |          /-1
-                                        \+-------|
+                                        \--------|
                                                   \-2
 ********************************************************'
-Test File Name: 'and_false.c'
-((None)args,((return,(1,0)&&))stmt)main"int"
-                    /args---- /-None
--Program- /main"int"
-                   |                    /-return
-                    \stmt---- /--------|
-                                       |          /-1
-                                        \&&------|
-                                                  \-0
-********************************************************'
-Test File Name: 'and_true.c'
+Test File Name: 'sub_neg.c'
 Syntax error at -: Line Number: 2
 None
 -Program- /-None
 ********************************************************'
-Test File Name: 'assign.c'
-((None)args,((int,a),((a,2)=),(return,a))stmt)main"int"
+Test File Name: 'ternary.c'
+Syntax error at -: Line Number: 3
+Illegal character '?'
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'ternary_short_circuit.c'
+Illegal character '?'
+Syntax error at =: Line Number: 4
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'ternary_short_circuit_2.c'
+Illegal character '?'
+Syntax error at =: Line Number: 4
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'unop_add.c'
+Syntax error at ~: Line Number: 2
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'unop_parens.c'
+Syntax error at ~: Line Number: 2
+None
+-Program- /-None
+********************************************************'
+Test File Name: 'unused_exp.c'
+((None)args,(((2,2)+),(return,0))stmt)main"int"
+                    /args---- /-None
+                   |
+-Program- /main"int"                              /-2
+                   |          /-------- /+-------|
+                   |         |                    \-2
+                    \stmt----|
+                             |          /-return
+                              \--------|
+                                        \-0
+********************************************************'
+Test File Name: 'variable_as_arg.c'
+(((int,x))args,((return,(x,1)+))stmt)foo"int",(((None)args,((int,(a,1)=),(return,(foo,(a)args)))stmt)main"int")
+                                        /-int
+                    /args---- /--------|
+                   |                    \-x
+          /foo"int"|
+         |         |                    /-return
+         |          \stmt---- /--------|
+         |                             |          /-x
+         |                              \+-------|
+-Program-|                                        \-1
+         |
+         |                    /args---- /-None
+         |                   |
+         |                   |                    /-int
+          \-------- /main"int"          /--------|
+                             |         |         |          /-a
+                             |         |          \=-------|
+                              \stmt----|                    \-1
+                                       |
+                                       |          /-return
+                                        \--------|
+                                                 |          /-foo
+                                                  \--------|
+                                                            \args---- /-a
+********************************************************'
+Test File Name: 'while_multi_statement.c'
+((None)args,((int,(a,0)=),(int,(b,1)=),(((a,5)<,(((a,(a,2)+)=),(b,(b,a)*)=)stmt)while),(return,a))stmt)main"int"
                     /args---- /-None
                    |
                    |                    /-int
--Program- /main"int"          /--------|
-                   |         |          \-a
+                   |          /--------|
+                   |         |         |          /-a
+                   |         |          \=-------|
+                   |         |                    \-0
                    |         |
-                   |         |                    /-a
-                    \stmt----|--------- /=-------|
-                             |                    \-2
+-Program- /main"int"         |          /-int
+                   |         |---------|
+                   |         |         |          /-b
+                   |         |          \=-------|
+                   |         |                    \-1
+                   |         |
+                   |         |                              /-a
+                   |         |                    /<-------|
+                   |         |                   |          \-5
+                    \stmt----|                   |
+                             |--------- /while---|                              /-a
+                             |                   |          /-------- /=-------|
+                             |                   |         |                   |          /-a
+                             |                   |         |                    \+-------|
+                             |                    \stmt----|                              \-2
+                             |                             |
+                             |                             |          /-b
+                             |                              \=-------|
+                             |                                       |          /-b
+                             |                                        \*-------|
+                             |                                                  \-a
                              |
                              |          /-return
                               \--------|
                                         \-a
 ********************************************************'
-Test File Name: 'assign_ternary.c'
-Illegal character '?'
-Syntax error at 2: Line Number: 3
-None
--Program- /-None
-********************************************************'
-Test File Name: 'assign_val.c'
-Syntax error at =: Line Number: 3
-None
--Program- /-None
-********************************************************'
-Test File Name: 'associativity_2.c'
-((None)args,((return,((6,3)/,2)/))stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                    /-return
-                   |                   |
-                    \stmt---- /--------|                    /-6
-                                       |          //-------|
-                                        \/-------|          \-3
-                                                 |
-                                                  \-2
-********************************************************'
-Test File Name: 'associativity.c'
-((None)args,((return,((1,2)-,3)-))stmt)main"int"
-                    /args---- /-None
-                   |
--Program- /main"int"                    /-return
-                   |                   |
-                    \stmt---- /--------|                    /-1
-                                       |          /--------|
-                                        \--------|          \-2
-                                                 |
-                                                  \-3
-********************************************************'
-Test File Name: 'bitwise.c'
-Syntax error at !: Line Number: 2
+Test File Name: 'while_single_statement.c'
+Syntax error at a: Line Number: 5
 None
 -Program- /-None
 ********************************************************'

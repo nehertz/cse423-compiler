@@ -6,7 +6,7 @@
 ### Yash Shah
 ### Andy Xiang
 
-# Overview -
+# Overview
 This goal of this project is to create a compiler for a subset of the C programming language, which will translate that subset of C into assembly language. The project will be written in Python.
 
 # Existing Solution
@@ -15,17 +15,52 @@ This goal of this project is to create a compiler for a subset of the C programm
 3. Parse tokenized input using yacc (PLY Project)
 4. Convert parsed input into parse tree format using skbio
 
-### Working features
-- TODO: after testing which features exactly work and which don't, add them here
+## Working Features
+KEY | | |
+--- | --- | ---
+[--] Not implemented | [X] Implemented | [/] Partially implemented
+
+**Required:**
+- [X] Identifiers
+- [X] Variables
+- [X] Functions
+- [X] Keywords
+- [X] Arithmetic expressions
+- [X] Assignment
+- [X] Boolean expressions
+- [X] Goto statements
+- [X] If/else control flow: One-line loops/conditionals aren't currently supported
+- [X] Unary operators (unary minus (`-`), NOT (`!`), `sizeof()`)
+- [X] Return statements
+- [/] Break statements: Break can currently be placed outside of loops and switches
+- [X] While/do-while loops: One-line loops/conditionals aren't currently supported
+
+**Optional:**
+- [X] Floats
+- [X] Characters
+- [X] ++/--/-=/+=/*=//=
+- [X] For loops: One-line loops/conditionals aren't currently supported
+- [X] Binary operators
+- [X] Switch statements
+
+**Not expected, but may be attempted:**
+- [--] Pointers
+- [--] Arrays
+- [/] Strings: Strings are being scanned but are not parsed due to our lack of pointer support
+- [/] Preprocessor statements: Only currently support `#include <file.h>` and `#include "file.h"`
+- [/] Struct/union: Structs/unions can be defined but accessing elements of a struct/union is not supported
+- [ ] Enum
+- [ ] Casting/type promotion
+- [X] Type specs
 
 # Design Discussion
 - Command line user input (in main):
-    - [x] Using getopt to collect command-line options (check number of arguments and assign flag by or-ing with bit representation of option)
-    - [x] Take filename from command line input (not an option)
-    - [x] Default option outputs tokens and labels
-    - [x] Read from file
-    - [x] Assign file contents to string
-    - [x] Use conditional statements to determine option(s) selected
+    - Using getopt to collect command-line options (check number of arguments and assign flag by or-ing with bit representation of option)
+    - Take filename from command line input (not an option)
+    - Default option outputs tokens and labels
+    - Read from file
+    - Assign file contents to string
+    - Use conditional statements to determine option(s) selected
 
 - Scanner(string input):
     - Implemented using lex from the PLY Project
@@ -45,3 +80,6 @@ This goal of this project is to create a compiler for a subset of the C programm
         - The error function is called whenever the parser runs into input that is not handled by a grammar rule; returns the value and line number of the token that threw the error
     - parser() calls the appropriate PLY functions that parse the output based on the defined grammar rules and returns
     - The output is formatted into an AST using skbio
+
+# Known Errors
+- Our grammar will throw shift/reduce conflict warnings occasionally; we are working on fixing them

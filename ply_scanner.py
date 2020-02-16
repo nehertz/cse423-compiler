@@ -4,23 +4,14 @@ import ply.lex as lex
 keywords = ['else', 'register','do','goto','continue','if','sizeof','switch', 'for', 'case','while','break','default','return', 'typedef', 'define', 'include']
 type_specifier = ['auto', 'union', 'short', 'double','long', 'unsigned','int','char','static','volatile','struct','extern','signed','const','enum','void','float']
 operators = {
-    # Arithmetic operators 
-    '+' : 'PLUS',
-    '-' : 'MINUS',
-    '*' : 'TIMES',
-    '/' : 'DIVIDE',
-    '%' : 'MODULO',
-    
     # Logical operators
     '||' : 'LOR',
     '&&' : 'LAND',
-    '!' : 'LNOT',
 
     # Bitwise operators
-    '|' : 'OR',
-    '&' : 'AND',
-    '~' : 'NOT',
-    '^' : 'XOR',
+    '<<=' : 'LSHIFTEQUAL',
+    '>>=' : 'RSHIFTEQUAL',
+
     '<<' : 'LSHIFT',
     '>>' : 'RSHIFT',
     
@@ -31,6 +22,8 @@ operators = {
     '>=' : 'GE',
     '==' : 'EQ',
     '!=' : 'NE',
+    '!' : 'LNOT',
+
 
     # Assignment operators
     '=' : 'EQUALS',
@@ -39,8 +32,8 @@ operators = {
     '%=' : 'MODEQUAL',
     '+=' : 'PLUSEQUAL',
     '-=' : 'MINUSEQUAL',
-    '<<=' : 'LSHIFTEQUAL',
-    '>>=' : 'RSHIFTEQUAL',
+   
+   
     '&=' : 'ANDEQUAL',
     '|=' : 'OREQUAL',
     '^=' : 'XOREQUAL',
@@ -69,14 +62,23 @@ operators = {
     '>' : 'RANGLE',
     '...' : 'ELLIPSIS',
 
+    # Arithmetic operators 
+    '+' : 'PLUS',
+    '-' : 'MINUS',
+    '*' : 'TIMES',
+    '/' : 'DIVIDE',
+    '%' : 'MODULO',
+
     # Boolean
     'TRUE' : 'TRUE',
     'FALSE' : 'FALSE',
 
-    # sizeof operator
+    '|' : 'OR',
+    '&' : 'AND',
+    '~' : 'NOT',
+    '^' : 'XOR',
 }
 
-# List of token names. Copy from TokenName.py 
 tokens = ['STRING','CHARACTER','ID', 'NUMCONST', 'PREPROC'] + [keyword.upper() for keyword in keywords] + [t.upper() for t in type_specifier] + list(operators.values())
 
 # Ignore whitespace and tabs
@@ -87,16 +89,18 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-# Line Comments
+# Skip Line Comments
 def t_comments(t):
     r'\/\/(.)*'
     pass
 
-# Block comments
+# Skip Block comments
 def t_blockComments(t):
     r'(\/\*)[\s\S]*(\*\/)'
+    # TODO: newlines inside of block comments will mess with following line numbers
     pass
 
+# Preprocessors
 def t_preproc(t):
     r'\#include<[a-zA-Z]+\.\w>|\#include\"[a-zA-Z]+\.\w\"'
     t.type = 'PREPROC'
@@ -158,18 +162,6 @@ def t_number(t):
     t.type = 'NUMCONST'
     return t
 
-# Logic Operator
-def t_logicOps(t):
-    r"(\|\|)|(&&)|(\!)"
-    t.type = operators.get(t.value)
-    return t
-
-# BitwiseOperator
-def t_bitOps(t):
-    r"(<<)|(>>)|(&)|(\|)|(\^)|(~)"
-    t.type = operators.get(t.value)
-    return t
-
 # ComparisonOperator
 def t_compOps(t):
     r"(==)|(\!=)|(>=)|(<=)"
@@ -179,6 +171,18 @@ def t_compOps(t):
 # AssignmentOperator
 def t_assignOps(t):
     r"(=)|(\+=)|(-=)|(\*=)|(/=)|(%=)|(<<=)|(>>=)|(&=)|(\^=)|(\|=)"   
+    t.type = operators.get(t.value)
+    return t
+    
+# Logic Operator
+def t_logicOps(t):
+    r"(\|\|)|(&&)|(\!)"
+    t.type = operators.get(t.value)
+    return t
+
+# BitwiseOperator
+def t_bitOps(t):
+    r"(<<)|(>>)|(&)|(\|)|(\^)|(~)"
     t.type = operators.get(t.value)
     return t
 
@@ -205,6 +209,8 @@ def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
+# Build the lexer and input the file string into lexer
+# parameters: fileString, string of C source file 
 def tokenizer(fileString):
     lexer = lex.lex()
     lexer.input(fileString)

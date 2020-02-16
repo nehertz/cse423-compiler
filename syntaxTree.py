@@ -1,19 +1,35 @@
+# Change the int-a to "int a"
+
 def astConstruct(p, type):
-    if(type == 'program' or type == 'declaration' or type == 'statement' or type == 'operand' or type == 'expr' or type == 'breakStmt'):
+    if(type == 'program' or type == 'declaration' or type == 'statement' or type == 'expr' or type == 'breakStmt'):
         p[0] = p[1]
+    elif (type == 'operand'):
+        if(len(p) == 2):
+            p[0] = p[1]
+        elif (len(p) == 3):
+            p[0] = '"' + str(p[1]) + str(p[2]) + '"'
+        else:
+            p[0] = p[2]
 
     elif(type == 'declarationList'):
         if(len(p) == 2):
             p[0] = p[1]
         else:
-            p[0] =  p[1]  +  ',' + '(' + p[2] + ')'
+            p[0] = p[1]  +  ',' + '(' + p[2] + ')'
+
     elif (type == 'enumDeclaration'):
         if (len(p) == 2):
             p[0] = p[1]
         elif (len(p) == 7):
-            p[0] = str(p[4]) + '(' + str(p[4]) + ')'
+            p[0] = str(p[1]) + str(p[4])
+        elif (len(p) == 6):
+            p[0] = str(p[1]) + str(p[3])
+        elif (len(p) == 4):
+            p[0] = str(p[1]) + ' ' + str(p[2])
         else: 
             pass
+
+
     elif (type == 'enumArgs'):
         if (len(p) == 2):
             p[0] = p[1]
@@ -21,6 +37,15 @@ def astConstruct(p, type):
             p[0] = str(p[1]) + ' , ' + str(p[3])
         else: 
             pass
+
+    elif (type == 'enumIDList'):
+        if (len(p) == 2):
+            p[0] = p[1]
+        elif (len(p) == 4):
+            p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
+        else: 
+            pass
+
 
     elif(type == 'funcList'):
         typeSpecID = str(p[2] + '"' + p[1] + '"')
@@ -30,6 +55,12 @@ def astConstruct(p, type):
 
     elif(type == 'args'):
         p[0] = '(' + str(p[1]) + ')' + 'args'
+
+    elif(type == 'operandList'):
+        if (len(p) == 2):
+            p[0] = p[1]
+        else:
+            p[0] = str(p[1]) + ',' + str(p[3])
 
     elif(type == 'idList'):
         if (len(p) == 2):
@@ -173,13 +204,13 @@ def astConstruct(p, type):
         if (len(p) == 2):
             p[0] = p[1]
         else: 
-            p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
+            p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + '"'+ str(p[2]) + '"'
         
     elif(type == 'multiplicativeExpr'):
         if (len(p) == 2):
             p[0] = p[1]
         elif (len(p) == 4):
-            p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
+            p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + '"'+ str(p[2]) + '"'
         else: 
             pass 
 
@@ -192,16 +223,25 @@ def astConstruct(p, type):
     elif(type == 'unaryExpr'):
         if (len(p) == 2):
             p[0] = p[1]
+        elif (p[2] == '++' or p[2] == '--'):
+            p[0] = '"' + p[1] + p[2] + '"'
+        elif (p[1] == '!' or p[1] == '~'):
+            p[0] = '"' + p[1] + p[2] + '"'
         elif (len(p) == 3):
-            p[0] = '(' + str(p[1]) + ')' + str(p[2])
+            p[0] = '(' + '"' + str(p[1]) + '"' + ')' + str(p[2])
+            
+        elif (len(p) == 5):
+            p[0] = '(' + str(p[1])  + '"' + str(p[3]) + '"' + ')'
         else:
             p[0] = str(p[3])
 
     elif(type == 'postfixExpr'):
         if (len(p) == 2):
             p[0] = p[1]
+        elif (p[1] == '++' or p[1] == '--'):
+            p[0] = '"' + p[1] + p[2] + '"'
         elif (len(p) == 3):
-            p[0] = '(' + str(p[1]) + ')' + str(p[2])
+            p[0] = '('  + '"' + str(p[1]) + '"' + ')' +  str(p[2])
         elif (len(p) == 4):
             p[0] = '(' + str(p[1]) + ',' + str(p[3] )+ ')' + str(p[2])
         elif (len(p) == 5):
