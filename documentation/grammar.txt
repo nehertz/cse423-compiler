@@ -34,19 +34,24 @@ typeSpecPostfix : INT | CHAR | SHORT | LONG | FLOAT | DOUBLE | UNSIGNED INT | SI
 statementList   : empty | statement SEMI statementList 
                 | whileLoop statementList | switch statementList
                 | ifStmt statementList | forLoop statementList
-statement       : returnStmt | varDecl | varAssign | gotoStmt | breakStmt
+statement       : returnStmt | varDecl | varAssign | gotoStmt
                 | expr | empty | doWhile
-whileLoop       : WHILE LPAREN conditionals RPAREN scope
+whileLoop       : WHILE LPAREN conditionals RPAREN loopScope
+loopScope       : LBRACE loopStatementList RBRACE 
+loopStatementList: breakStmt SEMI loopStatementList
+                | continueStmt SEMI loopStatementList
+                | statementList
+
 ifStmt          : IF LPAREN conditionals RPAREN scope
                 | IF LPAREN conditionals RPAREN scope elseIfList
 elseIfList      : ELSE IF LPAREN conditionals RPAREN scope elseIfList
                 | ELSE IF LPAREN conditionals RPAREN scope
                 | ELSE scope  
 doWhile         : DO scope WHILE LPAREN conditionals RPAREN
-forLoop         : FOR LPAREN empty SEMI compOps SEMI empty RPAREN scope
-                | FOR LPAREN init SEMI compOps SEMI empty RPAREN scope
-                | FOR LPAREN empty SEMI compOps SEMI increase RPAREN scope
-                | FOR LPAREN init SEMI compOps SEMI increase RPAREN scope
+forLoop         : FOR LPAREN empty SEMI compOps SEMI empty RPAREN loopScope
+                | FOR LPAREN init SEMI compOps SEMI empty RPAREN loopScope
+                | FOR LPAREN empty SEMI compOps SEMI increase RPAREN loopScope
+                | FOR LPAREN init SEMI compOps SEMI increase RPAREN loopScope
 init            : typeSpec varAssign | varAssign
 increase        : varAssign | INCREMENT ID | DECREMENT ID | ID INCREMENT | ID DECREMENT 
 switch          : SWITCH LPAREN expr RPAREN switchscope 
@@ -59,6 +64,7 @@ caseList        : CASE operand COLON statementList caseList
 returnStmt      : RETURN expr | RETURN varAssign
 gotoStmt        : GOTO ID 
 breakStmt       : BREAK
+continueStmt    : CONTINUE
 funcCall        : ID LPAREN args RPAREN
 
 
