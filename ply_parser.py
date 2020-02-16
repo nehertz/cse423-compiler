@@ -111,8 +111,25 @@ def p_scope(p):
     '''
     return astConstruct(p, 'scope')
 
+def p_loopScope(p):
+    '''
+    loopScope : LBRACE loopStatementList RBRACE
+    '''
+    return astConstruct(p, 'loopScope')
 
+def p_loopStatementList(p):
+    '''
+    loopStatementList    : breakStmt SEMI loopStatementList
+                        | continueStmt SEMI loopStatementList
+                        | statementList
+    '''
+    return astConstruct(p, 'loopStatementList')
 
+def p_continueStmt(p):
+    '''
+    continueStmt    :  CONTINUE
+    '''
+    return astConstruct(p, 'continueStmt')
 # variable Declaration 
 def p_varDeclList(p):
     '''
@@ -221,7 +238,6 @@ def p_statement(p):
               | varDecl
               | varAssign
               | gotoStmt
-              | breakStmt
               | expr
               | empty
               | doWhile
@@ -232,7 +248,7 @@ def p_statement(p):
 # separate scope needs to be defined
 def p_whileLoop(p):
     '''
-    whileLoop : WHILE LPAREN conditionals RPAREN scope
+    whileLoop : WHILE LPAREN conditionals RPAREN loopScope
     '''
     return astConstruct(p, 'whileLoop')
 
@@ -259,10 +275,10 @@ def p_doWhile(p):
 
 def p_forLoop(p):
     '''
-    forLoop : FOR LPAREN empty SEMI compOps SEMI empty RPAREN scope
-            | FOR LPAREN init SEMI compOps SEMI empty RPAREN scope
-            | FOR LPAREN empty SEMI compOps SEMI increase RPAREN scope
-            | FOR LPAREN init SEMI compOps SEMI increase RPAREN scope
+    forLoop : FOR LPAREN empty SEMI compOps SEMI empty RPAREN loopScope
+            | FOR LPAREN init SEMI compOps SEMI empty RPAREN loopScope
+            | FOR LPAREN empty SEMI compOps SEMI increase RPAREN loopScope
+            | FOR LPAREN init SEMI compOps SEMI increase RPAREN loopScope
     '''
     return astConstruct(p, 'forLoop')
 

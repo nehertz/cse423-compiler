@@ -1,7 +1,7 @@
 # Change the int-a to "int a"
 
 def astConstruct(p, type):
-    if(type == 'program' or type == 'declaration' or type == 'statement' or type == 'expr' or type == 'breakStmt'):
+    if(type == 'program' or type == 'declaration' or type == 'statement' or type == 'expr' or type == 'breakStmt' or type == 'continueStmt'):
         p[0] = p[1]
     elif (type == 'operand'):
         if(len(p) == 2):
@@ -257,9 +257,19 @@ def astConstruct(p, type):
 
     elif(type == 'conditionals'):
         if (len(p) == 2):
-            p[0] = p[1]
+            p[0] = str(p[1])
         elif (len(p) == 4):
-            p[0] = p[2]
+            p[0] = str(p[2])
+
+    elif (type== 'loopScope'):
+        p[0] = str(p[2])
+    
+    elif (type == 'loopStatementList'):
+        if (len(p) == 4):
+            p[0] = str(p[1]) + ',' + str(p[3])
+        else:
+            p[0] = str(p[1])
+        
 
     else :
         print("Ops, {0} is missing".format(type))
