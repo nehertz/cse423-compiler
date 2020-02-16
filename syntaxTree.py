@@ -1,8 +1,16 @@
-# Change the int-a to "int a"
+# The astConstruct function recieves argument p, and constructs the AST
+# p is a sequence containing the values of each grammar symbol in the corresponding rule. 
+# we can direcly use p[i] to retrieve the corresponding grammar symbol's value 
+# Accoding to the different token types, we can construct the ast and output the 
+# Tree structure in newick format. 
+# The values of p[i] are mapped to grammar symbols as shown here:
+# program : declarationList
+#   p[0]  =     p[1]
 
 def astConstruct(p, type):
     if(type == 'program' or type == 'declaration' or type == 'statement' or type == 'expr' or type == 'breakStmt' or type == 'continueStmt'):
         p[0] = p[1]
+
     elif (type == 'operand'):
         if(len(p) == 2):
             p[0] = p[1]
@@ -32,7 +40,6 @@ def astConstruct(p, type):
         else: 
             pass
 
-
     elif (type == 'enumArgs'):
         if (len(p) == 2):
             p[0] = p[1]
@@ -48,7 +55,6 @@ def astConstruct(p, type):
             p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
         else: 
             pass
-
 
     elif(type == 'funcList'):
         typeSpecID = str(p[2] + '"' + p[1] + '"')
@@ -232,7 +238,6 @@ def astConstruct(p, type):
             p[0] = '"' + p[1] + p[2] + '"'
         elif (len(p) == 3):
             p[0] = '(' + '"' + str(p[1]) + '"' + ')' + str(p[2])
-            
         elif (len(p) == 5):
             p[0] = '(' + str(p[1])  + '"' + str(p[3]) + '"' + ')'
         else:
@@ -269,8 +274,7 @@ def astConstruct(p, type):
             p[0] = str(p[1]) + ',' + str(p[3])
         else:
             p[0] = str(p[1])
-        
 
     else :
-        print("Ops, {0} is missing".format(type))
+        print("AST error, {0} is missing".format(type))
     return p

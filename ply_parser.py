@@ -4,14 +4,25 @@ from skbio import read
 from skbio.tree import TreeNode
 from syntaxTree import astConstruct
 
+# Each grammar rule is defined by a Python function 
+# where the docstring to that function contains the 
+# appropriate context-free grammar specification. 
+# The statements that make up the function body implement 
+# the semantic actions of the rule. 
+# Each function accepts a single argument p 
+# that is a sequence containing the values of each 
+# grammar symbol in the corresponding rule. 
+
+# Specify the entry of the program
 start = 'program'
 
 def p_empty(p):
     'empty :'
     pass
 
-# Start of the program
-# Handles preprocessor, Global variable, and functions 
+# Grammar that defines start of the program 
+# the declaration list contains preprocessor, Global variable, enum and functions declartions 
+# The function passes argument p to AST construnction function. 
 def p_program(p):
     '''
     program : declarationList
@@ -63,14 +74,15 @@ def p_enumIDList(p):
     return astConstruct(p, 'enumIDList')
 
 
-# Function Declaration  
+# Grammar that defines function declaration 
+# the function should have type specifer, identifer, arguments
+# scope represents everything that can exist in a function's scope 
 def p_funcDeclaration(p):
     '''
     funcList : typeSpec ID LPAREN args RPAREN scope
     '''
     return astConstruct(p, 'funcList')
 
-# TODO: Create operandList rule and add it here
 def p_args(p):
     '''
     args : typeSpecList
@@ -98,13 +110,6 @@ def p_operand(p):
     '''
     return astConstruct(p, 'operand')
 
-# def p_idList(p):
-#     '''
-#     idList : idList COMMA ID
-#            | ID
-#     '''
-#     return astConstruct(p, 'idList')
-
 def p_scope(p):
     '''
     scope : LBRACE statementList RBRACE
@@ -130,7 +135,10 @@ def p_continueStmt(p):
     continueStmt    :  CONTINUE
     '''
     return astConstruct(p, 'continueStmt')
-# variable Declaration 
+
+
+# variable Declaration grammar
+# The grammar specify a vaild variable declaration
 def p_varDeclList(p):
     '''
     varDeclList : varDeclList varDecl SEMI
@@ -153,7 +161,7 @@ def p_varDecl(p):
 
 
 
-#TypeSpecifier Related Grammar 
+#TypeSpecifier Grammar 
 def p_typeSpecList(p):
     '''
     typeSpecList : typeSpecList COMMA typeSpec ID
@@ -161,11 +169,6 @@ def p_typeSpecList(p):
     '''
     return astConstruct(p, 'typeSpecList')
 
-### TOTAKECAREOF: register keyword can only be used within scope
-### global variables are not allowed yet
-### typedef not working yet
-### Extern keyword can not have definition. That's why varDeclls
-### has EXTERN 
 def p_typeSpec(p):
     ''' 
     typeSpec : AUTO typeSpecPostfix
@@ -219,7 +222,8 @@ def p_typeSpecPostfix(p):
 
 
 
-# Statement Related Garmmars 
+# Statement Garmmars
+# Statements include if-stmt, iteration stmts, switch stmts and enum stmts.  
 def p_statementList(p):
     '''
     statementList : empty
@@ -244,8 +248,6 @@ def p_statement(p):
     '''
     return astConstruct(p, 'statement')
 
-# TODO: while loop scope supports break, continue, etc. 
-# separate scope needs to be defined
 def p_whileLoop(p):
     '''
     whileLoop : WHILE LPAREN conditionals RPAREN loopScope
@@ -321,7 +323,6 @@ def p_caseList(p):
     '''
     return astConstruct(p, 'caseList')
 
-# TODO: Add other types
 def p_returnStmt(p):
     '''
     returnStmt : RETURN expr
@@ -341,8 +342,6 @@ def p_breakStmt(p):
     '''
     return astConstruct(p, 'breakStmt')
 
-
-
 def p_funcCall(p):
     '''
     funcCall : ID LPAREN args RPAREN
@@ -350,12 +349,10 @@ def p_funcCall(p):
     return astConstruct(p, 'funcCall')
 
 
-
-# Expression Related Grammars
-
-#TODO: Type cast in C
-#TODO: sizeof(), Pointers, dereferencing 
-#TODO: Structure ->, . operators to be added
+# Expression Grammars
+# Includes grammars for logical, shift, arithmetic, and unary operations
+# type cast is supported but Any unary operator and casting are not supported together.
+# also included variable assign expression. 
 def p_expr(p):
     '''
     expr : logicalExpr
@@ -417,7 +414,6 @@ def p_castExpr(p):
     '''
     return astConstruct(p, 'castExpr') 
 
-# Any unary operator and casting are not supported together.
 def p_unaryExpr(p):
     '''
     unaryExpr : postfixExpr
@@ -431,8 +427,6 @@ def p_unaryExpr(p):
     '''
     return astConstruct(p, 'unaryExpr') 
 
-#TODO: Check the if conditions
-# postfixExpr ARROW ID
 def p_postfixExpr(p):
     '''
     postfixExpr : operand 
