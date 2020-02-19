@@ -1,25 +1,27 @@
-# The astConstruct function recieves argument p, and constructs the AST
-# p is a sequence containing the values of each grammar symbol in the corresponding rule. 
-# we can direcly use p[i] to retrieve the corresponding grammar symbol's value 
-# Accoding to the different token types, we can construct the ast and output the 
-# Tree structure in newick format. 
-# The values of p[i] are mapped to grammar symbols as shown here:
-# program : declarationList
-#   p[0]  =     p[1]
+from treeNode import Node
 
-def astConstruct(p, type):
-    if(type == 'program' or type == 'declaration' or type == 'statement' or type == 'expr' or type == 'breakStmt' or type == 'continueStmt'):
-        p[0] = p[1]
+def parseTreeConstruct(p, type):
+    if(type == 'program'):
+        p[0] = Node(p[1], 'program')
 
+    elif(type == 'declaration'):
+        p[0] = Node(p[1])
+
+    elif(type == 'statement'):
+        p[0] = Node(p[1])
+
+    elif(type == 'expr'):
+        p[0] = Node(p[1])
+
+    elif(type == 'breakStmt'):
+        p[0] = Node(p[1])
+        
+    elif(type == 'continueStmt'):
+        p[0] = Node(p[1]) 
+        
     elif (type == 'operand'):
         if(len(p) == 2):
-            p[0] = 'operand'
-        elif (len(p) == 3):
-            p[0] = '"' + str(p[1]) + str(p[2]) + '"'
-        else:
-            p[0] = p[2]
-        
-
+            
     elif(type == 'declarationList'):
         if(len(p) == 2):
             p[0] = p[1]
@@ -273,8 +275,9 @@ def astConstruct(p, type):
     elif (type == 'loopStatementList'):
         if (len(p) == 4):
             p[0] = str(p[1]) + ',' + str(p[3])
+            p[0] = Node([p[1], p[3]], "scope")
         else:
-            p[0] = str(p[1])
+            p[0] = Node([p[1]])
 
     else :
         print("AST error, {0} is missing".format(type))
