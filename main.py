@@ -29,11 +29,12 @@ def printTokens(lexer):
 # Print the abstract syntax tree
 # The function uses skbio module to parser/print the tree
 # parameters: ast, ast string contains tree structure in newick format
-def printAST(ast):
-    f = StringIO(ast)
-    tree = read(f, format="newick",into=TreeNode)
-    f.close
-    print(tree.ascii_art())
+
+# def printAST(ast):
+#     f = StringIO(ast)
+#     tree = read(f, format="newick",into=TreeNode)
+#     f.close
+#     print(tree.ascii_art())
 
 if __name__ == "__main__":
 
@@ -86,6 +87,7 @@ if __name__ == "__main__":
     # Goes to the tokenizer
     lexer = tokenizer(fileString)
     # Get the symbolTable
+    
     st = SymbolTable()
     st.run(lexer)
     st.print()
@@ -96,4 +98,4 @@ if __name__ == "__main__":
     if (flag & 10):
         # goes to parser and print the ast 
         ast = parser(lexer)
-        printAST(ast)
+        # printAST(ast)
