@@ -1,3 +1,4 @@
+import sys
 class SymbolTable:
         def __init__(self):
                 self.symbolTable = []
@@ -5,26 +6,52 @@ class SymbolTable:
                 self.nestedScope = 0b0
 
         def run(self, lexer):
+                isFunction = False
                 for tok in lexer:
                         if (str(tok.type) == 'INT'):
                                 typeStored = 'INT'
                                 continue
                         if (typeStored == 'INT'):
                                 self.insert(tok.value, typeStored)
+                                isFunction = True
                                 typeStored = ''
                                 continue
+                        if (isFunction):
+                                if (tok.type == 'LPAREN'):
+                                        if (self.nestedScope == 0b0):
+                                                self.currentScope += 1
+                                                continue
+                                        else:
+                                                # Todo: print line numbers
+                                                print("error: function declaration can't be inside any scope")
+                                if (tok.type == 'RPAREN'):
+                                        # isFunction = False
+                                        continue
 
                         if (typeStored == '' and str(tok.type) == 'ID'):
                                 self.lookup(tok.value)
+                                continue
 
                         if (str(tok.type) == 'LBRACE'):
+                                if (isFunction):
+                                        continue
                                 if (self.nestedScope == 0b0):
                                         self.currentScope += 1
+                                        continue
                                 else:
                                         self.nestedScope = (self.nestedScope << 1) | 0b1
+                                        continue
                         elif (str(tok.type) == 'RBRACE'):
+                                if (isFunction and self.nestedScope == 0b0):
+                                        isFunction = False
+                                        self.currentScope -= 1
+                                        continue
                                 if (self.nestedScope != 0b0):
                                         self.nestedScope >>= 1
+                                        continue
+                                else:
+                                        self.currentScope -= 1
+                                        continue
 
         def insert(self, token, type):
                 if (self.nestedScope == 0b0 and self.currentScope == 0):
