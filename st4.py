@@ -29,7 +29,7 @@ class SymbolTable:
                                         continue
 
                         if (typeStored == '' and str(tok.type) == 'ID'):
-                                self.lookup(tok.value)
+                                self.lookup(tok)
                                 continue
 
                         if (str(tok.type) == 'LBRACE'):
@@ -67,21 +67,21 @@ class SymbolTable:
         
         def lookupInternal(self, token, curr_scope, nested_scope):
                 if (nested_scope != 0b0):
-                        ans = self.find(token, str(curr_scope) + str(nested_scope))
+                        ans = self.find(token.value, str(curr_scope) + str(nested_scope))
                         if (ans[0] == False):
                                 nested_scope >>= 1
-                                self.lookupInternal(token, curr_scope, nested_scope)
+                                self.lookupInternal(token.value, curr_scope, nested_scope)
                         else: 
                                 return ans[1]
                 else:
-                        ans = self.find(token, str(curr_scope) + str(nested_scope))
+                        ans = self.find(token.value, str(curr_scope) + str(nested_scope))
                         if (ans[0] == True):
                                 return ans[1]
                         else:
                                 # search in global scope then
-                                ans = self.find(token, str(0))
-                                if (ans[0]):
-                                        print("error: {0} token undeclared".format(token))
+                                ans = self.find(token.value, str(0))
+                                if (not ans[0]):
+                                        print("error: {0} token undeclared. Current scope: {1}".format(token, self.currentScope))
                                         return None
                                 
                                 else:

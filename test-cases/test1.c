@@ -1,4 +1,4 @@
-int b(int c)
+int b()
 {
         hj = 1232;
 
