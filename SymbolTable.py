@@ -20,7 +20,7 @@ class SymbolTable:
 
     def insert(self, token, type):
         if (str(token) in self.symbolTable):
-            print("error: redeclaration of '{0}'")
+            print("error: redeclaration of '{0}'".format(token))
         else:
             self.symbolTable[str(token)] = str(type)
     # def inScope(self, token, type):
@@ -41,6 +41,9 @@ class SymbolTable:
                 self.insert(tok.value, typeStored)
                 typeStored = ''
                 continue
+
+            if (typeStored == '' and str(tok.type) == 'ID'):
+                self.lookup(tok)
             # LBRACE means new scope encountered
             # increase the nested scope, and add that to the 1
             # selfScope is a stack like list which is used to find the current 
