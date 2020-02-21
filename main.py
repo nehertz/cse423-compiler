@@ -87,6 +87,7 @@ if __name__ == "__main__":
     lexer = tokenizer(fileString)
     # Get the symbolTable
     st = SymbolTable()
+    st.globalScope = True 
     st.run(lexer)
     st.print()
     
