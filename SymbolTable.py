@@ -11,6 +11,7 @@ class SymbolTable:
         self.parentScope = None
         self.currentScope = 0
         self.globalScope = False
+        self.st = self
 
     # def lookup(self, token):
     #     if (str(token) in self.symbolTable):
@@ -28,7 +29,9 @@ class SymbolTable:
 
     def print(self):
         print("Number of nested Scopes: {}".format(self.nestedScope))
-        print(self.symbolTable) 
+        for i in range(1, self.nestedScope):
+            self.symbolTable[i].print()
+        print(self.symbolTable)
 
 
     def run(self, lexer):
@@ -38,40 +41,40 @@ class SymbolTable:
                 continue
 
             if (typeStored == 'INT'):
-                self.insert(tok.value, typeStored)
+                self.st.insert(tok.value, typeStored)
                 typeStored = ''
                 continue
 
             if (typeStored == '' and str(tok.type) == 'ID'):
-                self.lookup(tok)
+                self.st.lookup(tok)
             # LBRACE means new scope encountered
             # increase the nested scope, and add that to the 1
             # selfScope is a stack like list which is used to find the current 
             # scope and only add variables to it.
             if (str(tok.type) == 'LBRACE'):
-                self.nestedScope += 1
-                self.selfScopes.append(self.nestedScope)
-                self.symbolTable[self.nestedScope] = SymbolTable()
+                self.st.nestedScope += 1
+                self.st.selfScopes.append(self.nestedScope)
+                self.st.symbolTable[self.nestedScope] = SymbolTable()
                 self.st = self.symbolTable[self.nestedScope]
                 self.st.parentScope = self
                 # self.currentScope = self.selfScopes[len(self.selfScopes) - 1]
                 len(self.selfScopes)
             if (str(tok.type) == 'RBRACE'):
-                self.selfScopes.pop()
+                # self.st.selfScopes.pop()
                 # self.currentScope = self.selfScopes[len(self.selfScopes) - 1]
-                len(self.selfScopes)
+                len(self.st.selfScopes)
 
     def lookup(self, token):
-        if (str(token) in self.symbolTable):
-            return self.symbolTable[token]
+        if (str(token.value) in self.symbolTable):
+            return self.symbolTable[token.value]
         else:
             return self.lookupParent(token)
     
     def lookupParent(self, token):
         if (str(token) in self.symbolTable):
-            return self.symbolTable[token]
+            return self.symbolTable[token.value]
         elif (not self.globalScope):
-            return self.lookupParent(token)
+            return self.parentScope.lookupParent(token)
         else:
             print("error: {0} undeclared".format(token))
             return None
