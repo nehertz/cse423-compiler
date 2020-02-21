@@ -88,6 +88,7 @@ if __name__ == "__main__":
     # Get the symbolTable
     st = SymbolTable()
     st.globalScope = True 
+    st.parentScope = st
     st.run(lexer)
     st.print()
     

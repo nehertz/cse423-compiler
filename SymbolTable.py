@@ -29,9 +29,12 @@ class SymbolTable:
 
     def print(self):
         print("Number of nested Scopes: {}".format(self.nestedScope))
-        for i in range(1, self.nestedScope):
-            self.symbolTable[i].print()
+        for i in range(1, self.nestedScope + 1):
+            print(self.symbolTable[i].print2())
         print(self.symbolTable)
+
+    def print2(self):
+        return self.symbolTable
 
 
     def run(self, lexer):
@@ -62,7 +65,8 @@ class SymbolTable:
             if (str(tok.type) == 'RBRACE'):
                 # self.st.selfScopes.pop()
                 # self.currentScope = self.selfScopes[len(self.selfScopes) - 1]
-                len(self.st.selfScopes)
+                self.st = self.parentScope
+                # len(self.st.selfScopes)
 
     def lookup(self, token):
         if (str(token.value) in self.symbolTable):
@@ -71,7 +75,7 @@ class SymbolTable:
             return self.lookupParent(token)
     
     def lookupParent(self, token):
-        if (str(token) in self.symbolTable):
+        if (str(token.value) in self.symbolTable):
             return self.symbolTable[token.value]
         elif (not self.globalScope):
             return self.parentScope.lookupParent(token)
