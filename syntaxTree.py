@@ -6,6 +6,10 @@
 # The values of p[i] are mapped to grammar symbols as shown here:
 # program : declarationList
 #   p[0]  =     p[1]
+from SymbolTable import SymbolTable
+
+st = SymbolTable()
+st.globalScope = True
 
 def astConstruct(p, type):
     if(type == 'program' or type == 'declaration' or type == 'statement' or type == 'expr' or type == 'breakStmt' or type == 'continueStmt'):
