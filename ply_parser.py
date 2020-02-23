@@ -145,14 +145,14 @@ def p_afterLoopLBrace(p):
     '''
     afterLoopLBrace : 
     '''
-    st.loopInScope(p)
+    st.loopInScope()
     return p
 
 def p_afterLoopRBrace(p):
     '''
     afterLoopRBrace :
     '''
-    st.loopOutScope(p)
+    st.loopOutScope()
     return p
 def p_loopStatementList(p):
     '''

@@ -10,7 +10,10 @@ class SymbolTable:
 
         def insert(self, token, type, scope=-1):
                 if (scope == -1):
-                        self.symbolTable.append((token, type, self.currentScope))
+                        if (self.nestedScope == 0b0):
+                                self.symbolTable.append((token, type, str(self.currentScope)))
+                        else:
+                                self.symbolTable.append((token, type, str(self.currentScope) + str(self.nestedScope)))
                 else:
                         self.symbolTable.append((token, type, scope))
 

@@ -13,4 +13,8 @@ int main()
         int b;
         a = (a + b) * 2;
         b = b + (a - 3) / 12 * hj;
+        while (TRUE) {
+                int i;
+                float j;
+        }
 }
