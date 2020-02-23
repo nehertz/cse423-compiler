@@ -94,5 +94,5 @@ if __name__ == "__main__":
     if (flag & 10):
         # goes to parser and print the ast 
         ast = parser(lexer)
-        printAST(ast)
+        # printAST(ast)
     st.print()

@@ -2,8 +2,8 @@ import ply.yacc as yacc
 from ply_scanner import tokens
 from skbio import read
 from skbio.tree import TreeNode
-from parseTree import parseTreeConstruct
 from SymbolTable import SymbolTable
+from syntaxTree import astConstruct
 # Each grammar rule is defined by a Python function 
 # where the docstring to that function contains the 
 # appropriate context-free grammar specification. 
@@ -27,14 +27,14 @@ def p_program(p):
     '''
     program : declarationList
     '''
-    return parseTreeConstruct(p, 'program')
+    return astConstruct(p, 'program')
 
 def p_declarationList(p):
     '''
     declarationList : declarationList declaration 
                     | declaration
     '''
-    return parseTreeConstruct(p, 'declarationList')
+    return astConstruct(p, 'declarationList')
 
 def p_declaration(p):
     '''
@@ -42,13 +42,13 @@ def p_declaration(p):
                 | varDecl SEMI
                 | enumDeclaration
     '''
-    return parseTreeConstruct(p, 'declaration')
+    return astConstruct(p, 'declaration')
 
 def p_enumInScope(p):
     '''
     enumInScope : ENUM ID ID SEMI
     '''
-    return parseTreeConstruct(p, 'enumInScope')
+    return astConstruct(p, 'enumInScope')
 
 def p_enumDeclaration(p):
     '''
@@ -57,21 +57,21 @@ def p_enumDeclaration(p):
                     | ENUM LBRACE enumArgs RBRACE SEMI
                     | ENUM ID ID SEMI
     '''
-    return parseTreeConstruct(p, 'enumDeclaration')
+    return astConstruct(p, 'enumDeclaration')
 
 def p_enumArgs(p):
     '''
     enumArgs    : enumIDList
                 | enumArgs COMMA enumIDList
     '''
-    return parseTreeConstruct(p, 'enumArgs')
+    return astConstruct(p, 'enumArgs')
 
 def p_enumIDList(p):
     '''
     enumIDList : ID 
                 | ID EQUALS NUMCONST
     '''
-    return parseTreeConstruct(p, 'enumIDList')
+    return astConstruct(p, 'enumIDList')
 
 
 # Grammar that defines function declaration 
@@ -81,7 +81,7 @@ def p_funcDeclaration(p):
     '''
     funcList : typeSpec ID LPAREN args RPAREN scope
     '''
-    return parseTreeConstruct(p, 'funcList')
+    return astConstruct(p, 'funcList')
 
 def p_args(p):
     '''
@@ -89,14 +89,14 @@ def p_args(p):
          | operandList
          | empty
     '''
-    return parseTreeConstruct(p, 'args')
+    return astConstruct(p, 'args')
 
 def p_operandList(p):
     '''
     operandList : operandList COMMA operand
                 | operand
     '''
-    return parseTreeConstruct(p, 'operandList')
+    return astConstruct(p, 'operandList')
 
 #TODO: String
 def p_operand(p):
@@ -108,7 +108,7 @@ def p_operand(p):
             | MINUS NUMCONST
             
     '''
-    return parseTreeConstruct(p, 'operand')
+    return astConstruct(p, 'operand')
 
 def p_afterID(p):
     '''
@@ -121,7 +121,7 @@ def p_scope(p):
     '''
     scope : LBRACE afterLBRACE statementList RBRACE afterRBRACE
     '''
-    return parseTreeConstruct(p, 'scope')
+    return astConstruct(p, 'scope')
 
 def p_afterRBRACE(p):
     '''
@@ -142,7 +142,7 @@ def p_loopScope(p):
     '''
     loopScope : LBRACE afterLoopLBrace loopStatementList RBRACE afterLoopRBrace
     '''
-    return parseTreeConstruct(p, 'loopScope')
+    return astConstruct(p, 'loopScope')
 
 def p_afterLoopLBrace(p):
     '''
@@ -163,13 +163,13 @@ def p_loopStatementList(p):
                         | continueStmt SEMI loopStatementList
                         | statementList
     '''
-    return parseTreeConstruct(p, 'loopStatementList')
+    return astConstruct(p, 'loopStatementList')
 
 def p_continueStmt(p):
     '''
     continueStmt    :  CONTINUE
     '''
-    return parseTreeConstruct(p, 'continueStmt')
+    return astConstruct(p, 'continueStmt')
 
 
 # variable Declaration grammar
@@ -179,7 +179,7 @@ def p_varDeclList(p):
     varDeclList : varDeclList varDecl SEMI
                 | varDecl SEMI
     '''
-    return parseTreeConstruct(p, 'varDeclList')
+    return astConstruct(p, 'varDeclList')
 
 def p_varDecl(p):
     '''
@@ -192,7 +192,8 @@ def p_varDecl(p):
             | EXTERN typeSpecPostfix ID
             | CONST EXTERN typeSpecPostfix ID
     '''
-    return parseTreeConstruct(p, 'varDecl')
+    st.symbolTableConstruct(p, 'varDecl')
+    return astConstruct(p, 'varDecl')
 
 def p_afterVarAssign(p):
     '''
@@ -208,7 +209,7 @@ def p_typeSpecList(p):
                  | typeSpec ID
     '''
     st.symbolTableConstruct(p, 'typeSpecList')
-    return parseTreeConstruct(p, 'typeSpecList')
+    return astConstruct(p, 'typeSpecList')
 
 def p_typeSpec(p):
     ''' 
@@ -222,20 +223,20 @@ def p_typeSpec(p):
              | typeSpecPostfix
              | combineType
     '''
-    return parseTreeConstruct(p, 'typeSpec')
+    return astConstruct(p, 'typeSpec')
 
 def p_combineTypeSpec(p):
     '''
     combineTypeSpec : combineType LBRACE varDeclList RBRACE
     '''
-    return parseTreeConstruct(p, 'combineTypeSpec')
+    return astConstruct(p, 'combineTypeSpec')
 
 def p_combineType(p):
     '''
     combineType : STRUCT ID
                 | UNION ID
     '''
-    return parseTreeConstruct(p, 'combineType')
+    return astConstruct(p, 'combineType')
 
 def p_typeSpecPostfix(p):
     '''
@@ -259,7 +260,7 @@ def p_typeSpecPostfix(p):
                     | SIGNED SHORT
                     | UNSIGNED SHORT 
     '''
-    return parseTreeConstruct(p, 'typeSpecPostfix')
+    return astConstruct(p, 'typeSpecPostfix')
 
 
 
@@ -275,7 +276,7 @@ def p_statementList(p):
                   | switch statementList
                   | enumInScope statementList
     '''
-    return parseTreeConstruct(p, 'statementList')
+    return astConstruct(p, 'statementList')
 
 def p_statement(p):
     '''
@@ -287,20 +288,20 @@ def p_statement(p):
               | empty
               | doWhile
     '''
-    return parseTreeConstruct(p, 'statement')
+    return astConstruct(p, 'statement')
 
 def p_whileLoop(p):
     '''
     whileLoop : WHILE LPAREN conditionals RPAREN loopScope
     '''
-    return parseTreeConstruct(p, 'whileLoop')
+    return astConstruct(p, 'whileLoop')
 
 def p_ifStmt(p):
     '''
     ifStmt : IF LPAREN conditionals RPAREN conditionalScope
            | IF LPAREN conditionals RPAREN conditionalScope elseIfList
     '''
-    return parseTreeConstruct(p, 'ifStmt')
+    return astConstruct(p, 'ifStmt')
         
 def p_elseIfList(p):
     '''
@@ -308,20 +309,20 @@ def p_elseIfList(p):
                | ELSE IF LPAREN conditionals RPAREN conditionalScope
                | ELSE conditionalScope     
     '''
-    return parseTreeConstruct(p, 'elseIfList')
+    return astConstruct(p, 'elseIfList')
 
 def p_conditionalScope(p):
     '''
     conditionalScope : LBRACE afterLoopLBrace statementList RBRACE afterLoopRBrace
     '''
-    return parseTreeConstruct(p, 'conditionalScope')
+    return astConstruct(p, 'conditionalScope')
 
 
 def p_doWhile(p):
     '''
     doWhile : DO loopScope WHILE LPAREN conditionals RPAREN
     '''
-    return parseTreeConstruct(p, 'doWhile')
+    return astConstruct(p, 'doWhile')
 
 def p_forLoop(p):
     '''
@@ -330,14 +331,14 @@ def p_forLoop(p):
             | FOR LPAREN empty SEMI compOps SEMI increase RPAREN loopScope
             | FOR LPAREN init SEMI compOps SEMI increase RPAREN loopScope
     '''
-    return parseTreeConstruct(p, 'forLoop')
+    return astConstruct(p, 'forLoop')
 
 def p_forInit(p):
     '''
     init : typeSpec varAssign
          | varAssign
     '''
-    return parseTreeConstruct(p, 'init')
+    return astConstruct(p, 'init')
 
 def p_forIncrement(p):
     '''
@@ -347,19 +348,19 @@ def p_forIncrement(p):
               | ID INCREMENT
               | ID DECREMENT 
     '''
-    return parseTreeConstruct(p, 'increment')
+    return astConstruct(p, 'increment')
 
 def p_switch(p):
     '''
     switch : SWITCH LPAREN expr RPAREN switchscope 
     '''
-    return parseTreeConstruct(p, 'switch')
+    return astConstruct(p, 'switch')
 
 def p_switchScope(p):
     '''
     switchscope : LBRACE caseList RBRACE
     '''
-    return parseTreeConstruct(p, 'switchscope')
+    return astConstruct(p, 'switchscope')
 
 def p_caseList(p):
     '''
@@ -369,32 +370,32 @@ def p_caseList(p):
              | CASE CHARACTER COLON statementList 
              | DEFAULT COLON statementList
     '''
-    return parseTreeConstruct(p, 'caseList')
+    return astConstruct(p, 'caseList')
 
 def p_returnStmt(p):
     '''
     returnStmt : RETURN expr
                | RETURN varAssign
     '''
-    return parseTreeConstruct(p, 'returnStmt')
+    return astConstruct(p, 'returnStmt')
 
 def p_gotoStmt(p):
     '''
     gotoStmt : GOTO ID 
     '''
-    return parseTreeConstruct(p, 'gotoStmt')
+    return astConstruct(p, 'gotoStmt')
 
 def p_breakStmt(p):
     '''
     breakStmt : BREAK
     '''
-    return parseTreeConstruct(p, 'breakStmt')
+    return astConstruct(p, 'breakStmt')
 
 def p_funcCall(p):
     '''
     funcCall : ID LPAREN args RPAREN
     '''
-    return parseTreeConstruct(p, 'funcCall')
+    return astConstruct(p, 'funcCall')
 
 
 # Expression Grammars
@@ -405,7 +406,7 @@ def p_expr(p):
     '''
     expr : logicalExpr
     '''
-    return parseTreeConstruct(p, 'expr')
+    return astConstruct(p, 'expr')
 
 def p_logicalExpr(p):
     '''
@@ -416,7 +417,7 @@ def p_logicalExpr(p):
                 | logicalExpr XOR compOps
                 | logicalExpr AND compOps
     '''
-    return parseTreeConstruct(p, 'logicalExpr')
+    return astConstruct(p, 'logicalExpr')
 
 def p_compOps(p):
     '''
@@ -428,7 +429,7 @@ def p_compOps(p):
             | compOps LANGLE shiftExpr
             | compOps RANGLE shiftExpr 
     '''
-    return parseTreeConstruct(p, 'compOps')
+    return astConstruct(p, 'compOps')
 
 def p_shiftExpr(p):
     '''
@@ -436,7 +437,7 @@ def p_shiftExpr(p):
               | shiftExpr LSHIFT additiveExpr
               | shiftExpr RSHIFT additiveExpr
     '''
-    return parseTreeConstruct(p, 'shiftExpr')
+    return astConstruct(p, 'shiftExpr')
 
 def p_additiveExpr(p):
     '''
@@ -444,7 +445,7 @@ def p_additiveExpr(p):
                  | additiveExpr MINUS multiplicativeExpr
                  | multiplicativeExpr
     '''
-    return parseTreeConstruct(p, 'additiveExpr')
+    return astConstruct(p, 'additiveExpr')
 
 def p_multiplicativeExpr(p):
     '''
@@ -453,14 +454,14 @@ def p_multiplicativeExpr(p):
                        | multiplicativeExpr MODULO castExpr   
                        | castExpr
     '''
-    return parseTreeConstruct(p, 'multiplicativeExpr')
+    return astConstruct(p, 'multiplicativeExpr')
 
 def p_castExpr(p):
     '''
     castExpr : unaryExpr 
              | LPAREN typeSpec RPAREN castExpr 
     '''
-    return parseTreeConstruct(p, 'castExpr') 
+    return astConstruct(p, 'castExpr') 
 
 def p_unaryExpr(p):
     '''
@@ -473,7 +474,7 @@ def p_unaryExpr(p):
               | unaryExpr DECREMENT
 
     '''
-    return parseTreeConstruct(p, 'unaryExpr') 
+    return astConstruct(p, 'unaryExpr') 
 
 def p_postfixExpr(p):
     '''
@@ -483,7 +484,7 @@ def p_postfixExpr(p):
                 | INCREMENT postfixExpr
                 | DECREMENT postfixExpr
     '''
-    return parseTreeConstruct(p, 'postfixExpr') 
+    return astConstruct(p, 'postfixExpr') 
 
 def p_varAssign(p):
     '''
@@ -502,7 +503,7 @@ def p_varAssign(p):
               | ID XOREQUAL expr
     '''
     st.symbolTable_varAssign(str(p[1]))
-    return parseTreeConstruct(p, 'varAssign') 
+    return astConstruct(p, 'varAssign') 
 
 def p_conditionals(p):
     '''
@@ -511,7 +512,7 @@ def p_conditionals(p):
                  | FALSE
                  | LPAREN conditionals RPAREN
     '''
-    return parseTreeConstruct(p, 'conditionals')
+    return astConstruct(p, 'conditionals')
 
 # Error Handling 
 def p_error(t):
