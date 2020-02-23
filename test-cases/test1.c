@@ -1,5 +1,5 @@
 
-int hj;
+int hj = 12;
 
 int b(int c)
 {

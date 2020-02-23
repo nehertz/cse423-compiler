@@ -6,6 +6,7 @@ class SymbolTable:
                 self.globalScope = 0
                 self.nestedScope = 0b0
                 self.args = []
+                self.afterVarAssign = True
                 self.ID = ''
 
         def insert(self, token, type, scope=-1):
@@ -40,19 +41,20 @@ class SymbolTable:
         # TODO: var-assign with declaration not supported
         def symbolTableConstruct(self, p, type):
                 if (type == 'varDecl'):
-                        if (len(p) == 3):
-                                if (self.ID != ''):
-                                        print("in if var decl: ID: {0}  type: {1}".format(self.ID, p[1]))
-                                        self.insert(self.ID, p[1])
-                                        self.ID = ''
-                                        return
-                                
-                                print("var decl: ID: {0}  type: {1}".format(p[2], p[1]))
-                                self.insert(str(p[2]), str(p[1]))
+                        # if (len(p) == 3):
+                        if (self.ID != '' and self.afterVarAssign):
+                                print("in if var decl: ID: {0}  type: {1}".format(self.ID, p[1]))
+                                self.insert(self.ID, p[1])
+                                self.ID = ''
+                                self.afterVarAssign = False
+                                return
+                        
+                        print("var decl: ID: {0}  type: {1}".format(p[2], p[1]))
+                        self.insert(str(p[2]), str(p[1]))
 
                                 
-                        else:
-                                print("currently not supporting")
+                        # else:
+                        # print("currently not supporting")
 
                 if (type == 'funcDecl'):
                         if (self.globalScope == 1):
@@ -71,10 +73,11 @@ class SymbolTable:
                                 return
                 
 
-
+        def symbolTable_afterVarAssign(self):
+                self.afterVarAssign = True
 
         def symbolTable_varAssign(self, ID):
-                self.ID = ID
+                self.ID = str(ID)
                 return
         def inScope(self):
                 self.currentScope += 1

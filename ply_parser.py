@@ -190,7 +190,7 @@ def p_varDecl(p):
     '''
     varDecl : combineTypeSpec
             | typeSpec ID
-            | typeSpec varAssign
+            | typeSpec varAssign afterVarAssign
             | combineTypeSpec ID    
             | TYPEDEF typeSpec ID
             | TYPEDEF combineTypeSpec ID
@@ -200,7 +200,12 @@ def p_varDecl(p):
     st.symbolTableConstruct(p, 'varDecl')
     return astConstruct(p, 'varDecl')
 
-
+def p_afterVarAssign(p):
+    '''
+    afterVarAssign :
+    '''
+    st.symbolTable_afterVarAssign()
+    return p
 
 #TypeSpecifier Grammar 
 def p_typeSpecList(p):
@@ -503,7 +508,7 @@ def p_varAssign(p):
               | ID OREQUAL expr 
               | ID XOREQUAL expr
     '''
-    # st.symbolTable_varAssign(str(p[1]))
+    st.symbolTable_varAssign(str(p[1]))
     return astConstruct(p, 'varAssign') 
 
 def p_conditionals(p):
