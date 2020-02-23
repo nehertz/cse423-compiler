@@ -105,14 +105,22 @@ def p_operandList(p):
 #TODO: String
 def p_operand(p):
     ''' 
-    operand : ID
+    operand : ID afterID
             | NUMCONST
             | funcCall
             | LPAREN expr RPAREN
             | MINUS NUMCONST
             
     '''
+
     return astConstruct(p, 'operand')
+
+def p_afterID(p):
+    '''
+    afterID : 
+    '''
+    st.lookup(p[-1])
+    return p
 
 def p_scope(p):
     '''

@@ -18,8 +18,23 @@ class SymbolTable:
                         self.symbolTable.append((token, type, scope))
 
         def lookup(self, token):
-                # scope = str(self.currentScope) + str(self.nestedScope) 
-                return
+                acceptableScopes = []
+                nested = self.nestedScope
+                if (nested == 0):
+                        acceptableScopes.append(str(self.currentScope))
+                else:
+                        acceptableScopes.append(str(self.currentScope))
+                        while (nested != 0):
+                                acceptableScopes.append(str(self.currentScope) + str(nested))
+                                nested >>= 1
+                acceptableScopes.append(str(0))
+
+                for elem in self.symbolTable:
+                        if ((elem[0] == token) and (elem[2] in acceptableScopes)):
+                                print("found: {0} with type: {1} in scope {2}".format(elem[0], elem[1], elem[2]))
+                                return elem[1]
+                print("{0} not found in the symbol table ".format(token))
+                return None
         def print(self):
                 print(self.symbolTable)
         # TODO: var-assign with declaration not supported
