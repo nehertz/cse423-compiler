@@ -86,15 +86,6 @@ if __name__ == "__main__":
     # Goes to the tokenizer
     lexer = tokenizer(fileString)
     # Get the symbolTable
-<<<<<<< .merge_file_MjlyEn
-    # st = SymbolTable()
-    # st.run(lexer)
-=======
-    
-    st = SymbolTable()
-    st.run(lexer)
-    st.print()
->>>>>>> .merge_file_2ftadm
     
     if (flag & 1 or flag == 0):
        # prints the tokens
@@ -103,9 +94,5 @@ if __name__ == "__main__":
     if (flag & 10):
         # goes to parser and print the ast 
         ast = parser(lexer)
-<<<<<<< .merge_file_MjlyEn
         printAST(ast)
     st.print()
-=======
-        # printAST(ast)
->>>>>>> .merge_file_2ftadm
