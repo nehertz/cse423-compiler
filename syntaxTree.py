@@ -82,7 +82,7 @@ def astConstruct(p, type):
         else:
             p[0] = str(p[1]) + ',' + str(p[3])
         
-    elif(type == 'scope'):
+    elif(type == 'scope' or type == 'conditionalScope'):
         p[0] = '(' + str(p[2]) + ')' + 'stmt'
 
     elif(type == 'varDeclList'):
