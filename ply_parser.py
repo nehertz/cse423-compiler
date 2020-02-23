@@ -3,7 +3,7 @@ from ply_scanner import tokens
 from skbio import read
 from skbio.tree import TreeNode
 from syntaxTree import astConstruct
-from st5 import SymbolTable
+from SymbolTable import SymbolTable
 # Each grammar rule is defined by a Python function 
 # where the docstring to that function contains the 
 # appropriate context-free grammar specification. 
