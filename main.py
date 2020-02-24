@@ -89,8 +89,8 @@ if __name__ == "__main__":
     
     if (flag & 1 or flag == 0):
        # prints the tokens
-        # printTokens(lexer)
-        pass
+        printTokens(lexer)
+        # pass
     if (flag & 10):
         # goes to parser and print the ast 
         ast = parser(lexer)
