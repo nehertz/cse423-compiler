@@ -71,6 +71,8 @@ if __name__ == "__main__":
             flag = flag | 1
         if (currentArgument in ("-p", "--parse-tree")):
             flag = flag | 10
+        if (currentArgument in ("-s", "--symbol-table")):
+            flag = flag | 100
         if (currentArgument in ("-h", "--help")):
             printHelp()
             sys.exit()
@@ -94,5 +96,8 @@ if __name__ == "__main__":
     if (flag & 10):
         # goes to parser and print the ast 
         ast = parser(lexer)
+        print(ast)
         # printAST(ast)
-    st.print()
+    if (flag & 100):
+        # Print out the symbol table
+        st.print()

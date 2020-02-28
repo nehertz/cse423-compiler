@@ -52,7 +52,7 @@ def p_enumInScope(p):
 
 def p_enumDeclaration(p):
     '''
-    enumDeclaration :  funcList
+    enumDeclaration : funcList
                     | ENUM ID LBRACE enumArgs RBRACE SEMI
                     | ENUM LBRACE enumArgs RBRACE SEMI
                     | ENUM ID ID SEMI
@@ -524,5 +524,5 @@ def parser(lex):
     parser = yacc.yacc()
     result = parser.parse(lexer=lex)
     s = '(' + str(result) + ')Program;'
-    # print(result)
+    print(result)
     return result
