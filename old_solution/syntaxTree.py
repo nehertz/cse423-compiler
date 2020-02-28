@@ -11,7 +11,7 @@ from treeNode import Node
 def astConstruct(p, type):
     if(type == 'program'):
         p[0] = Node(p[1], 'program')
-        print(p[0])
+        # print(p[0])
         return p[0]
 
     elif(type == 'declaration'):
@@ -90,6 +90,7 @@ def astConstruct(p, type):
         typeSpecID = str(p[1]) + ' ' + str(p[2])
         # arg = p[4]
         # scope = p[6]
+        print("p[4] = {0} p[6] = {1}, typeSpecID = {2}".format(p[4].print(), p[6].print(), typeSpecID))
         p[0] = Node([p[4], p[6]], typeSpecID)
         #p[0] = '(' + arg + ',' + scope + ')' +  typeSpecID
 

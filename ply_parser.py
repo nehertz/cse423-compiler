@@ -12,6 +12,7 @@ from syntaxTree import astConstruct
 # Each function accepts a single argument p 
 # that is a sequence containing the values of each 
 # grammar symbol in the corresponding rule. 
+# TODO: Revert parser to old solution
 
 # Specify the entry of the program
 start = 'program'
@@ -523,6 +524,6 @@ def p_error(t):
 def parser(lex):
     parser = yacc.yacc()
     result = parser.parse(lexer=lex)
-    s = '(' + str(result) + ')Program;'
-    print(result)
+    # s = '(' + str(result) + ')Program;'
+    #print(str(result))
     return result

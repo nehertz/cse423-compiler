@@ -95,8 +95,10 @@ if __name__ == "__main__":
         # pass
     if (flag & 10):
         # goes to parser and print the ast 
+        print("in parser")
         ast = parser(lexer)
         print(ast)
+        ast.print()
         # printAST(ast)
     if (flag & 100):
         # Print out the symbol table
