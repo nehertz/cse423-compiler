@@ -2,8 +2,8 @@ import ply.yacc as yacc
 from ply_scanner import tokens
 from skbio import read
 from skbio.tree import TreeNode
+from SymbolTable import SymbolTable
 from syntaxTree import astConstruct
-
 # Each grammar rule is defined by a Python function 
 # where the docstring to that function contains the 
 # appropriate context-free grammar specification. 
@@ -15,7 +15,7 @@ from syntaxTree import astConstruct
 
 # Specify the entry of the program
 start = 'program'
-
+st = SymbolTable()
 def p_empty(p):
     'empty :'
     pass
@@ -101,7 +101,7 @@ def p_operandList(p):
 #TODO: String
 def p_operand(p):
     ''' 
-    operand : ID
+    operand : ID afterID
             | NUMCONST
             | funcCall
             | LPAREN expr RPAREN
@@ -110,18 +110,53 @@ def p_operand(p):
     '''
     return astConstruct(p, 'operand')
 
+def p_afterID(p):
+    '''
+    afterID : 
+    '''
+    st.lookup(p[-1])
+    return p
+
 def p_scope(p):
     '''
-    scope : LBRACE statementList RBRACE
+    scope : LBRACE afterLBRACE statementList RBRACE afterRBRACE
     '''
     return astConstruct(p, 'scope')
 
+def p_afterRBRACE(p):
+    '''
+    afterRBRACE :
+    '''
+    st.outScope()
+    return p
+
+def p_afterLBRACE(p):
+    '''
+    afterLBRACE :
+    '''
+    st.inScope()
+    return p
+
+
 def p_loopScope(p):
     '''
-    loopScope : LBRACE loopStatementList RBRACE
+    loopScope : LBRACE afterLoopLBrace loopStatementList RBRACE afterLoopRBrace
     '''
     return astConstruct(p, 'loopScope')
 
+def p_afterLoopLBrace(p):
+    '''
+    afterLoopLBrace : 
+    '''
+    st.loopInScope()
+    return p
+
+def p_afterLoopRBrace(p):
+    '''
+    afterLoopRBrace :
+    '''
+    st.loopOutScope()
+    return p
 def p_loopStatementList(p):
     '''
     loopStatementList    : breakStmt SEMI loopStatementList
@@ -150,16 +185,22 @@ def p_varDecl(p):
     '''
     varDecl : combineTypeSpec
             | typeSpec ID
-            | typeSpec varAssign
+            | typeSpec varAssign afterVarAssign
             | combineTypeSpec ID    
             | TYPEDEF typeSpec ID
             | TYPEDEF combineTypeSpec ID
             | EXTERN typeSpecPostfix ID
             | CONST EXTERN typeSpecPostfix ID
     '''
+    st.symbolTableConstruct(p, 'varDecl')
     return astConstruct(p, 'varDecl')
 
-
+def p_afterVarAssign(p):
+    '''
+    afterVarAssign :
+    '''
+    st.symbolTable_afterVarAssign()
+    return p
 
 #TypeSpecifier Grammar 
 def p_typeSpecList(p):
@@ -167,6 +208,7 @@ def p_typeSpecList(p):
     typeSpecList : typeSpecList COMMA typeSpec ID
                  | typeSpec ID
     '''
+    st.symbolTableConstruct(p, 'typeSpecList')
     return astConstruct(p, 'typeSpecList')
 
 def p_typeSpec(p):
@@ -256,22 +298,29 @@ def p_whileLoop(p):
 
 def p_ifStmt(p):
     '''
-    ifStmt : IF LPAREN conditionals RPAREN scope
-           | IF LPAREN conditionals RPAREN scope elseIfList
+    ifStmt : IF LPAREN conditionals RPAREN conditionalScope
+           | IF LPAREN conditionals RPAREN conditionalScope elseIfList
     '''
     return astConstruct(p, 'ifStmt')
         
 def p_elseIfList(p):
     '''
-    elseIfList : ELSE IF LPAREN conditionals RPAREN scope elseIfList
-               | ELSE IF LPAREN conditionals RPAREN scope
-               | ELSE scope     
+    elseIfList : ELSE IF LPAREN conditionals RPAREN conditionalScope elseIfList
+               | ELSE IF LPAREN conditionals RPAREN conditionalScope
+               | ELSE conditionalScope     
     '''
     return astConstruct(p, 'elseIfList')
 
+def p_conditionalScope(p):
+    '''
+    conditionalScope : LBRACE afterLoopLBrace statementList RBRACE afterLoopRBrace
+    '''
+    return astConstruct(p, 'conditionalScope')
+
+
 def p_doWhile(p):
     '''
-    doWhile : DO scope WHILE LPAREN conditionals RPAREN
+    doWhile : DO loopScope WHILE LPAREN conditionals RPAREN
     '''
     return astConstruct(p, 'doWhile')
 
@@ -453,6 +502,7 @@ def p_varAssign(p):
               | ID OREQUAL expr 
               | ID XOREQUAL expr
     '''
+    st.symbolTable_varAssign(str(p[1]))
     return astConstruct(p, 'varAssign') 
 
 def p_conditionals(p):
@@ -467,12 +517,12 @@ def p_conditionals(p):
 # Error Handling 
 def p_error(t):
     print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))
-   
 
+   
 # Build the parser and pass lex into the parser
 def parser(lex):
     parser = yacc.yacc()
     result = parser.parse(lexer=lex)
     s = '(' + str(result) + ')Program;'
-    print(result)
+    # print(result)
     return s

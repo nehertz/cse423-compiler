@@ -1,25 +1,20 @@
+
+int hj = 12;
+
+int b(int c)
+{
+        hj = 1232;
+
+        return 12 + c;
+}
 int main()
 {
-
-        // int b -= a;  
-        // int b += a;
-
-        // int b *= a;  
-        // int b /= a;
-
-        // int c %= a;
-  
-        // int x = sizeof(int);
-       
-        // int c = sizeof(unsigned int);
-
-
-        // if (!a){
-        //         break;
-        //         return 0;
-        // }
-        // p = &a;
-
+        int a;
+        int b;
         a = (a + b) * 2;
-        b = b + (a - 3) / 12;
+        b = b + (a - 3) / 12 * hj;
+        while (TRUE) {
+                int i;
+                float j;
+        }
 }

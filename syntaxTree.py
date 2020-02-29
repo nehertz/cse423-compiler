@@ -13,11 +13,12 @@ def astConstruct(p, type):
 
     elif (type == 'operand'):
         if(len(p) == 2):
-            p[0] = p[1]
+            p[0] = 'operand'
         elif (len(p) == 3):
             p[0] = '"' + str(p[1]) + str(p[2]) + '"'
         else:
             p[0] = p[2]
+        
 
     elif(type == 'declarationList'):
         if(len(p) == 2):
@@ -77,7 +78,7 @@ def astConstruct(p, type):
         else:
             p[0] = str(p[1]) + ',' + str(p[3])
         
-    elif(type == 'scope'):
+    elif(type == 'scope' or type == 'conditionalScope'):
         p[0] = '(' + str(p[2]) + ')' + 'stmt'
 
     elif(type == 'varDeclList'):
