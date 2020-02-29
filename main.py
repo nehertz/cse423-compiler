@@ -96,6 +96,6 @@ if __name__ == "__main__":
         # goes to parser and print the ast 
         printAST(ast)
         
-     # Get the symbolTable  
+     # Get the symbolTable
     if (flag & 100):
         st.print()
