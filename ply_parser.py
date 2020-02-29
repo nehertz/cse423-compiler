@@ -525,4 +525,4 @@ def parser(lex):
     result = parser.parse(lexer=lex)
     s = '(' + str(result) + ')Program;'
     # print(result)
-    return result
+    return s

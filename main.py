@@ -28,12 +28,11 @@ def printTokens(lexer):
 # Print the abstract syntax tree
 # The function uses skbio module to parser/print the tree
 # parameters: ast, ast string contains tree structure in newick format
-
-# def printAST(ast):
-#     f = StringIO(ast)
-#     tree = read(f, format="newick",into=TreeNode)
-#     f.close
-#     print(tree.ascii_art())
+def printAST(ast):
+    f = StringIO(ast)
+    tree = read(f, format="newick",into=TreeNode)
+    f.close
+    print(tree.ascii_art())
 
 if __name__ == "__main__":
 
@@ -56,8 +55,8 @@ if __name__ == "__main__":
 
     # Currently we have options h for help, t to print tokens and labels,
     # and p to print parse tree
-    unixOptions = "htp"
-    gnuOptions = ["help", "tokenize", "parse-tree"]
+    unixOptions = "htps"
+    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table"]
 
     try:
         arguments, values = getopt.getopt(listArgs, unixOptions, gnuOptions)
@@ -71,6 +70,8 @@ if __name__ == "__main__":
             flag = flag | 1
         if (currentArgument in ("-p", "--parse-tree")):
             flag = flag | 10
+        if (currentArgument in ("-s", "--symbol-table")):
+            flag = flag | 100
         if (currentArgument in ("-h", "--help")):
             printHelp()
             sys.exit()
@@ -85,14 +86,16 @@ if __name__ == "__main__":
     
     # Goes to the tokenizer
     lexer = tokenizer(fileString)
-    # Get the symbolTable
-    
+    ast = parser(lexer)
+   
     if (flag & 1 or flag == 0):
        # prints the tokens
         printTokens(lexer)
-        # pass
+
     if (flag & 10):
         # goes to parser and print the ast 
-        ast = parser(lexer)
-        # printAST(ast)
-    st.print()
+        printAST(ast)
+        
+     # Get the symbolTable  
+    if (flag & 100):
+        st.print()
