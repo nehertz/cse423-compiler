@@ -1,4 +1,4 @@
-while (TRUE)
+int main()
 {
-        c++;
+        return 1;
 }

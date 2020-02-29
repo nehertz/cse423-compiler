@@ -13,7 +13,7 @@ def astConstruct(p, type):
 
     elif (type == 'operand'):
         if(len(p) == 2):
-            p[0] = 'operand'
+            p[0] = p[1]
         elif (len(p) == 3):
             p[0] = '"' + str(p[1]) + str(p[2]) + '"'
         else:
@@ -79,7 +79,7 @@ def astConstruct(p, type):
             p[0] = str(p[1]) + ',' + str(p[3])
         
     elif(type == 'scope' or type == 'conditionalScope'):
-        p[0] = '(' + str(p[2]) + ')' + 'stmt'
+        p[0] = '(' + str(p[3]) + ')' + 'stmt'
 
     elif(type == 'varDeclList'):
         if (len(p) == 4):
@@ -93,7 +93,10 @@ def astConstruct(p, type):
         elif (len(p) == 3):
             p[0] = str(p[1]) + ',' + str(p[2]) 
         elif (len(p) == 4):
-            p[0] = '(' + str(p[2]) + ',' + str(p[3]) + ')' + str(p[1]) 
+            if (p[1] == 'TYPEDEF' or p[1] == 'EXTERN'):
+                p[0] = '(' + str(p[2]) + ',' + str(p[3]) + ')' + str(p[1]) 
+            else: 
+                p[0] = '(' + str(p[2]) + ',' + str(p[3]) + ')'
         elif (len(p) == 5):
             p[0] = '(' + str(p[3]) + ',' + str(p[4]) + ')' + str(p[1])+'-'+str(p[2])
 
@@ -268,7 +271,7 @@ def astConstruct(p, type):
             p[0] = str(p[2])
 
     elif (type== 'loopScope'):
-        p[0] = str(p[2])
+        p[0] = str(p[3])
     
     elif (type == 'loopStatementList'):
         if (len(p) == 4):

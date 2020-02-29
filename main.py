@@ -86,7 +86,7 @@ if __name__ == "__main__":
     
     # Goes to the tokenizer
     lexer = tokenizer(fileString)
-    ast = parser(lexer)
+    ast = parser(lexer.clone())
    
     if (flag & 1 or flag == 0):
        # prints the tokens
