@@ -17,5 +17,9 @@ int main()
                 int i;
                 float j;
         }
+<<<<<<< HEAD:test-cases/test1.c
         return 0;
+=======
+        return 12;
+>>>>>>> 90974ce5acddcd6467f3e086e77f49eb19b99abf:test-cases/IR-test/test1.c
 }
