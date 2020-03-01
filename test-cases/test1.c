@@ -13,8 +13,9 @@ int main()
         int b;
         a = (a + b) * 2;
         b = b + (a - 3) / 12 * hj;
-        while (TRUE) {
+        while (1) {
                 int i;
                 float j;
         }
+        return 0;
 }

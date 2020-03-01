@@ -9,6 +9,7 @@ from skbio.tree import TreeNode
 from ply_scanner import tokenizer
 from ply_parser import parser
 from ply_parser import st
+from typeChecking import typeChecking
 # Print the instruction of how to excute the program
 # parameters: None
 def printHelp():
@@ -86,16 +87,14 @@ if __name__ == "__main__":
     
     # Goes to the tokenizer
     lexer = tokenizer(fileString)
-    ast = parser(lexer)
-   
+    ast = parser(lexer.clone())
+    typeChecking(ast)
     if (flag & 1 or flag == 0):
        # prints the tokens
         printTokens(lexer)
-
     if (flag & 10):
         # goes to parser and print the ast 
         printAST(ast)
-        
      # Get the symbolTable  
     if (flag & 100):
         st.print()
