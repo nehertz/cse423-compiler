@@ -108,4 +108,4 @@ class SymbolTable:
                 else:
                         self.nestedScope >>= 1
                 return   
-
+        
