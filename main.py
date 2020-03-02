@@ -88,14 +88,15 @@ if __name__ == "__main__":
     # Goes to the tokenizer
     lexer = tokenizer(fileString)
     ast = parser(lexer.clone())
-   
+    # tc = typeChecking()
+    # tc.traverse()
     if (flag & 1 or flag == 0):
        # prints the tokens
         printTokens(lexer)
+        #pass
     if (flag & 10):
         # goes to parser and print the ast 
         printAST(ast)
-        
-     # Get the symbolTable
+     # Get the symbolTable  
     if (flag & 100):
         st.print()
