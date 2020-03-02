@@ -4,6 +4,7 @@ from skbio import read
 from skbio.tree import TreeNode
 from SymbolTable import SymbolTable
 from syntaxTree import astConstruct
+from typeChecking import typeChecking
 # Each grammar rule is defined by a Python function 
 # where the docstring to that function contains the 
 # appropriate context-free grammar specification. 
@@ -16,6 +17,7 @@ from syntaxTree import astConstruct
 # Specify the entry of the program
 start = 'program'
 st = SymbolTable()
+tc = typeChecking()
 def p_empty(p):
     'empty :'
     pass
@@ -493,18 +495,24 @@ def p_varAssign(p):
               | ID EQUALS STRING
               | LPAREN varAssign RPAREN
               | ID TIMESEQUAL expr
-              | ID DIVEQUAL expr 
-              | ID MODEQUAL expr 
-              | ID PLUSEQUAL expr 
-              | ID MINUSEQUAL expr 
-              | ID LSHIFTEQUAL expr 
-              | ID RSHIFTEQUAL expr 
+              | ID DIVEQUAL expr
+              | ID MODEQUAL expr
+              | ID PLUSEQUAL expr
+              | ID MINUSEQUAL expr
+              | ID LSHIFTEQUAL expr
+              | ID RSHIFTEQUAL expr
               | ID ANDEQUAL expr
-              | ID OREQUAL expr 
+              | ID OREQUAL expr
               | ID XOREQUAL expr
     '''
     st.symbolTable_varAssign(str(p[1]))
-    return astConstruct(p, 'varAssign') 
+    s = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2]) + ';'
+    s = s.replace("\"", "")
+    print(s)
+    tc.checkTypes(s, st)
+    return astConstruct(p, 'varAssign')
+
+    
 
 def p_conditionals(p):
     '''
