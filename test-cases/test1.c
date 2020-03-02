@@ -10,9 +10,10 @@ int b(int c)
 int main()
 {
         int a;
-        int b;
+        float b;
         a = (a + b) * 2;
         b = b + (a - 3) / 12 * hj;
+        a = a == b;
         while (1) {
                 int i;
                 float j;
