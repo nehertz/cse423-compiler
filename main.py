@@ -10,6 +10,7 @@ from ply_scanner import tokenizer
 from ply_parser import parser
 from ply_parser import st
 from typeChecking import typeChecking
+from IR import IR
 # Print the instruction of how to excute the program
 # parameters: None
 def printHelp():
@@ -90,10 +91,12 @@ if __name__ == "__main__":
     ast = parser(lexer.clone())
     # tc = typeChecking()
     # tc.traverse()
+    ir = IR(ast)
+    ir.run()
     if (flag & 1 or flag == 0):
        # prints the tokens
-        printTokens(lexer)
-        #pass
+        # printTokens(lexer)
+        pass
     if (flag & 10):
         # goes to parser and print the ast 
         printAST(ast)

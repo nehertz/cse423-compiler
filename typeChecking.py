@@ -27,24 +27,24 @@ class typeChecking:
                                                 continue
                                         else:
                                                 if (self.getTypeSimilarity(type1, node.name, st)):
-                                                        print("good")
+                                                        # print("good")
                                                         continue
                                                 else:
-                                                        print ("not good")
-                                                        print("types not matched. Type conversion required which is not supproted")
+                                                        # print ("not good")
+                                                        # print("types not matched. Type conversion required which is not supproted")
                                                         continue
 
         
         def getTypeSimilarity(self, type1, token, st):
                 number = re.compile('\d+.{0,1}\d*')
                 if (number.match(token)):
-                        print("it's a number  " + token)
+                        # print("it's a number  " + token)
                         return False 
                 else:
                         type2 = st.lookup(token)
                         if (type1 == type2):
-                                print('types matched   ' + token)
+                                # print('types matched   ' + token)
                                 return True 
                         else: 
-                                print('types not matched   ' + token)
+                                # print('types not matched   ' + token)
                                 return False
