@@ -43,13 +43,13 @@ class SymbolTable:
                 if (type == 'varDecl'):
                         # if (len(p) == 3):
                         if (self.ID != '' and self.afterVarAssign):
-                                print("in if var decl: ID: {0}  type: {1}".format(self.ID, p[1]))
+                                # print("in if var decl: ID: {0}  type: {1}".format(self.ID, p[1]))
                                 self.insert(self.ID, p[1])
                                 self.ID = ''
                                 self.afterVarAssign = False
                                 return
                         
-                        print("var decl: ID: {0}  type: {1}".format(p[2], p[1]))
+                        # print("var decl: ID: {0}  type: {1}".format(p[2], p[1]))
                         self.insert(str(p[2]), str(p[1]))
 
                                 
@@ -108,4 +108,4 @@ class SymbolTable:
                 else:
                         self.nestedScope >>= 1
                 return   
-
+        
