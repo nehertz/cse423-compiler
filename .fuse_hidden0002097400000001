@@ -1,0 +1,141 @@
+(hj,12)=;
+hj not found in the symbol table 
+it's a number  12
+in if var decl: ID: hj  type: int
+(hj,1232)=;
+found: hj with type: int in scope 0
+it's a number  1232
+found: c with type: int in scope 1
+var decl: ID: a  type: int
+var decl: ID: b  type: int
+found: a with type: int in scope 2
+found: b with type: int in scope 2
+(a,((aNone,bNone)+,2)*)=;
+found: a with type: int in scope 2
+aNone not found in the symbol table 
+bNone not found in the symbol table 
+it's a number  2
+found: b with type: int in scope 2
+found: a with type: int in scope 2
+found: hj with type: int in scope 0
+(b,(bNone,(((aNone,3)-,12)/,hjNone)*)+)=;
+found: b with type: int in scope 2
+bNone not found in the symbol table 
+aNone not found in the symbol table 
+it's a number  3
+it's a number  12
+hjNone not found in the symbol table 
+var decl: ID: i  type: int
+var decl: ID: j  type: float
+Syntax error at <<: Line Number: 20
+Token['int' , 'INT']
+Token['hj' , 'ID']
+Token['=' , 'EQUALS']
+Token['12' , 'NUMCONST']
+Token[';' , 'SEMI']
+Token['int' , 'INT']
+Token['b' , 'ID']
+Token['(' , 'LPAREN']
+Token['int' , 'INT']
+Token['c' , 'ID']
+Token[')' , 'RPAREN']
+Token['{' , 'LBRACE']
+Token['hj' , 'ID']
+Token['=' , 'EQUALS']
+Token['1232' , 'NUMCONST']
+Token[';' , 'SEMI']
+Token['return' , 'RETURN']
+Token['12' , 'NUMCONST']
+Token['+' , 'PLUS']
+Token['c' , 'ID']
+Token[';' , 'SEMI']
+Token['}' , 'RBRACE']
+Token['int' , 'INT']
+Token['main' , 'ID']
+Token['(' , 'LPAREN']
+Token[')' , 'RPAREN']
+Token['{' , 'LBRACE']
+Token['int' , 'INT']
+Token['a' , 'ID']
+Token[';' , 'SEMI']
+Token['int' , 'INT']
+Token['b' , 'ID']
+Token[';' , 'SEMI']
+Token['a' , 'ID']
+Token['=' , 'EQUALS']
+Token['(' , 'LPAREN']
+Token['a' , 'ID']
+Token['+' , 'PLUS']
+Token['b' , 'ID']
+Token[')' , 'RPAREN']
+Token['*' , 'TIMES']
+Token['2' , 'NUMCONST']
+Token[';' , 'SEMI']
+Token['b' , 'ID']
+Token['=' , 'EQUALS']
+Token['b' , 'ID']
+Token['+' , 'PLUS']
+Token['(' , 'LPAREN']
+Token['a' , 'ID']
+Token['-' , 'MINUS']
+Token['3' , 'NUMCONST']
+Token[')' , 'RPAREN']
+Token['/' , 'DIVIDE']
+Token['12' , 'NUMCONST']
+Token['*' , 'TIMES']
+Token['hj' , 'ID']
+Token[';' , 'SEMI']
+Token['while' , 'WHILE']
+Token['(' , 'LPAREN']
+Token['1' , 'NUMCONST']
+Token[')' , 'RPAREN']
+Token['{' , 'LBRACE']
+Token['int' , 'INT']
+Token['i' , 'ID']
+Token[';' , 'SEMI']
+Token['float' , 'FLOAT']
+Token['j' , 'ID']
+Token[';' , 'SEMI']
+Token['}' , 'RBRACE']
+Token['<<' , 'LSHIFT']
+Token['<<' , 'LSHIFT']
+Token['<<' , 'LSHIFT']
+Token['<' , 'LANGLE']
+Token['HEAD' , 'ID']
+Token[':' , 'COLON']
+Token['test' , 'ID']
+Token['-' , 'MINUS']
+Token['cases' , 'ID']
+Token['/' , 'DIVIDE']
+Token['test1' , 'ID']
+Token['.' , 'PERIOD']
+Token['c' , 'ID']
+Token['return' , 'RETURN']
+Token['0' , 'NUMCONST']
+Token[';' , 'SEMI']
+Token['==' , 'EQ']
+Token['==' , 'EQ']
+Token['==' , 'EQ']
+Token['=' , 'EQUALS']
+Token['return' , 'RETURN']
+Token['12' , 'NUMCONST']
+Token[';' , 'SEMI']
+Token['>>' , 'RSHIFT']
+Token['>>' , 'RSHIFT']
+Token['>>' , 'RSHIFT']
+Token['>' , 'RANGLE']
+Token['90974' , 'NUMCONST']
+Token['ce5acddcd6467f3e086e77f49eb19b99abf' , 'ID']
+Token[':' , 'COLON']
+Token['test' , 'ID']
+Token['-' , 'MINUS']
+Token['cases' , 'ID']
+Token['/' , 'DIVIDE']
+Token['IR' , 'ID']
+Token['-' , 'MINUS']
+Token['test' , 'ID']
+Token['/' , 'DIVIDE']
+Token['test1' , 'ID']
+Token['.' , 'PERIOD']
+Token['c' , 'ID']
+Token['}' , 'RBRACE']
