@@ -32,7 +32,7 @@ class SymbolTable:
 
                 for elem in self.symbolTable:
                         if ((elem[0] == token) and (elem[2] in acceptableScopes)):
-                                print("found: {0} with type: {1} in scope {2}".format(elem[0], elem[1], elem[2]))
+                                # print("found: {0} with type: {1} in scope {2}".format(elem[0], elem[1], elem[2]))
                                 return elem[1]
                 print("{0} not found in the symbol table ".format(token))
                 return None
@@ -108,4 +108,4 @@ class SymbolTable:
                 else:
                         self.nestedScope >>= 1
                 return   
-        
+
