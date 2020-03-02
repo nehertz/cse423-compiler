@@ -27,11 +27,11 @@ class typeChecking:
                                                 continue
                                         else:
                                                 if (self.getTypeSimilarity(type1, node.name, st)):
-                                                        # print("good")
+                                                        print("good")
                                                         continue
                                                 else:
-                                                        # print ("not good")
-                                                        # print("types not matched. Type conversion required which is not supproted")
+                                                        print ("not good")
+                                                        print("types not matched. Type conversion required which is not supproted")
                                                         continue
 
         
@@ -43,8 +43,8 @@ class typeChecking:
                 else:
                         type2 = st.lookup(token)
                         if (type1 == type2):
-                                # print('types matched   ' + token)
+                                print('types matched   ' + token)
                                 return True 
                         else: 
-                                # print('types not matched   ' + token)
+                                print('types not matched   ' + token)
                                 return False
