@@ -93,7 +93,6 @@ if __name__ == "__main__":
     ast = parser(lexer.clone())
     # tc = typeChecking()
     # tc.traverse()
-
     if (flag & 1 or flag == 0):
        # prints the tokens
         # printTokens(lexer)
