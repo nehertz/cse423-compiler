@@ -15,7 +15,10 @@ def astConstruct(p, type):
         if(len(p) == 2):
             p[0] = p[1]
         elif (len(p) == 3):
-            p[0] = '"' + str(p[1]) + str(p[2]) + '"'
+            if (p[1] == '-'):
+                p[0] = '"' + str(p[1]) + str(p[2]) + '"'
+            else:
+                p[0] = p[1]
         else:
             p[0] = p[2]
         
