@@ -220,13 +220,16 @@ def astConstruct(p, type):
         if (len(p) == 2):
             p[0] = p[1]
         else: 
-            p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + '"'+ str(p[2]) + '"'
-        
+           # p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + '"'+ str(p[2]) + '"'
+            p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' +  str(p[2]) 
+
     elif(type == 'multiplicativeExpr'):
         if (len(p) == 2):
             p[0] = p[1]
         elif (len(p) == 4):
-            p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + '"'+ str(p[2]) + '"'
+            #p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + '"'+ str(p[2]) + '"'
+            p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2]) 
+
         else: 
             pass 
 

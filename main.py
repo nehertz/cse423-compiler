@@ -91,8 +91,7 @@ if __name__ == "__main__":
     ast = parser(lexer.clone())
     # tc = typeChecking()
     # tc.traverse()
-    ir = IR(ast)
-    ir.run()
+
     if (flag & 1 or flag == 0):
        # prints the tokens
         # printTokens(lexer)
@@ -103,3 +102,7 @@ if __name__ == "__main__":
      # Get the symbolTable  
     if (flag & 100):
         st.print()
+
+    ir = IR(ast)
+    ir.run()
+    ir.printIR()

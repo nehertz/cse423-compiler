@@ -9,10 +9,11 @@
 // }
 int main()
 {
-        int a = 12.32;
+        //int a = 12.32;
+        
         // int b;
-        // a = (a + b) * 2;
-        // b = b + (a - 3) / 12 * hj;
+        a = (a + b) * 2;
+        b = b + (a + 3) * 12 * hj;
         // while (1) {
         //         int i;
         //         float j;

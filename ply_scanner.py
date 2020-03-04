@@ -3,6 +3,7 @@ import ply.lex as lex
 
 keywords = ['else', 'register','do','goto','continue','if','sizeof','switch', 'for', 'case','while','break','default','return', 'typedef', 'define', 'include']
 type_specifier = ['auto', 'union', 'short', 'double','long', 'unsigned','int','char','static','volatile','struct','extern','signed','const','enum','void','float']
+
 operators = {
     # Logical operators
     '||' : 'LOR',
