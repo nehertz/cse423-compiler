@@ -57,8 +57,8 @@ if __name__ == "__main__":
 
     # Currently we have options h for help, t to print tokens and labels,
     # and p to print parse tree
-    unixOptions = "htps"
-    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table"]
+    unixOptions = "htpsi"
+    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR"]
 
     try:
         arguments, values = getopt.getopt(listArgs, unixOptions, gnuOptions)
@@ -74,6 +74,8 @@ if __name__ == "__main__":
             flag = flag | 10
         if (currentArgument in ("-s", "--symbol-table")):
             flag = flag | 100
+        if (currentArgument in ("-i", "--IR")):
+            flag = flag | 10000
         if (currentArgument in ("-h", "--help")):
             printHelp()
             sys.exit()
@@ -96,13 +98,17 @@ if __name__ == "__main__":
        # prints the tokens
         # printTokens(lexer)
         pass
-    if (flag & 10):
+    elif (flag & 10):
         # goes to parser and print the ast 
         printAST(ast)
      # Get the symbolTable  
-    if (flag & 100):
+    elif (flag & 100):
         st.print()
+        
+    elif (flag & 10000):
+        ir = IR(ast)
+        ir.run()
+        ir.printIR()
+    
 
-    ir = IR(ast)
-    ir.run()
-    ir.printIR()
+    
