@@ -36,7 +36,6 @@ class IR:
                                 continue
                         if (expr):
                                 exprNode = node1
-                                print('in here')
                                 break
                 # copy_exprNode = exprNode.copy()
                 # notFound = False
