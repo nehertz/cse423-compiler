@@ -61,7 +61,7 @@ def astConstruct(p, type):
             pass
 
     elif(type == 'funcList'):
-        typeSpecID = str(p[2] + '"' + p[1] + '"')
+        typeSpecID = 'func-' + str(p[2])
         arg = str(p[4])
         scope = str(p[6])
         p[0] = '(' + arg + ',' + scope + ')' +  typeSpecID
@@ -94,20 +94,26 @@ def astConstruct(p, type):
         if (len(p) == 2):
             p[0] = p[1]
         elif (len(p) == 3):
-            p[0] = str(p[1]) + ',' + str(p[2]) 
+            #p[0] = str(p[1]) + ',' + str(p[2]) 
+            p[0] = '(' + str(p[2]) + ')varDecl'
         elif (len(p) == 4):
-            if (p[1] == 'TYPEDEF' or p[1] == 'EXTERN'):
-                p[0] = '(' + str(p[2]) + ',' + str(p[3]) + ')' + str(p[1]) 
-            elif (str(p[3]) == 'None'):
+            if (str(p[3]) == 'None'):
                 p[0] = str(p[2])
+            else:
+                p[0] = '(' + str(p[3]) + ')varDecl'
+            # if (p[1] == 'TYPEDEF' or p[1] == 'EXTERN'):
+            #     p[0] = '(' + str(p[2]) + ',' + str(p[3]) + ')' + str(p[1]) 
+            # elif (str(p[3]) == 'None'):
+            #     p[0] = str(p[2])
         elif (len(p) == 5):
-            p[0] = '(' + str(p[3]) + ',' + str(p[4]) + ')' + str(p[1])+'-'+str(p[2])
-
+            #p[0] = '(' + str(p[3]) + ',' + str(p[4]) + ')' + str(p[1])+'-'+str(p[2])
+            p[0] = '(' + str(p[4]) + ')varDecl'
     elif(type == 'typeSpecList'):
         if(len(p) == 3):
-            p[0] ='(' + str(p[1]) + ',' + str(p[2]) + ')'
+            # p[0] ='(' + str(p[1]) + ',' + str(p[2]) + ')'
+            p[0] = str(p[2])
         else:
-            p[0] =  p[1] + ',' + '(' + str(p[3]) + ',' + str(p[4]) + ')' 
+            p[0] =  p[1] + ',' + str(p[4]) 
 
     elif(type == 'typeSpec'):
         if (len(p) == 2):
@@ -190,7 +196,7 @@ def astConstruct(p, type):
             p[0] = '(' + str(p[3]) + ')'+ 'default'
 
     elif(type == 'returnStmt'):
-        p[0] =  '(' + str(p[1]) + ',' + str(p[2]) + ')'
+        p[0] =  '(' + str(p[2]) + ')' + str(p[1])
 
     elif(type == 'gotoStmt'):
         p[0] = 'goto' + '-' + str(p[2])

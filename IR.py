@@ -16,13 +16,59 @@ class IR:
 
         def run(self):
                 for node in self.tree.traverse():
-                        if (node.name == 'stmt'):
-                                self.statementNode(node)
+                
+                        # handle function name node 
+                        if ('func-' in str(node.name)):
+                                self.funcNode(node)
+                        # handle global varible node
+                        elif (node.name == 'varDecl'):
+                                self.varDecl(node)
         
-        def statementNode(self, node):
+        def funcNode(self, node):
+                funcName = ''
                 for nodes in node.traverse():
+                        if ('func-' in str(nodes.name)):
+                                funcName = str(nodes.name).replace('func-', '')        
+                        if (nodes.name == 'args'):
+                                self.args(nodes, funcName)
+
+                        if (nodes.name == 'stmt'):
+                                self.statement(nodes)
+                        
+        
+        def args(self, node, funcName):
+                argsCount = 0
+                ir = []
+                ir.append(funcName)
+                for nodes in self.getSubtree(node):
+                        if (nodes.name != 'args'):
+                                self.enqueue(nodes.name)
+                                argsCount += 1
+                ir.append('(')
+                while argsCount > 0:
+                        ir.append(str(self.dequeue()))
+                        if argsCount != 1:
+                                ir.append(',')
+                        argsCount -= 1
+                ir.append(')')
+                self.IRS.append(ir)
+                # print(argsCount)                
+
+
+        def statement(self, node):
+                for nodes in node.traverse():
+                        # in statement block, handle var decl with assignment
+                        # note: only handles:
+                        # int a = expr or a = expr, since the root used to 
+                        # distinguish the node is assignment operator  
                         if (nodes.name in assignment):
                                 self.assign(nodes)
+
+                        # handle the var-decl without assignment case
+                        # TODO: need to consider more cases. Only handles the simple one for now. 
+                        elif (nodes.name == 'varDecl'):
+                                pass
+                                # self.varDecl(nodes)
 
         def assign(self, node):
                 subtree = self.getSubtree(node)
@@ -55,6 +101,14 @@ class IR:
                                         # print("operand2 ", operand2)
                                         ir = [operand2, '=', operand2, operator1, operand1] 
                                         self.IRS.append(ir)
+
+
+        def varDecl(self, node):
+                for nodes in node.traverse():
+                        if (nodes.name != 'varDecl'):
+                                self.IRS.append([nodes.name])
+
+
         def getSubtree(self, node):
                 subtree = []
                 for nodes in node.levelorder():

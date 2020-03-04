@@ -7,8 +7,11 @@
 
 //         return 12 + c;
 // }
+int e;
+
 int main()
 {
+        int b;
         int a *= 12.32;
         
         // int b;
