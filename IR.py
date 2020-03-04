@@ -15,25 +15,30 @@ class IR:
                 self.temporaryVarible = 0
 
         def run(self):
-                for node in self.tree.traverse():
-                
+                # TODO: change to levelorder, and only use the first level. 
+                # for node in self.tree.traverse():
+                for node in self.tree.children:
+                        
                         # handle function name node 
                         if ('func-' in str(node.name)):
-                                self.funcNode(node)
+                                self.funcNode(node, node.name)
                         # handle global varible node
                         elif (node.name == 'varDecl'):
                                 self.varDecl(node)
         
-        def funcNode(self, node):
-                funcName = ''
-                for nodes in node.traverse():
-                        if ('func-' in str(nodes.name)):
-                                funcName = str(nodes.name).replace('func-', '')        
-                        if (nodes.name == 'args'):
-                                self.args(nodes, funcName)
 
-                        if (nodes.name == 'stmt'):
-                                self.statement(nodes)
+        def funcNode(self, nodes, funcName):
+                # funcName = ''
+                funcName = funcName.replace('func-', '')
+                for node in nodes.traverse():
+                        
+                        if (node.name == 'args'):
+                                print("here")
+                                self.args(node, funcName)
+
+                        if (node.name == 'stmt'):
+                                print("here1")
+                                self.statement(node)
                         
         
         def args(self, node, funcName):
@@ -77,8 +82,8 @@ class IR:
                                 self.enqueue(nodes.name)
 
                         elif(nodes.name not in assignment and nodes.name in operators.keys()):
-                                operand1 = self.dequeue()
                                 operand2 = self.dequeue()
+                                operand1 = self.dequeue()
                                 operator = nodes.name
                                 tempVar = 't_' + str(self.temporaryVarible)
                                 ir = [tempVar, '=', operand1, operator, operand2]
@@ -102,11 +107,9 @@ class IR:
                                         ir = [operand2, '=', operand2, operator1, operand1] 
                                         self.IRS.append(ir)
 
-
-        def varDecl(self, node):
-                for nodes in node.traverse():
-                        if (nodes.name != 'varDecl'):
-                                self.IRS.append([nodes.name])
+        def varDecl(self, nodes):
+                for node in nodes:
+                        self.IRS.append([node.name])
 
 
         def getSubtree(self, node):

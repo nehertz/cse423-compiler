@@ -104,8 +104,9 @@ if __name__ == "__main__":
      # Get the symbolTable  
     elif (flag & 100):
         st.print()
-        
+
     elif (flag & 10000):
+        printAST(ast)
         ir = IR(ast)
         ir.run()
         ir.printIR()

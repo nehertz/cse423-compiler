@@ -533,5 +533,5 @@ def parser(lex):
     parser = yacc.yacc()
     result = parser.parse(lexer=lex)
     s = '(' + str(result) + ')Program;'
-    # print(s)
+    print(s)
     return s
