@@ -18,7 +18,6 @@ class IR:
                 # TODO: change to levelorder, and only use the first level. 
                 # for node in self.tree.traverse():
                 for node in self.tree.children:
-                        
                         # handle function name node 
                         if ('func-' in str(node.name)):
                                 self.funcNode(node, node.name)
@@ -31,13 +30,9 @@ class IR:
                 # funcName = ''
                 funcName = funcName.replace('func-', '')
                 for node in nodes.traverse():
-                        
                         if (node.name == 'args'):
-                                print("here")
                                 self.args(node, funcName)
-
                         if (node.name == 'stmt'):
-                                print("here1")
                                 self.statement(node)
                         
         

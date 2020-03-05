@@ -16,7 +16,9 @@ int main()
         
         int b;
         // //a *= (a + b) * 2;
-        b = b + 12 * c / a;
+        b = b + 12 * c / -a;
+        a++;
+        a--; 
         // // while (1) {
         // //         int i;
         // //         float j;
