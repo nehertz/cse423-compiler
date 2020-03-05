@@ -1,122 +1,27 @@
 (hj,12)=;
 hj not found in the symbol table 
 it's a number  12
-not good
 types not matched. Type conversion required which is not supproted
-in if var decl: ID: hj  type: int
 (hj,1232)=;
-found: hj with type: int in scope 0
 it's a number  1232
-not good
 types not matched. Type conversion required which is not supproted
-found: c with type: int in scope 1
-var decl: ID: a  type: int
-var decl: ID: b  type: int
-found: a with type: int in scope 2
-found: b with type: int in scope 2
 (a,((a,b)+,2)*)=;
-found: a with type: int in scope 2
-found: a with type: int in scope 2
 types matched   a
-good
-found: b with type: int in scope 2
-types matched   b
-good
-it's a number  2
-not good
+types not matched   b
 types not matched. Type conversion required which is not supproted
-found: b with type: int in scope 2
-found: a with type: int in scope 2
-found: hj with type: int in scope 0
+it's a number  2
+types not matched. Type conversion required which is not supproted
 (b,(b,(((a,3)-,12)/,hj)*)+)=;
-found: b with type: int in scope 2
-found: b with type: int in scope 2
 types matched   b
-good
-found: a with type: int in scope 2
-types matched   a
-good
+types not matched   a
+types not matched. Type conversion required which is not supproted
 it's a number  3
-not good
 types not matched. Type conversion required which is not supproted
 it's a number  12
-not good
 types not matched. Type conversion required which is not supproted
-found: hj with type: int in scope 0
-types matched   hj
-good
-var decl: ID: i  type: int
-var decl: ID: j  type: float
-Token['int' , 'INT']
-Token['hj' , 'ID']
-Token['=' , 'EQUALS']
-Token['12' , 'NUMCONST']
-Token[';' , 'SEMI']
-Token['int' , 'INT']
-Token['b' , 'ID']
-Token['(' , 'LPAREN']
-Token['int' , 'INT']
-Token['c' , 'ID']
-Token[')' , 'RPAREN']
-Token['{' , 'LBRACE']
-Token['hj' , 'ID']
-Token['=' , 'EQUALS']
-Token['1232' , 'NUMCONST']
-Token[';' , 'SEMI']
-Token['return' , 'RETURN']
-Token['12' , 'NUMCONST']
-Token['+' , 'PLUS']
-Token['c' , 'ID']
-Token[';' , 'SEMI']
-Token['}' , 'RBRACE']
-Token['int' , 'INT']
-Token['main' , 'ID']
-Token['(' , 'LPAREN']
-Token[')' , 'RPAREN']
-Token['{' , 'LBRACE']
-Token['int' , 'INT']
-Token['a' , 'ID']
-Token[';' , 'SEMI']
-Token['int' , 'INT']
-Token['b' , 'ID']
-Token[';' , 'SEMI']
-Token['a' , 'ID']
-Token['=' , 'EQUALS']
-Token['(' , 'LPAREN']
-Token['a' , 'ID']
-Token['+' , 'PLUS']
-Token['b' , 'ID']
-Token[')' , 'RPAREN']
-Token['*' , 'TIMES']
-Token['2' , 'NUMCONST']
-Token[';' , 'SEMI']
-Token['b' , 'ID']
-Token['=' , 'EQUALS']
-Token['b' , 'ID']
-Token['+' , 'PLUS']
-Token['(' , 'LPAREN']
-Token['a' , 'ID']
-Token['-' , 'MINUS']
-Token['3' , 'NUMCONST']
-Token[')' , 'RPAREN']
-Token['/' , 'DIVIDE']
-Token['12' , 'NUMCONST']
-Token['*' , 'TIMES']
-Token['hj' , 'ID']
-Token[';' , 'SEMI']
-Token['while' , 'WHILE']
-Token['(' , 'LPAREN']
-Token['1' , 'NUMCONST']
-Token[')' , 'RPAREN']
-Token['{' , 'LBRACE']
-Token['int' , 'INT']
-Token['i' , 'ID']
-Token[';' , 'SEMI']
-Token['float' , 'FLOAT']
-Token['j' , 'ID']
-Token[';' , 'SEMI']
-Token['}' , 'RBRACE']
-Token['return' , 'RETURN']
-Token['0' , 'NUMCONST']
-Token[';' , 'SEMI']
-Token['}' , 'RBRACE']
+types not matched   hj
+types not matched. Type conversion required which is not supproted
+(a,(a,b)==)=;
+types matched   a
+types not matched   b
+types not matched. Type conversion required which is not supproted

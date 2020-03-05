@@ -506,10 +506,17 @@ def p_varAssign(p):
               | ID XOREQUAL expr
     '''
     st.symbolTable_varAssign(str(p[1]))
+<<<<<<< HEAD
     # s = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2]) + ';'
     # s = s.replace("\"", "")
     # print(s)
     # tc.checkTypes(s, st)
+=======
+    s = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2]) + ';'
+    s = s.replace("\"", "")
+    print(s)
+    tc.checkTypes(s, st)
+>>>>>>> type_checking
     return astConstruct(p, 'varAssign')
 
     
