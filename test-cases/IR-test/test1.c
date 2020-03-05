@@ -1,5 +1,6 @@
 
 int hj = 12;
+int j;
 
 int b(int c)
 {
@@ -7,18 +8,18 @@ int b(int c)
 
         // return 12 + c;
 }
-// int e;
+// // int e;
 
 int main()
 {
         int b;
-        int a *= 12.32;
+        // int a *= 12.32;
         
-        int b;
-        // //a *= (a + b) * 2;
-        b = b + 12 * c / -a;
-        a++;
-        a--; 
+        // int b;
+        // // //a *= (a + b) * 2;
+        // b = b + 12 * c / -a;
+        // a++;
+        // a--; 
         // // while (1) {
         // //         int i;
         // //         float j;
