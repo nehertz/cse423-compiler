@@ -1,6 +1,24 @@
-((hj,12)=,(a,(1211.21,hj)+)=,((c)args,(((hj,(1232.32,a)+)=),((12,c)+)return)stmt)func-b,((None)args,((0)return)stmt)func-main)Program;
+a not found in the symbol table 
+((hj,12)=,((c)args,(((hj,(1232.32,a)+)=),((12,c)+)return)stmt)func-b,((None)args,((0)return)stmt)func-main)Program;
 type of  12;
   supposed to be int
 expected int, matched int  12
-number is float. expected float 1211.21
-type conversion required
+                    /-hj
+          /=-------|
+         |          \-12
+         |
+         |          /args---- /-c
+         |         |
+         |         |                              /-hj
+         |-func-b--|          /-------- /=-------|
+         |         |         |                   |          /-1232.32
+-Program-|         |         |                    \+-------|
+         |          \stmt----|                              \-a
+         |                   |
+         |                   |                    /-12
+         |                    \return-- /+-------|
+         |                                        \-c
+         |
+         |          /args---- /-None
+          \func-main
+                    \stmt---- /return-- /-0
