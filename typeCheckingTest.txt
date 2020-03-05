@@ -1,0 +1,59 @@
+((hj,12)=,((c)args,(((hj,1232.32)=),((12,c)+)return)stmt)func-b,((None)args,(((a)varDecl),((b)varDecl),((a,((a,b)+,2)*)=),((b,(b,(((a,3)-,12)/,hj)*)+)=),((a,(a,b)==)=),((1,((i)varDecl),(j)varDecl)while),(0)return)stmt)func-main)Program;
+type of  12;
+  supposed to be int
+expected int, matched int  12
+func encountered
+func encountered
+                    /-hj
+          /=-------|
+         |          \-12
+         |
+         |          /args---- /-c
+         |         |
+         |-func-b--|                              /-hj
+         |         |          /-------- /=-------|
+         |         |         |                    \-1232.32
+         |          \stmt----|
+         |                   |                    /-12
+         |                    \return-- /+-------|
+-Program-|                                        \-c
+         |
+         |          /args---- /-None
+         |         |
+         |         |          /-------- /varDecl- /-a
+         |         |         |
+         |         |         |--------- /varDecl- /-b
+         |         |         |
+         |         |         |                    /-a
+         |         |         |                   |
+         |         |         |--------- /=-------|                    /-a
+         |         |         |                   |          /+-------|
+          \func-main         |                    \*-------|          \-b
+                   |         |                             |
+                   |         |                              \-2
+                   |         |
+                   |         |                    /-b
+                   |         |                   |
+                   |         |--------- /=-------|          /-b
+                   |         |                   |         |
+                   |         |                   |         |                              /-a
+                   |         |                    \+-------|                    /--------|
+                    \stmt----|                             |          //-------|          \-3
+                             |                             |         |         |
+                             |                              \*-------|          \-12
+                             |                                       |
+                             |                                        \-hj
+                             |
+                             |                    /-a
+                             |--------- /=-------|
+                             |                   |          /-a
+                             |                    \==------|
+                             |                              \-b
+                             |
+                             |                    /-1
+                             |                   |
+                             |--------- /while---|--------- /varDecl- /-i
+                             |                   |
+                             |                    \varDecl- /-j
+                             |
+                              \return-- /-0
