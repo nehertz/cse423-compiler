@@ -4,7 +4,7 @@ from skbio import read
 from skbio.tree import TreeNode
 from SymbolTable import SymbolTable
 from syntaxTree import astConstruct
-from typeChecking import typeChecking
+# from typeChecking import typeChecking
 # Each grammar rule is defined by a Python function 
 # where the docstring to that function contains the 
 # appropriate context-free grammar specification. 
