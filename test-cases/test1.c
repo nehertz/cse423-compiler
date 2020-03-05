@@ -3,7 +3,7 @@ int hj = 12;
 
 int b(int c)
 {
-        hj = 1232;
+        hj = 1232.32;
 
         return 12 + c;
 }

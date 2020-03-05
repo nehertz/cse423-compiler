@@ -17,7 +17,6 @@ from syntaxTree import astConstruct
 # Specify the entry of the program
 start = 'program'
 st = SymbolTable()
-tc = typeChecking()
 def p_empty(p):
     'empty :'
     pass

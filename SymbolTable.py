@@ -12,9 +12,9 @@ class SymbolTable:
         def insert(self, token, type, scope=-1):
                 if (scope == -1):
                         if (self.nestedScope == 0b0):
-                                self.symbolTable.append((token, type, str(self.currentScope)))
+                                self.symbolTable.append((token, type, str(self.currentScope), str(self.currentScope)))
                         else:
-                                self.symbolTable.append((token, type, str(self.currentScope) + str(self.nestedScope)))
+                                self.symbolTable.append((token, type, str(self.currentScope) + str(self.nestedScope), str(self.currentScope)))
                 else:
                         self.symbolTable.append((token, type, scope))
 
@@ -109,3 +109,13 @@ class SymbolTable:
                         self.nestedScope >>= 1
                 return   
 
+        def lookupTC(self, token, scope):
+                # print(token)
+                # print(scope)
+                token = token.replace(';','')
+                for elem in self.symbolTable:
+                        if ((elem[0] == token) and (elem[3] == str(scope))):
+                                return elem[1]
+                        print(elem)
+                        
+                return 'Unknown'
