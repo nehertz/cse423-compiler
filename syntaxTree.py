@@ -140,9 +140,11 @@ def astConstruct(p, type):
 
     elif(type == 'statementList'):
         if(len(p) == 4 and p[3] != None):
-            p[0] = '(' + str(p[1]) + ')' + ',' + str(p[3]) 
+           # p[0] = '(' + str(p[1]) + ')' + ',' + str(p[3]) 
+           p[0] = str(p[1]) + ',' + str(p[3]) 
         elif(len(p) == 3 and p[2] != None):
-            p[0] = '(' + str(p[1]) + ')'  + ',' + str(p[2])
+            #p[0] = '(' + str(p[1]) + ')'  + ',' + str(p[2])
+            p[0] = str(p[1]) + ',' + str(p[2]) 
         else:
             p[0] = p[1]
         

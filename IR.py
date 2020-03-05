@@ -61,8 +61,7 @@ class IR:
 
 
         def statement(self, nodes):
-                for node in nodes.traverse():
-
+                for node in nodes.children:
                         # in statement block, handle var decl with assignment
                         # note: only handles:
                         # int a = expr or a = expr, since the root used to 
@@ -74,13 +73,15 @@ class IR:
                         # TODO: need to consider more cases. Only handles the simple one for now. 
                         elif (node.name == 'varDecl'):
                                 self.varDecl(node)
+                        elif (node.name == 'return'):
+                                self.returnStmt(node)
 
         def assign(self, nodes):
                 subtree = self.getSubtree(nodes)
+                operand2 = ''
                 for node in reversed(subtree):
                         if( node.name not in operators.keys()):
                                 self.enqueue(node.name)
-
                         elif(node.name not in assignment and node.name in operators.keys()):
                                 operand2 = self.dequeue()
                                 operand1 = self.dequeue()
@@ -104,12 +105,33 @@ class IR:
                                         operand2 = self.dequeue()
                                         ir = [operand2, '=', operand2, operator1, operand1] 
                                         self.IRS.append(ir)
+                return operand2
 
         def varDecl(self, nodes):
                 for node in nodes:
                         if(node.name != None):
                                 self.IRS.append([node.name])
 
+        # TODO: return statement needs to support var assign and func calls 
+        # return 1; return b; 
+        # return 1+2;
+        # return a = 1 + 2;
+        # return add();
+        def returnStmt(self, nodes):
+                for node in nodes.children:
+                        if (node.name in assignment):
+                                operand = self.assign(node)
+                                self.IRS.append(['ret', operand])
+                                
+                        elif ('func-' in str(node.name)):
+                                self.funcCall(node)
+                               
+                        else:
+                                self.IRS.append(['ret', node.name])
+                
+
+        def funcCall(self, nodes):
+                pass
 
         def getSubtree(self, nodes):
                 subtree = []

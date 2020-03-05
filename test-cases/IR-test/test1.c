@@ -24,5 +24,5 @@ int main()
         // //         int i;
         // //         float j;
         // // }
-        return 0;
+        return b = 1 + 2 * 8 + 20;
 }
