@@ -13,36 +13,41 @@ class IR:
                 self.treeString = ast
                 self.tree = TreeNode.read(StringIO(ast))
                 self.temporaryVarible = 0
+                
 
         def run(self):
+                
                 # TODO: change to levelorder, and only use the first level. 
-                # for node in self.tree.traverse():
                 for node in self.tree.children:
                         # handle function name node 
                         if ('func-' in str(node.name)):
                                 self.funcNode(node, node.name)
-                        # handle global varible node
+                                
+                        # handle global varible declration without assigment 
                         elif (node.name == 'varDecl'):
                                 self.varDecl(node)
+                        # handle global varible declration with assigment      
+                        elif (node.name in assignment):
+                                self.assign(node)
         
 
         def funcNode(self, nodes, funcName):
-                # funcName = ''
                 funcName = funcName.replace('func-', '')
                 for node in nodes.traverse():
                         if (node.name == 'args'):
                                 self.args(node, funcName)
                         if (node.name == 'stmt'):
                                 self.statement(node)
+                self.IRS.append(['}'])
                         
         
-        def args(self, node, funcName):
+        def args(self, nodes, funcName):
                 argsCount = 0
                 ir = []
                 ir.append(funcName)
-                for nodes in self.getSubtree(node):
-                        if (nodes.name != 'args'):
-                                self.enqueue(nodes.name)
+                for node in self.getSubtree(nodes):
+                        if (node.name != 'args' and node.name != None):
+                                self.enqueue(node.name)
                                 argsCount += 1
                 ir.append('(')
                 while argsCount > 0:
@@ -51,66 +56,65 @@ class IR:
                                 ir.append(',')
                         argsCount -= 1
                 ir.append(')')
-                self.IRS.append(ir)
-                # print(argsCount)                
+                self.IRS.append(ir)              
+                self.IRS.append(['{'])
 
 
-        def statement(self, node):
-                for nodes in node.traverse():
+        def statement(self, nodes):
+                for node in nodes.traverse():
+
                         # in statement block, handle var decl with assignment
                         # note: only handles:
                         # int a = expr or a = expr, since the root used to 
                         # distinguish the node is assignment operator  
-                        if (nodes.name in assignment):
-                                self.assign(nodes)
+                        if (node.name in assignment):
+                                self.assign(node)
 
                         # handle the var-decl without assignment case
                         # TODO: need to consider more cases. Only handles the simple one for now. 
-                        elif (nodes.name == 'varDecl'):
-                                pass
-                                # self.varDecl(nodes)
+                        elif (node.name == 'varDecl'):
+                                self.varDecl(node)
 
-        def assign(self, node):
-                subtree = self.getSubtree(node)
-                for nodes in reversed(subtree):
-                        if( nodes.name not in operators.keys()):
-                                self.enqueue(nodes.name)
+        def assign(self, nodes):
+                subtree = self.getSubtree(nodes)
+                for node in reversed(subtree):
+                        if( node.name not in operators.keys()):
+                                self.enqueue(node.name)
 
-                        elif(nodes.name not in assignment and nodes.name in operators.keys()):
+                        elif(node.name not in assignment and node.name in operators.keys()):
                                 operand2 = self.dequeue()
                                 operand1 = self.dequeue()
-                                operator = nodes.name
+                                operator = node.name
                                 tempVar = 't_' + str(self.temporaryVarible)
                                 ir = [tempVar, '=', operand1, operator, operand2]
                                 self.IRS.append(ir)
                                 self.enqueue(tempVar)
                                 self.temporaryVarible += 1
-                        elif(nodes.name in assignment):
-                                if(nodes.name == '='):
+                        elif(node.name in assignment):
+                                if(node.name == '='):
                                         operand1 = self.dequeue()
                                         operand2 = self.dequeue()
                                         ir = [operand2, '=', operand1]
                                         self.IRS.append(ir)
                                 else:
                                         # e,g : if we have +=, operator1 is '+', operator2 is '='
-                                        operator1 = nodes.name[0]
-                                        operator2 = nodes.name[1]
+                                        operator1 = node.name[0]
+                                        operator2 = node.name[1]
                                         operand1 = self.dequeue()
                                         operand2 = self.dequeue()
-                                        # print("operand1 ", operand1)
-                                        # print("operand2 ", operand2)
                                         ir = [operand2, '=', operand2, operator1, operand1] 
                                         self.IRS.append(ir)
 
         def varDecl(self, nodes):
                 for node in nodes:
-                        self.IRS.append([node.name])
+                        if(node.name != None):
+                                self.IRS.append([node.name])
 
 
-        def getSubtree(self, node):
+        def getSubtree(self, nodes):
                 subtree = []
-                for nodes in node.levelorder():
-                        subtree.append(nodes)
+                for node in nodes.levelorder():
+                        subtree.append(node)
                 return subtree
                 
         def enqueue(self, item):
@@ -121,6 +125,17 @@ class IR:
                 
         def printIR(self):
                 str1 = " " 
+                indentFlag = 0
                 for list in self.IRS:
-                        print(str1.join(list))
-                        
+                        if (str1.join(list) == '{'):
+                                indentFlag = 1
+                                print(str1.join(list))
+                                continue
+                        elif (str1.join(list) == '}'):
+                                indentFlag = 0
+                                print(str1.join(list))
+                                continue
+                        elif (indentFlag):
+                                print('\t', str1.join(list))
+                        else:
+                                print(str1.join(list))
