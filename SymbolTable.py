@@ -116,6 +116,6 @@ class SymbolTable:
                 for elem in self.symbolTable:
                         if ((elem[0] == token) and (elem[3] == str(scope))):
                                 return elem[1]
-                        print(elem)
+                        # print(elem)
                         
                 return 'Unknown'

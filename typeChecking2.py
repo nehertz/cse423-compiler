@@ -34,11 +34,12 @@ class TypeChecking:
                 self.checkType(nodes[1], supposedType)
 
         def checkType(self, expr, supposedType):
-                if (supposedType == 'int'):
+                if (supposedType == 'float'):
+                        expr = self.checkFloat(expr)
+                elif (supposedType == 'int'):
                         print('type of  ' + str(expr) +  '  supposed to be int')
                         expr = self.checkInt(expr)
-                elif (supposedType == 'float'):
-                        expr = self.checkFloat(expr)
+
                 else:
                         pass
         def checkInt(self, expr):
@@ -47,13 +48,15 @@ class TypeChecking:
                                 print(node.name)
                                 print('what?')
                                 continue
+                        elif (self.numbersFloat.match(node.name)):
+                                print('number is float. expected Int')
+                                number = int(float(node.name))
+                                node.name = str(number)
+                                print(node.name)
                         elif (self.numbersInt.match(node.name)):
                                 print('expected int, matched int  ' + node.name)
                                 continue
-                        elif (self.numbersFloat.match(node.name)):
-                                print('number is float. expected Int')
-                                number = int(node.name)
-                                node.name = str(number)
+
                         else:
                                 type = st.lookupTC(node.name, self.scope)
                                 if (type == 'Unknown'):
@@ -70,14 +73,16 @@ class TypeChecking:
                 for node in expr.preorder():
                         if ('+-/*%'.find(node.name) != -1):
                                 continue
-                        elif (self.numbersInt.match(node.name)):
-                                print('number is int. expected float')
-                                number= int(node.name)
-                                node.name = str(number) + '.' + '00'
-                                continue
                         elif (self.numbersFloat.match(node.name)):
                                 print('number is float. expected float ' + node.name)
                                 continue
+                        elif (self.numbersInt.match(node.name)):
+                                print('number is int. expected float')
+                                number= float(int(node.name))
+                                node.name = str(number)
+                                print(number)
+                                continue
+
                         else:
                                 type = st.lookupTC(node.name, self.scope)
                                 if (type == 'Unknown'):
