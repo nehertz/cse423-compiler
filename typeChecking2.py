@@ -23,12 +23,17 @@ class TypeChecking:
                                 self.variablesTC(node.children)
                                 # print(node.children)
                                 continue
-                        elif ( 'func-' in node.name):
+                        elif ('func-' in node.name):
                                 self.scope += 1
-                                print('func encountered')
+                                self.functionsTC(node.children)
                                 continue
                         
 
+
+        def functionsTC(self, nodes):
+                for node in nodes:
+                        if ('stmt-' in node.name):
+                                
         def variablesTC(self, nodes):
                 supposedType = st.lookupTC(nodes[0].name, 0)
                 self.checkType(nodes[1], supposedType)
