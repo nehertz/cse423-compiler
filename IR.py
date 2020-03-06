@@ -72,22 +72,31 @@ class IR:
 
         def statement(self, nodes):
                 for node in nodes.children:
-                        # in statement block, handle var decl with assignment
-                        # note: only handles:
-                        # int a = expr or a = expr, since the root used to distinguish the node is assignment operator  
+                        # convert var decl with assignment
+                        # int a = expr or a = expr 
                         if (node.name in assignment):
                                 self.assign(node)
-                        # converting the var-decl without assignment 
+
+                        # convert simple expressions 
+                        # those are expressions without assignment
+                        # examples : '1 + 2 + 3', 'a << 1' 
+                        elif (node.name in arithmetic):
+                                self.simpleExpr(node)
+
+                        # convert the var-decl without assignment 
                         elif (node.name == 'varDecl'):
                                 self.varDecl(node)
-                        # converting return stmt 
+
+                        # convert return stmt 
                         elif (node.name == 'return'):
                                 self.returnStmt(node)
-                        # converting increment and decrement, ++a and --a
+
+                        # convert increment and decrement, ++a and --a
                         # the a = ++a case is handled by the assign() function
                         elif (node.name == '++' or node.name == '--'):
                                 self.increment(node, node.name)
-                        # converting function calls. 
+
+                        # convert function calls. 
                         elif ('func-' in str(node.name)):
                                 self.funcCall(node, node.name, 0)
 
@@ -133,7 +142,26 @@ class IR:
                                         ir = [operand2, operator2, operand2, operator1, operand1] 
                                         self.IRS.append(ir)
                 return operand2
- 
+        
+        # simpleExpr converts experssion which does not have assigment
+        # e,g a >> 1, 1 + 2 + 3
+        def simpleExpr(self, nodes):
+                subtree = self.getSubtree(nodes)
+                operand2 = ''
+                for node in reversed(subtree):
+                        if (node.name not in arithmetic):
+                                self.enqueue(node.name)
+                        elif (node.name in arithmetic):
+                                operand2 = self.dequeue()
+                                operand1 = self.dequeue()
+                                operator = node.name
+                                tempVar = 't_' + str(self.temporaryVarible)
+                                ir = [tempVar, '=', operand1, operator, operand2]
+                                self.IRS.append(ir)
+                                self.enqueue(tempVar)
+                                self.temporaryVarible += 1
+                return tempVar
+
 
         def varDecl(self, nodes):
                 for node in nodes:
@@ -150,6 +178,9 @@ class IR:
                         if (node.name in assignment):
                                 operand = self.assign(node)
                                 self.IRS.append(['ret', operand])
+                        elif (node.name in arithmetic):
+                                tempVar = self.simpleExpr(node)
+                                self.IRS.append(['ret', tempVar])
                         elif ('func-' in str(node.name)):
                                 self.funcCall(node, node.name, 1)
                         # TODO: simple experssions like 1+2+3 

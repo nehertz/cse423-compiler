@@ -22,10 +22,11 @@ int main()
         // b++;
         // a = b + 1; 
         // return 1 + 2 + 3;
-        a = b++;
-        c++;
-        d--;
-        add(e,f);
+        // a = b++;
+        // c++;
+        // d--;
+        // add(e,f);
+        //1 + 2 + 3;
 
         // int a *= 12.32;
         
@@ -38,8 +39,8 @@ int main()
         // //         int i;
         // //         float j;
         // // }
-        // return 1;
+        return 1 + 2 + a +b;
         // return 1+2;
         // return a = 1 + 2;
-        return add(a, b);
+        // return add(a, b);
 }
