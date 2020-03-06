@@ -1,21 +1,4 @@
-type of  (1232.32,c)+;
-  supposed to be int
-+
-what?
-number is float. expected Int
-1232
-                    /args---- /-c
-                   |
-                   |                    /-hj
-          /func-b--|          /=-------|
-         |         |         |         |          /-1232.32
-         |         |         |          \+-------|
-         |          \stmt----|                    \-c
-         |                   |
--Program-|                   |                    /-12
-         |                    \return-- /+-------|
-         |                                        \-c
-         |
-         |          /args---- /-None
-          \func-main
-                    \stmt---- /return-- /-0
+[('c', 'int', '1', '1'), ('hj', 'int', '1', '1')]
+b
+Unknown
+Unknown type:   Unknown  [<TreeNode, name: +, internal node count: 0, tips count: 2>]
