@@ -4,7 +4,7 @@ from skbio import read
 from skbio.tree import TreeNode
 from SymbolTable import SymbolTable
 from syntaxTree import astConstruct
-from typeChecking import typeChecking
+# from typeChecking import typeChecking
 # Each grammar rule is defined by a Python function 
 # where the docstring to that function contains the 
 # appropriate context-free grammar specification. 
@@ -17,7 +17,6 @@ from typeChecking import typeChecking
 # Specify the entry of the program
 start = 'program'
 st = SymbolTable()
-tc = typeChecking()
 def p_empty(p):
     'empty :'
     pass
@@ -533,5 +532,5 @@ def parser(lex):
     parser = yacc.yacc()
     result = parser.parse(lexer=lex)
     s = '(' + str(result) + ')Program;'
-    print(s)
+    # print(s)
     return s
