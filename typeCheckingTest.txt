@@ -1,4 +1,3 @@
-[('c', 'int', '1', '1'), ('hj', 'int', '1', '1')]
 type of  (1232.32,c)+;
   supposed to be int
 +
@@ -20,3 +19,32 @@ number is float. expected Int
          |          /args---- /-None
           \func-main
                     \stmt---- /return-- /-0
+Token['int' , 'INT']
+Token['b' , 'ID']
+Token['(' , 'LPAREN']
+Token['int' , 'INT']
+Token['c' , 'ID']
+Token[')' , 'RPAREN']
+Token['{' , 'LBRACE']
+Token['int' , 'INT']
+Token['hj' , 'ID']
+Token['=' , 'EQUALS']
+Token['1232.32' , 'NUMCONST']
+Token['+' , 'PLUS']
+Token['c' , 'ID']
+Token[';' , 'SEMI']
+Token['return' , 'RETURN']
+Token['12' , 'NUMCONST']
+Token['+' , 'PLUS']
+Token['c' , 'ID']
+Token[';' , 'SEMI']
+Token['}' , 'RBRACE']
+Token['int' , 'INT']
+Token['main' , 'ID']
+Token['(' , 'LPAREN']
+Token[')' , 'RPAREN']
+Token['{' , 'LBRACE']
+Token['return' , 'RETURN']
+Token['0' , 'NUMCONST']
+Token[';' , 'SEMI']
+Token['}' , 'RBRACE']
