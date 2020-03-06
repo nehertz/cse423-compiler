@@ -276,6 +276,7 @@ def p_statementList(p):
                   | forLoop statementList
                   | switch statementList
                   | enumInScope statementList
+                  | labeledStmt statementList
     '''
     return astConstruct(p, 'statementList')
 
@@ -382,7 +383,7 @@ def p_returnStmt(p):
 
 def p_gotoStmt(p):
     '''
-    gotoStmt : GOTO ID 
+    gotoStmt : GOTO ID
     '''
     return astConstruct(p, 'gotoStmt')
 
@@ -391,6 +392,12 @@ def p_breakStmt(p):
     breakStmt : BREAK
     '''
     return astConstruct(p, 'breakStmt')
+
+def p_labeledStmt(p):
+    '''
+    labeledStmt : ID COLON 
+    '''
+    return astConstruct(p, 'labeledStmt')
 
 def p_funcCall(p):
     '''
