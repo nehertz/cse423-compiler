@@ -205,7 +205,7 @@ def astConstruct(p, type):
         p[0] = 'goto' + '-' + str(p[2])
 
     elif(type == 'funcCall'):
-        p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')'
+        p[0] =  '(' + str(p[3]) + ')' + 'func-' + str(p[1]) 
 
     elif(type == 'logicalExpr'):
         if (len(p) == 2):
@@ -251,8 +251,12 @@ def astConstruct(p, type):
     elif(type == 'unaryExpr'):
         if (len(p) == 2):
             p[0] = p[1]
-        elif (p[2] == '++' or p[2] == '--'):
-            p[0] = '"' + p[1] + p[2] + '"'
+        elif (p[2] == '++'):
+             p[0] = '(' +  str(p[1]) + ')++'
+        elif (p[2] == '--'):
+            p[0] = '(' +  str(p[1]) + ')--'
+           
+            
         elif (p[1] == '!' or p[1] == '~'):
             p[0] = '"' + p[1] + p[2] + '"'
         elif (len(p) == 3):
@@ -265,8 +269,13 @@ def astConstruct(p, type):
     elif(type == 'postfixExpr'):
         if (len(p) == 2):
             p[0] = p[1]
-        elif (p[1] == '++' or p[1] == '--'):
-            p[0] = '"' + p[1] + p[2] + '"'
+
+        elif (p[1] == '++'):
+            p[0] = '(' +  str(p[2]) + ')++'
+        elif (p[1] == '--'):
+            p[0] = '(' +  str(p[2]) + ')--'
+            
+
         elif (len(p) == 3):
             p[0] = '('  + '"' + str(p[1]) + '"' + ')' +  str(p[2])
         elif (len(p) == 4):
