@@ -16,7 +16,7 @@ class SymbolTable:
                         else:
                                 self.symbolTable.append((token, type, str(self.currentScope) + str(self.nestedScope), str(self.currentScope)))
                 else:
-                        self.symbolTable.append((token, type, scope))
+                        self.symbolTable.append((token, type, scope, str(0)))
 
         def lookup(self, token):
                 acceptableScopes = []
@@ -59,7 +59,7 @@ class SymbolTable:
                 if (type == 'funcDecl'):
                         if (self.globalScope == 1):
                                 
-                                self.insert(str(p[1]), str(p[2]), self.globalScope - 1)
+                                self.insert(str(p[2]), str(p[1]), self.globalScope - 1)
                         else:
                                 print("error: function definition not in a global scope")
                                 sys.exit(1)
