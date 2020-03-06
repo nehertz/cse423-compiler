@@ -91,6 +91,7 @@ if __name__ == "__main__":
     # Goes to the tokenizer
     lexer = tokenizer(fileString)
     ast = parser(lexer.clone())
+    st.print()
     tc = TypeChecking(ast)
     tc.run()
     printAST(ast)

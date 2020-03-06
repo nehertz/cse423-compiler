@@ -11,12 +11,13 @@ class TypeChecking:
                 self.treeString = ast.replace('"', '')
 
                 self.tree = TreeNode.read(StringIO(self.treeString))
-                self.numbersFloat = re.compile('\d+\.{1}\d+')
-                self.numbersInt = re.compile('\d+')
+                self.numbersFloat = re.compile(r'\d+\.{1}\d+')
+                self.numbersInt = re.compile(r'\d+')
                 self.scope = 0
                 # self.scope = 0
         def run(self):
                 for node in self.tree.children:
+                        # print(node)
                         if (node.name == '='):
                                 # global variable
                                 # print('global variable')
@@ -24,6 +25,7 @@ class TypeChecking:
                                 # print(node.children)
                                 continue
                         elif ('func-' in node.name):
+                                # print(node.children)
                                 self.scope += 1
                                 self.functionsTC(node.children)
                                 continue
@@ -32,21 +34,39 @@ class TypeChecking:
 
         def functionsTC(self, nodes):
                 for node in nodes:
-                        if ('stmt-' in node.name):
+                        # print(node.name)
+                        if ('stmt' in node.name):
+                                # print(node.name)
+                                self.checkStatement(node.children)
+                                continue
+
+        def checkStatement(self, nodes):
+                for node in nodes:
+                        # print(node.name)
+                        if ('=' == node.name):
+                                # print(node.name)
+                                self.variablesTC(node.children)
+                                continue
+                        else:
+                                continue
                                 
         def variablesTC(self, nodes):
-                supposedType = st.lookupTC(nodes[0].name, 0)
+                supposedType = st.lookupTC(nodes[0].name, self.scope)
+                # print(supposedType + '   token:   ' + nodes[0].name)
+                # print(nodes[1])
                 self.checkType(nodes[1], supposedType)
 
         def checkType(self, expr, supposedType):
                 if (supposedType == 'float'):
+                        print(expr)
                         expr = self.checkFloat(expr)
                 elif (supposedType == 'int'):
                         print('type of  ' + str(expr) +  '  supposed to be int')
                         expr = self.checkInt(expr)
 
                 else:
-                        pass
+                        print("Unknown type:   " + supposedType)
+                        sys.exit(1)
         def checkInt(self, expr):
                 for node in expr.preorder():
                         if ('+-/*%'.find(node.name) != -1):
