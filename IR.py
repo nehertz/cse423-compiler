@@ -87,6 +87,13 @@ class IR:
                         elif (node.name == 'varDecl'):
                                 self.varDecl(node)
 
+                        # convert the goto stmt, and its label
+                        elif (node.name == 'goto'):
+                                self.gotoStmt(node)
+
+                        elif (node.name == 'label'):
+                                self.createLabel(node)
+
                         # convert return stmt 
                         elif (node.name == 'return'):
                                 self.returnStmt(node)
@@ -167,6 +174,16 @@ class IR:
                 for node in nodes:
                         if(node.name != None):
                                 self.IRS.append([node.name])
+
+        # TODO: need to have our own goto rules. 
+        def gotoStmt(self, nodes):
+                for node in nodes.children:
+                        self.IRS.append(['goto', node.name])
+
+        def createLabel(self, nodes):
+                for node in nodes.children:
+                        self.IRS.append([node.name, ':'])
+
 
         # return statement support var assign and func calls 
         # return 1; return b; 

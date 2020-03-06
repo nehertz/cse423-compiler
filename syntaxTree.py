@@ -202,7 +202,10 @@ def astConstruct(p, type):
         p[0] =  '(' + str(p[2]) + ')' + str(p[1])
 
     elif(type == 'gotoStmt'):
-        p[0] = 'goto' + '-' + str(p[2])
+        p[0] =  '(' + str(p[2]) + ')' + 'goto'
+    
+    elif(type == 'labeledStmt'):
+        p[0] = '(' + str(p[1]) + ')' + 'label'
 
     elif(type == 'funcCall'):
         p[0] =  '(' + str(p[3]) + ')' + 'func-' + str(p[1]) 

@@ -12,6 +12,11 @@
 
 int main()
 {
+        int a;
+        goto even;
+        
+        even:
+                a = 1;
         // int b, a;
         // b <<= 1; 
         // b >>= 1;
@@ -39,7 +44,7 @@ int main()
         // //         int i;
         // //         float j;
         // // }
-        return 1 + 2 + a +b;
+        //return 1 + 2 + a +b;
         // return 1+2;
         // return a = 1 + 2;
         // return add(a, b);
