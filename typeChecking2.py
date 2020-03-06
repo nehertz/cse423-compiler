@@ -80,8 +80,8 @@ class TypeChecking:
                         print("Unknown type:   " + supposedType + '  ' + str(expr))
                         # sys.exit(1)
         def checkInt(self, expr):
-                print('in checkInt')
-                print(expr)
+                # print('in checkInt')
+                # print(expr)
                 for elem in expr:
                         for node in elem.preorder():
                                 if ('+-/*%'.find(node.name) != -1):

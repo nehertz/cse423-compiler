@@ -1,22 +1,12 @@
 [('c', 'int', '1', '1'), ('hj', 'int', '1', '1'), ('b', 'int', 0, '0'), ('a', 'int', '2', '2'), ('b', 'float', '2', '2'), ('main', 'int', 0, '0')]
 int   token:   hj
-in checkInt
-(1232.32,c)+;
-
 number is float. expected Int
-in checkInt
-[<TreeNode, name: +, internal node count: 0, tips count: 2>]
 what?
 expected int, matched int  12
 int   token:   a
-in checkInt
-((a,b)+,2)*;
-
 what?
 type conversion required
 expected int, matched int  2
-in checkInt
-[<TreeNode, name: 0, internal node count: 0, tips count: 0>]
 expected int, matched int  0
                     /args---- /-c
                    |
