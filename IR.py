@@ -74,17 +74,22 @@ class IR:
                 for node in nodes.children:
                         # in statement block, handle var decl with assignment
                         # note: only handles:
-                        # int a = expr or a = expr, since the root used to 
-                        # distinguish the node is assignment operator  
+                        # int a = expr or a = expr, since the root used to distinguish the node is assignment operator  
                         if (node.name in assignment):
                                 self.assign(node)
-                        # handle the var-decl without assignment case
+                        # converting the var-decl without assignment 
                         elif (node.name == 'varDecl'):
                                 self.varDecl(node)
+                        # converting return stmt 
                         elif (node.name == 'return'):
                                 self.returnStmt(node)
+                        # converting increment and decrement, ++a and --a
+                        # the a = ++a case is handled by the assign() function
                         elif (node.name == '++' or node.name == '--'):
                                 self.increment(node, node.name)
+                        # converting function calls. 
+                        elif ('func-' in str(node.name)):
+                                self.funcCall(node, node.name, 0)
 
         def assign(self, nodes):
                 subtree = self.getSubtree(nodes)
@@ -146,7 +151,7 @@ class IR:
                                 operand = self.assign(node)
                                 self.IRS.append(['ret', operand])
                         elif ('func-' in str(node.name)):
-                                self.funcCall(node, node.name)
+                                self.funcCall(node, node.name, 1)
                         # TODO: simple experssions like 1+2+3 
                         else:
                                 self.IRS.append(['ret', node.name])
@@ -162,12 +167,15 @@ class IR:
         # funcCall function calls the args function to obtain the call arguments
         # In normal case, it appends the func call to  IRS. e,g 'add(a , b)' will be append to the IRS 
         # In special case such as func call in returnStmt, it appends 'ret add(a, b)'    
-        def funcCall(self, nodes, funcName):
+        def funcCall(self, nodes, funcName, retStmtFlag):
                 ir = []
                 argsCount = self.args(nodes, funcName, 1)
                 #print("count  = ", argsCount)
                 funcName = funcName.replace('func-', '')
-                ir.append('ret ' + funcName + ' (')
+                if(retStmtFlag):
+                        ir.append('ret ' + funcName + ' (')
+                else:
+                        ir.append(funcName + ' (')
                 while argsCount > 0:
                         ir.append(str(self.dequeue()))
                         if argsCount != 1:
