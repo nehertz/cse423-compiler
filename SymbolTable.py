@@ -58,6 +58,7 @@ class SymbolTable:
 
                 if (type == 'funcDecl'):
                         if (self.globalScope == 1):
+                                
                                 self.insert(str(p[1]), str(p[2]), self.globalScope - 1)
                         else:
                                 print("error: function definition not in a global scope")
@@ -115,6 +116,7 @@ class SymbolTable:
                 token = token.replace(';','')
                 for elem in self.symbolTable:
                         if ((elem[0] == token) and (elem[3] == str(scope))):
+                                # print(elem)
                                 return elem[1]
                         # print(elem)
                         
