@@ -9,7 +9,7 @@ from skbio.tree import TreeNode
 from ply_scanner import tokenizer
 from ply_parser import parser
 from ply_parser import st
-from typeChecking import typeChecking
+from typeChecking2 import TypeChecking
 from IR import IR
 # Print the instruction of how to excute the program
 # parameters: None
@@ -91,12 +91,12 @@ if __name__ == "__main__":
     # Goes to the tokenizer
     lexer = tokenizer(fileString)
     ast = parser(lexer.clone())
-    # tc = typeChecking()
-    # tc.traverse()
-
+    tc = TypeChecking(ast)
+    tc.run()
+    # printAST(ast)
     if (flag & 1 or flag == 0):
        # prints the tokens
-        # printTokens(lexer)
+        printTokens(lexer)
         pass
     elif (flag & 10):
         # goes to parser and print the ast 
@@ -104,12 +104,11 @@ if __name__ == "__main__":
      # Get the symbolTable  
     elif (flag & 100):
         st.print()
-
+    #gets the ir
     elif (flag & 10000):
         printAST(ast)
         ir = IR(ast)
         ir.run()
         ir.printIR()
-    
 
     

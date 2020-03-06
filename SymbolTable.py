@@ -12,9 +12,9 @@ class SymbolTable:
         def insert(self, token, type, scope=-1):
                 if (scope == -1):
                         if (self.nestedScope == 0b0):
-                                self.symbolTable.append((token, type, str(self.currentScope)))
+                                self.symbolTable.append((token, type, str(self.currentScope), str(self.currentScope)))
                         else:
-                                self.symbolTable.append((token, type, str(self.currentScope) + str(self.nestedScope)))
+                                self.symbolTable.append((token, type, str(self.currentScope) + str(self.nestedScope), str(self.currentScope)))
                 else:
                         self.symbolTable.append((token, type, scope))
 
@@ -32,7 +32,7 @@ class SymbolTable:
 
                 for elem in self.symbolTable:
                         if ((elem[0] == token) and (elem[2] in acceptableScopes)):
-                                print("found: {0} with type: {1} in scope {2}".format(elem[0], elem[1], elem[2]))
+                                # print("found: {0} with type: {1} in scope {2}".format(elem[0], elem[1], elem[2]))
                                 return elem[1]
                 print("{0} not found in the symbol table ".format(token))
                 return None
@@ -43,13 +43,13 @@ class SymbolTable:
                 if (type == 'varDecl'):
                         # if (len(p) == 3):
                         if (self.ID != '' and self.afterVarAssign):
-                                print("in if var decl: ID: {0}  type: {1}".format(self.ID, p[1]))
+                                # print("in if var decl: ID: {0}  type: {1}".format(self.ID, p[1]))
                                 self.insert(self.ID, p[1])
                                 self.ID = ''
                                 self.afterVarAssign = False
                                 return
                         
-                        print("var decl: ID: {0}  type: {1}".format(p[2], p[1]))
+                        # print("var decl: ID: {0}  type: {1}".format(p[2], p[1]))
                         self.insert(str(p[2]), str(p[1]))
 
                                 
@@ -109,3 +109,13 @@ class SymbolTable:
                         self.nestedScope >>= 1
                 return   
 
+        def lookupTC(self, token, scope):
+                # print(token)
+                # print(scope)
+                token = token.replace(';','')
+                for elem in self.symbolTable:
+                        if ((elem[0] == token) and (elem[3] == str(scope))):
+                                return elem[1]
+                        # print(elem)
+                        
+                return 'Unknown'
