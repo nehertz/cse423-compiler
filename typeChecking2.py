@@ -31,6 +31,8 @@ class TypeChecking:
                                 self.scope += 1
                                 self.functionsTC(node.children)
                                 continue
+                        else: 
+                                continue
                         
 
 
@@ -55,14 +57,14 @@ class TypeChecking:
 
         def returnTC (self, nodes):
                 supposedType = st.lookupTC(self.funcName, 0)
-                print(self.funcName)
-                print(supposedType)
+                # print(self.funcName)
+                # print(supposedType)
                 self.checkType(nodes, supposedType)
 
 
         def variablesTC(self, nodes):
                 supposedType = st.lookupTC(nodes[0].name, self.scope)
-                # print(supposedType + '   token:   ' + nodes[0].name)
+                print(supposedType + '   token:   ' + nodes[0].name)
                 # print(nodes[1])
                 self.checkType(nodes[1], supposedType)
 
@@ -76,43 +78,46 @@ class TypeChecking:
 
                 else:
                         print("Unknown type:   " + supposedType + '  ' + str(expr))
-                        sys.exit(1)
+                        # sys.exit(1)
         def checkInt(self, expr):
-                for node in expr.preorder():
-                        if ('+-/*%'.find(node.name) != -1):
-                                # print(node.name)
-                                # print('what?')
-                                continue
-                        elif (self.numbersFloat.match(node.name)):
-                                # print('number is float. expected Int')
-                                number = int(float(node.name))
-                                node.name = str(number)
-                                # print(node.name)
-                        elif (self.numbersInt.match(node.name)):
-                                # print('expected int, matched int  ' + node.name)
-                                continue
-
-                        else:
-                                type = st.lookupTC(node.name, self.scope)
-                                if (type == 'Unknown'):
-                                        print('unknown token found: ' + node.name)
-                                elif (type == 'int'):
-                                        # print(' in else; in elif int')
+                print('in checkInt')
+                print(expr)
+                for elem in expr:
+                        for node in elem.preorder():
+                                if ('+-/*%'.find(node.name) != -1):
+                                        # print(node.name)
+                                        print('what?')
                                         continue
-                                else : 
-                                        # print('type conversion required')
-                                        sys.exit(1)
-                        return expr
+                                elif (self.numbersFloat.match(node.name)):
+                                        print('number is float. expected Int')
+                                        number = int(float(node.name))
+                                        node.name = str(number)
+                                        # print(node.name)
+                                elif (self.numbersInt.match(node.name)):
+                                        print('expected int, matched int  ' + node.name)
+                                        continue
+
+                                else:
+                                        type = st.lookupTC(node.name, self.scope)
+                                        if (type == 'Unknown'):
+                                                print('unknown token found: ' + node.name)
+                                        elif (type == 'int'):
+                                                # print(' in else; in elif int')
+                                                continue
+                                        else : 
+                                                print('type conversion required')
+                                                # sys.exit(1)
+                return expr
         def checkFloat(self, expr):
 
                 for node in expr.preorder():
                         if ('+-/*%'.find(node.name) != -1):
                                 continue
                         elif (self.numbersFloat.match(node.name)):
-                                # print('number is float. expected float ' + node.name)
+                                print('number is float. expected float ' + node.name)
                                 continue
                         elif (self.numbersInt.match(node.name)):
-                                # print('number is int. expected float')
+                                print('number is int. expected float')
                                 number= float(int(node.name))
                                 node.name = str(number)
                                 print(number)

@@ -1,4 +1,47 @@
-[('c', 'int', '1', '1'), ('hj', 'int', '1', '1')]
-b
-Unknown
-Unknown type:   Unknown  [<TreeNode, name: +, internal node count: 0, tips count: 2>]
+[('c', 'int', '1', '1'), ('hj', 'int', '1', '1'), ('b', 'int', 0, '0'), ('a', 'int', '2', '2'), ('b', 'float', '2', '2'), ('main', 'int', 0, '0')]
+int   token:   hj
+in checkInt
+(1232.32,c)+;
+
+number is float. expected Int
+in checkInt
+[<TreeNode, name: +, internal node count: 0, tips count: 2>]
+what?
+expected int, matched int  12
+int   token:   a
+in checkInt
+((a,b)+,2)*;
+
+what?
+type conversion required
+expected int, matched int  2
+in checkInt
+[<TreeNode, name: 0, internal node count: 0, tips count: 0>]
+expected int, matched int  0
+                    /args---- /-c
+                   |
+                   |                    /-hj
+          /func-b--|          /=-------|
+         |         |         |         |          /-1232.32
+         |         |         |          \+-------|
+         |          \stmt----|                    \-c
+         |                   |
+         |                   |                    /-12
+-Program-|                    \return-- /+-------|
+         |                                        \-c
+         |
+         |          /args---- /-None
+         |         |
+         |         |          /varDecl- /-a
+         |         |         |
+          \func-main         |-varDecl- /-b
+                   |         |
+                   |         |          /-a
+                   |         |         |
+                    \stmt----|-=-------|                    /-a
+                             |         |          /+-------|
+                             |          \*-------|          \-b
+                             |                   |
+                             |                    \-2
+                             |
+                              \return-- /-0

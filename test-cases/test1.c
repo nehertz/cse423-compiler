@@ -11,9 +11,9 @@ int b(int c)
 }
 int main()
 {
-        // int a;
-        // float b;
-        // a = (a + b) * 2;
+        int a;
+        float b;
+        a = (a + b) * 2;
         // b = b + (a - 3) / 12 * hj;
         // a = a == b;
         // while (1) {
