@@ -1,21 +1,19 @@
-a not found in the symbol table 
-((hj,12)=,((c)args,(((hj,(1232.32,a)+)=),((12,c)+)return)stmt)func-b,((None)args,((0)return)stmt)func-main)Program;
-type of  12;
+[('c', 'int', '1', '1'), ('hj', 'int', '1', '1')]
+type of  (1232.32,c)+;
   supposed to be int
-expected int, matched int  12
-                    /-hj
-          /=-------|
-         |          \-12
-         |
-         |          /args---- /-c
-         |         |
-         |         |                              /-hj
-         |-func-b--|          /-------- /=-------|
-         |         |         |                   |          /-1232.32
--Program-|         |         |                    \+-------|
-         |          \stmt----|                              \-a
++
+what?
+number is float. expected Int
+1232
+                    /args---- /-c
+                   |
+                   |                    /-hj
+          /func-b--|          /=-------|
+         |         |         |         |          /-1232.32
+         |         |         |          \+-------|
+         |          \stmt----|                    \-c
          |                   |
-         |                   |                    /-12
+-Program-|                   |                    /-12
          |                    \return-- /+-------|
          |                                        \-c
          |
