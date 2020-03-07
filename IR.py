@@ -5,6 +5,9 @@ from skbio.tree import TreeNode
 from ply_scanner import assignment
 from ply_scanner import operators
 from ply_scanner import arithmetic
+from ply_scanner import logical
+from ply_scanner import comparison
+from ply_scanner import alc
 
 class IR:
         def __init__(self, ast):
@@ -80,7 +83,9 @@ class IR:
                         # convert simple expressions 
                         # those are expressions without assignment
                         # examples : '1 + 2 + 3', 'a << 1' 
-                        elif (node.name in arithmetic):
+                        # 'a > b',  'a || b', simple expression will be useful in loops and if conditions
+                        # reference to scanner for the alc list,  
+                        elif (node.name in alc):
                                 self.simpleExpr(node)
 
                         # convert the var-decl without assignment 
@@ -113,7 +118,7 @@ class IR:
                 for node in reversed(subtree):
                         if( node.name not in operators.keys()):
                                 self.enqueue(node.name)
-                        elif(node.name not in assignment and node.name in arithmetic):
+                        elif(node.name not in assignment and node.name in alc):
                                 operand2 = self.dequeue()
                                 operand1 = self.dequeue()
                                 operator = node.name
@@ -140,7 +145,7 @@ class IR:
                                         if (len(node.name) == 2):
                                                 operator1 = node.name[0]
                                                 operator2 = node.name[1]
-                                        # >>= and <<= 
+                                        # >>= and <<= , operator1 is '>>' or '<<', operator2 is '='
                                         elif(len(node.name) == 3):
                                                 operator1 = node.name[0] + node.name[1]
                                                 operator2 = node.name[2]
@@ -156,9 +161,9 @@ class IR:
                 subtree = self.getSubtree(nodes)
                 operand2 = ''
                 for node in reversed(subtree):
-                        if (node.name not in arithmetic):
+                        if (node.name not in alc):
                                 self.enqueue(node.name)
-                        elif (node.name in arithmetic):
+                        elif (node.name in alc):
                                 operand2 = self.dequeue()
                                 operand1 = self.dequeue()
                                 operator = node.name
@@ -167,6 +172,7 @@ class IR:
                                 self.IRS.append(ir)
                                 self.enqueue(tempVar)
                                 self.temporaryVarible += 1
+                self.dequeue()
                 return tempVar
 
 

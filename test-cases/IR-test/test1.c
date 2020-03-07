@@ -13,10 +13,22 @@
 int main()
 {
         int a;
-        goto even;
+        int b;
+        int c; 
+        // c = a > b;
+        // // a > b;
+        // // a = a || b;
+        // // a || b;
+         a+b;
+         b+c + a;
+        a && b && c;
+        a != b && c ;
+
+        // int a;
+        // goto even;
         
-        even:
-                a = 1;
+        // even:
+        //         a = 1;
         // int b, a;
         // b <<= 1; 
         // b >>= 1;
