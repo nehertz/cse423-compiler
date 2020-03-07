@@ -153,17 +153,17 @@ def astConstruct(p, type):
 
     elif(type == 'ifStmt'):
         if (len(p) == 6):
-            p[0] = '(' + '(' + str(p[3]) + ',' + str(p[5]) + ')' + 'if' + ')ifstmt'
+            p[0] = '(' + '(' + str(p[3]) + ',' + str(p[5]) + ')' + 'if' + ')condStmt'
         else: 
-            p[0] = '(' + '(' + str(p[3]) + ',' + str(p[5]) + ')' + 'if' + ',' + str(p[6]) + ')ifstmt'
+            p[0] = '(' + '(' + str(p[3]) + ',' + str(p[5]) + ')' + 'if' + ',' + str(p[6]) + ')condStmt'
 
     elif(type == 'elseIfList'):
         if(len(p) == 3):
             p[0] = '(' + str(p[2]) + ')else'
         elif (len(p) == 7):
-            p[0] = '(' + str(p[4]) + ',' + str(p[6]) + ')elsif'
+            p[0] = '(' + str(p[4]) + ',' + str(p[6]) + ')else-if'
         elif (len(p) == 8):
-            p[0] = '(' + str(p[4]) + ',' + str(p[6]) + ')elsif' + ',' + p[7]
+            p[0] = '(' + str(p[4]) + ',' + str(p[6]) + ')else-if' + ',' + p[7]
 
     elif(type == 'doWhile'):
         p[0] = '(' + str(p[2]) + ',' + str(p[5]) + ')doWhile'
