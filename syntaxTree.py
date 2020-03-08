@@ -149,7 +149,7 @@ def astConstruct(p, type):
             p[0] = p[1]
         
     elif(type == 'whileLoop'):
-        p[0] = '(' + str(p[3]) + ',' + str(p[5]) + ')while'
+        p[0] = '(' + '(' + str(p[3]) + ')condition' +  ',' + '(' + str(p[5]) + ')stmt' + ')while'
 
     elif(type == 'ifStmt'):
         if (len(p) == 6):

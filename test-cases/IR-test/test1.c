@@ -19,11 +19,11 @@ int main()
         // // a > b;
         // // a = a || b;
         // // a || b;
-         a+b;
-         b+c + a;
-        a && b && c;
-        a != b && c ;
-
+        //  a+b;
+        //  b+c + a;
+        // a && b && c;
+        // a != b && c ;
+        
         // int a;
         // goto even;
         
@@ -52,10 +52,13 @@ int main()
         // b = b + 12 * c / -a;
         // a++;
         // a--; 
-        // // while (1) {
-        // //         int i;
-        // //         float j;
-        // // }
+        while (a + b + c) {
+                int i = i + 1;
+                float j = j + 2;
+        }
+        // if (a > b){
+        //         int i = i + 1;
+        // }
         //return 1 + 2 + a +b;
         // return 1+2;
         // return a = 1 + 2;
