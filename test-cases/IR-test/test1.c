@@ -52,7 +52,7 @@ int main()
         // b = b + 12 * c / -a;
         // a++;
         // a--; 
-        while (a + b + c) {
+        while (1+2+3) {
                 int i = i + 1;
                 float j = j + 2;
         }
