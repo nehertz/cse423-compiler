@@ -122,6 +122,7 @@ class IR:
                         elif (node.name == 'while'):
                                 self.whileloop(node)
 
+
         def assign(self, nodes):
                 subtree = self.getSubtree(nodes)
                 operand2 = ''
@@ -281,7 +282,7 @@ class IR:
 
                 for node in nodes.children:
                         if (node.name == 'stmt'):
-                                pass
+                                self.statement(node)
 
                 self.IRS.append([')'])
 
@@ -289,7 +290,7 @@ class IR:
                 for node in nodes.children:
                         if (node.name == 'condition'):
                                 self.loopConditions(node, enterLoopLabel, endLoopLable)
-                
+                               
                 self.IRS.append([endLoopLable])
 
 
@@ -305,8 +306,16 @@ class IR:
                                         pass
                         # >, < , != etc, this means the condition stmt only
                         # has one condition expression 
+                        # TODO: need discussion
                         elif (node.name in comparison):
-                                pass
+                                subtree = self.getSubtree(node)
+                                operand2 = ''
+                                for n in reversed(subtree):
+                                        if (n.name not in comparison):
+                                                self.enqueue(n.name)
+                                        elif (n.name in comparison):
+                                                pass
+
                         # the condition is arithmetric express
                         # example: while(1 + 2)
                         elif (node.name in arithmetic):
@@ -315,6 +324,7 @@ class IR:
                                 self.IRS.append(ir)
                                 ir = ['else', 'goto', endLoopLable]
                                 self.IRS.append(ir)
+                        
                                 
         def getSubtree(self, nodes):
                 subtree = []
