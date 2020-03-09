@@ -53,6 +53,14 @@ else:
     else:
         C
 ```
+---
+```
+if(X || Y)
+```
+is equivalent to
+```
+if (X): else if (Y)
+```
 
 - [] Unary operators (unary minus (`-`), NOT (`!`), `sizeof()`)
 - [] Return statements

@@ -428,16 +428,13 @@ class IR:
                 self.IRS.append([node.name])
 
     # TODO: Add comments
-    # TODO: Check condition and create conditions with correct layout
-    # TODO: Try and make the generation function usable for conditionals and loops alike
-    # TODO: Short-circuiting
     def condStmt(self, nodes):
         for node in nodes.children:
             if (node.name == 'if' or node.name == 'else-if'):
                 # Handle if and else if
                 self.IRS.append([node.name + ':'])
                 # self.statement(node.children[0])
-                # FIXME: Need Andy's simpleExpr() function for arithmetic expressions
+                # FIXME: Need Andy's simpleExpr() function
                 self.statement(node.children[1])
             else:
                 # Handle else
