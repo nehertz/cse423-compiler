@@ -3,3 +3,5 @@ ply/__pycache__/*
 a.out
 parsetab.py
 parser.out
+
+*.pyc
