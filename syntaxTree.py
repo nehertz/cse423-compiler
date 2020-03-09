@@ -149,7 +149,7 @@ def astConstruct(p, type):
             p[0] = p[1]
         
     elif(type == 'whileLoop'):
-        p[0] = '(' + str(p[3]) + ',' + str(p[5]) + ')while'
+        p[0] = '(' + '(' + str(p[3]) + ')condition' +  ',' + '(' + str(p[5]) + ')stmt' + ')while'
 
     elif(type == 'ifStmt'):
         if (len(p) == 6):
@@ -202,7 +202,10 @@ def astConstruct(p, type):
         p[0] =  '(' + str(p[2]) + ')' + str(p[1])
 
     elif(type == 'gotoStmt'):
-        p[0] = 'goto' + '-' + str(p[2])
+        p[0] =  '(' + str(p[2]) + ')' + 'goto'
+    
+    elif(type == 'labeledStmt'):
+        p[0] = '(' + str(p[1]) + ')' + 'label'
 
     elif(type == 'funcCall'):
         p[0] =  '(' + str(p[3]) + ')' + 'func-' + str(p[1]) 
@@ -258,11 +261,12 @@ def astConstruct(p, type):
            
             
         elif (p[1] == '!' or p[1] == '~'):
-            p[0] = '"' + p[1] + p[2] + '"'
+            # p[0] = '"' + p[1] + p[2] + '"'
+            p[0] = '(' + p[2] + ')' + p[1]
         elif (len(p) == 3):
-            p[0] = '(' + '"' + str(p[1]) + '"' + ')' + str(p[2])
+            p[0] = '(' + str(p[1]) + ')' + str(p[2])
         elif (len(p) == 5):
-            p[0] = '(' + str(p[1])  + '"' + str(p[3]) + '"' + ')'
+            p[0] = '(' +  str(p[3]) + ')' + str(p[1])
         else:
             p[0] = str(p[3])
 

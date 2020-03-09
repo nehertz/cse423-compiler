@@ -1,0 +1,31 @@
+main ()
+{
+  int D.1801;
+
+  {
+    int a;
+    int b;
+    int c;
+
+    _1 = a + b;
+    c = c + _1;
+    if (a < b) goto <D.1799>; else goto <D.1798>;
+    <D.1799>:
+    if (a != b) goto <D.1800>; else goto <D.1798>;
+    <D.1800>:
+    D.1801 = 1;
+    return D.1801;
+    <D.1798>:
+    if (a == b) goto <D.1802>; else goto <D.1803>;
+    <D.1802>:
+    D.1801 = -1;
+    return D.1801;
+    <D.1803>:
+    D.1801 = 0;
+    return D.1801;
+  }
+  D.1801 = 0;
+  return D.1801;
+}
+
+

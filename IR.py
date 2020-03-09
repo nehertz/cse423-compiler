@@ -5,6 +5,9 @@ from skbio.tree import TreeNode
 from ply_scanner import assignment
 from ply_scanner import operators
 from ply_scanner import arithmetic
+from ply_scanner import logical
+from ply_scanner import comparison
+from ply_scanner import alc
 
 class IR:
         def __init__(self, ast):
@@ -13,6 +16,12 @@ class IR:
                 self.treeString = ast
                 self.tree = TreeNode.read(StringIO(ast))
                 self.temporaryVarible = 0
+
+                ## LL stands for Loop Label 
+                self.LL = 0
+
+                ## CL Stands for condition label
+                self.CL = 0
                 
 
         def run(self):
@@ -72,24 +81,47 @@ class IR:
 
         def statement(self, nodes):
                 for node in nodes.children:
-                        # in statement block, handle var decl with assignment
-                        # note: only handles:
-                        # int a = expr or a = expr, since the root used to distinguish the node is assignment operator  
+                        # convert var decl with assignment
+                        # int a = expr or a = expr 
                         if (node.name in assignment):
                                 self.assign(node)
-                        # converting the var-decl without assignment 
+
+                        # convert simple expressions 
+                        # those are expressions without assignment
+                        # examples : '1 + 2 + 3', 'a << 1' 
+                        # 'a > b',  'a || b', simple expression will be useful in loops and if conditions
+                        # reference to scanner for the alc list,  
+                        elif (node.name in alc):
+                                self.simpleExpr(node)
+
+                        # convert the var-decl without assignment 
                         elif (node.name == 'varDecl'):
                                 self.varDecl(node)
-                        # converting return stmt 
+
+                        # convert the goto stmt, and its label
+                        elif (node.name == 'goto'):
+                                self.gotoStmt(node)
+
+                        elif (node.name == 'label'):
+                                self.createLabel(node, None)
+
+                        # convert return stmt 
                         elif (node.name == 'return'):
                                 self.returnStmt(node)
-                        # converting increment and decrement, ++a and --a
+
+                        # convert increment and decrement, ++a and --a
                         # the a = ++a case is handled by the assign() function
                         elif (node.name == '++' or node.name == '--'):
                                 self.increment(node, node.name)
-                        # converting function calls. 
+
+                        # convert function calls. 
                         elif ('func-' in str(node.name)):
                                 self.funcCall(node, node.name, 0)
+                        
+                        # convert while loop
+                        elif (node.name == 'while'):
+                                self.whileloop(node)
+
 
         def assign(self, nodes):
                 subtree = self.getSubtree(nodes)
@@ -97,7 +129,7 @@ class IR:
                 for node in reversed(subtree):
                         if( node.name not in operators.keys()):
                                 self.enqueue(node.name)
-                        elif(node.name not in assignment and node.name in arithmetic):
+                        elif(node.name not in assignment and node.name in alc):
                                 operand2 = self.dequeue()
                                 operand1 = self.dequeue()
                                 operator = node.name
@@ -124,7 +156,7 @@ class IR:
                                         if (len(node.name) == 2):
                                                 operator1 = node.name[0]
                                                 operator2 = node.name[1]
-                                        # >>= and <<= 
+                                        # >>= and <<= , operator1 is '>>' or '<<', operator2 is '='
                                         elif(len(node.name) == 3):
                                                 operator1 = node.name[0] + node.name[1]
                                                 operator2 = node.name[2]
@@ -133,12 +165,64 @@ class IR:
                                         ir = [operand2, operator2, operand2, operator1, operand1] 
                                         self.IRS.append(ir)
                 return operand2
- 
+        
+        # simpleExpr converts experssion which does not have assigment
+        # e,g a >> 1, 1 + 2 + 3
+        def simpleExpr(self, nodes):
+                subtree = self.getSubtree(nodes)
+                operand2 = ''
+                for node in reversed(subtree):
+                        if (node.name not in arithmetic):
+                                self.enqueue(node.name)
+                        elif (node.name in arithmetic):
+                                operand2 = self.dequeue()
+                                operand1 = self.dequeue()
+                                operator = node.name
+                                tempVar = 't_' + str(self.temporaryVarible)
+                                ir = [tempVar, '=', operand1, operator, operand2]
+                                self.IRS.append(ir)
+                                self.enqueue(tempVar)
+                                self.temporaryVarible += 1
+                self.dequeue()
+                return tempVar
+
 
         def varDecl(self, nodes):
                 for node in nodes:
                         if(node.name != None):
                                 self.IRS.append([node.name])
+
+        # TODO: need to have our own goto rules. 
+        def gotoStmt(self, nodes):
+                for node in nodes.children:
+                        self.IRS.append(['goto', node.name])
+
+        # creates label for goto stmt and loops
+        # if type is loopLabel, 
+        # use the loopLabel global varible to create the label 
+        # else if the label name is already exist, for example in goto stmt, 
+        # 'goto even:'
+        # 'lable even:'
+        # then creates the label 'even' 
+        def createLabel(self, nodes, type):
+                if (type == 'loop'):
+                        loopL = 'LL' + str(self.LL) + ':'
+                        # self.IRS.append(loopL)
+                        self.LL += 1
+                        return loopL
+                elif (type == 'condition'):
+                        loopL = 'CL' + str(self.CL) + ':'
+                        self.CL += 1
+                        return loopL
+                else:
+                        for node in nodes.children:
+                                self.IRS.append([node.name, ':'])
+
+        # Samll helper function to create 'goto label:'
+        # example: if label = 'loop1'
+        # the function will append 'goto loop1' to the IRS  
+        def createGotoLabel(self, label):
+                self.IRS.append(['goto', label])
 
         # return statement support var assign and func calls 
         # return 1; return b; 
@@ -150,6 +234,9 @@ class IR:
                         if (node.name in assignment):
                                 operand = self.assign(node)
                                 self.IRS.append(['ret', operand])
+                        elif (node.name in arithmetic):
+                                tempVar = self.simpleExpr(node)
+                                self.IRS.append(['ret', tempVar])
                         elif ('func-' in str(node.name)):
                                 self.funcCall(node, node.name, 1)
                         # TODO: simple experssions like 1+2+3 
@@ -184,7 +271,61 @@ class IR:
                 ir.append(')')
                 self.IRS.append(ir)
 
+        def whileloop(self, nodes):
+                enterLoopLabel = self.createLabel(nodes, 'loop')
+                endLoopLable = self.createLabel(nodes, 'loop')
+                loopConditionLabel = self.createLabel(nodes, 'condition')
+        
+                gotoLabel = self.createGotoLabel(loopConditionLabel)
+                self.IRS.append([enterLoopLabel])
+                self.IRS.append(['('])
 
+                for node in nodes.children:
+                        if (node.name == 'stmt'):
+                                self.statement(node)
+
+                self.IRS.append([')'])
+
+                self.IRS.append([loopConditionLabel])
+                for node in nodes.children:
+                        if (node.name == 'condition'):
+                                self.loopConditions(node, enterLoopLabel, endLoopLable)
+                               
+                self.IRS.append([endLoopLable])
+
+
+        def loopConditions(self, nodes, enterLoopLabel, endLoopLable):
+                for node in nodes.children:
+                        # && and ||, this means the conditions stmt is 
+                        # composed by multiple conditions expression 
+                        # for example, a > b && b > c
+                        if(node.name in logical):
+                                if (node.name == '&&'):
+                                        pass
+                                elif (node.name == '||'):
+                                        pass
+                        # >, < , != etc, this means the condition stmt only
+                        # has one condition expression 
+                        # TODO: need discussion
+                        elif (node.name in comparison):
+                                subtree = self.getSubtree(node)
+                                operand2 = ''
+                                for n in reversed(subtree):
+                                        if (n.name not in comparison):
+                                                self.enqueue(n.name)
+                                        elif (n.name in comparison):
+                                                pass
+
+                        # the condition is arithmetric express
+                        # example: while(1 + 2)
+                        elif (node.name in arithmetic):
+                                tempVar = self.simpleExpr(node)
+                                ir = ['if', '(', str(tempVar), '!=', '0', ')', 'goto', enterLoopLabel]
+                                self.IRS.append(ir)
+                                ir = ['else', 'goto', endLoopLable]
+                                self.IRS.append(ir)
+                        
+                                
         def getSubtree(self, nodes):
                 subtree = []
                 for node in nodes.levelorder():
