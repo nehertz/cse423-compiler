@@ -269,12 +269,7 @@ def astConstruct(p, type):
         elif (len(p) == 3):
             p[0] = '(' + str(p[1]) + ')' + str(p[2])
         elif (len(p) == 5):
-<<<<<<< master
             p[0] = '(' +  str(p[3]) + ')' + str(p[1])
-=======
-            p[0] = '(' + str(p[1]) + '"' + str(p[3]) + '"' + ')'
-
->>>>>>> changed to 4 spaces
         else:
             p[0] = str(p[3])
 
