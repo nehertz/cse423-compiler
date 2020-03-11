@@ -1,1 +1,1 @@
-(((None)args,((a,0b1)=,(b,0b10011010000)=,(a,((a,b)+,2)*)=,((((a,b)>)!,((a,b)+=)stmt)if)ifstmt,(0)return)stmt)func-main)Program;
+(((None)args,((a,1.232)=,(b,1232.12332)=,(a,((a,b)+,2.0)*)=,((((a,b)>)!,((a,b)+=)stmt)if,((b,a)>,((b,a)+=)stmt)elseif,(((b,(b,a)-)=)stmt)else)ifstmt,(0)return)stmt)func-main)Program;
