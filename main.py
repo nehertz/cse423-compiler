@@ -93,23 +93,25 @@ if __name__ == "__main__":
     ast = parser(lexer.clone())
     st.print()
     tc = TypeChecking(ast)
-    tc.run()
-    # printAST(ast)
-    if (flag & 1 or flag == 0):
-       # prints the tokens
-        printTokens(lexer)
-        pass
-    elif (flag & 10):
-        # goes to parser and print the ast 
-        printAST(ast)
-     # Get the symbolTable  
-    elif (flag & 100):
-        st.print()
-    #gets the ir
-    elif (flag & 10000):
-        printAST(ast)
-        ir = IR(ast)
-        ir.run()
-        ir.printIR()
+    ast = tc.run()
+    printAST(ast)
+    print(ast)
+    # # printAST(ast)
+    # if (flag & 1 or flag == 0):
+    #    # prints the tokens
+    #     printTokens(lexer)
+    #     pass
+    # elif (flag & 10):
+    #     # goes to parser and print the ast 
+    #     printAST(ast)
+    #  # Get the symbolTable  
+    # elif (flag & 100):
+    #     st.print()
+    # #gets the ir
+    # elif (flag & 10000):
+    #     printAST(ast)
+    #     ir = IR(ast)
+    #     ir.run()
+    #     ir.printIR()
 
     
