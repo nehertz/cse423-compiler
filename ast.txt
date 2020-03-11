@@ -1,0 +1,1 @@
+(((None)args,((a,0b1)=,(b,0b10011010000)=,(a,((a,b)+,2)*)=,((((a,b)>)!,((a,b)+=)stmt)if)ifstmt,(0)return)stmt)func-main)Program;
