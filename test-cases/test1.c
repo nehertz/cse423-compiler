@@ -11,15 +11,20 @@
 // }
 int main()
 {
-        int a = 1.232;
+        float a = 1.232;
         // float b = 12;
-        int b = 1232.12332;
+        float b = 1232.12332;
         a = (a + b) * 2;
         // b = b + (a - 3) / 12 * hj;
         // a = a == b;
         if (!(a > b))
         {
                 a += b;
+        } else if (b > a)
+        {
+                b += a;
+        } else {
+                b = b - a;
         }
         // while (1) {
         //         int i;

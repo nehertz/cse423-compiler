@@ -14,6 +14,8 @@ class TypeChecking:
                 self.tree = TreeNode.read(StringIO(self.treeString))
                 self.numbersFloat = re.compile(r'\d+\.{1}\d+')
                 self.numbersInt = re.compile(r'\d+')
+                self.logicalExpr = re.compile(r'(\|\|)|(&&)|(\!)')
+                self.compOps = re.compile(r'(==)|(\!=)|(>=)|(<=)')
                 self.scope = 0
                 self.funcName = ''
                 # self.scope = 0
@@ -62,10 +64,32 @@ class TypeChecking:
                                 node.children = self.returnTC(node.children)
                                 continue
                         elif ('ifStmt' == node.name):
-                                # node.children = self
+                                node.children = self.checkConditionals(nodes)
                                 continue
+                        elif ('++' == node.name or '--' == node.name):
+                                node.children = self.checkInt(node.children)
                 return nodes
 
+        def checkConditionals(self, nodes):
+                for node in nodes:
+                        
+                        if (node.name == 'if' or node.name == 'elseif' or node.name == 'else'):
+                                node.children[0] = self.checkLogicalExpr(node.children[0])
+                        else:
+                                continue
+                return nodes
+        
+        def checkLogicalExpr(self, node):
+                for elem in node.traverse():
+                        if (self.logicalExpr.match(elem.name)):
+                                continue
+                        elif (self.compOps.match(elem.name)):
+                                continue
+                        else:
+                                print('id encountered')
+                                continue       
+                return node
+        
         def returnTC (self, nodes):
                 supposedType = st.lookupTC(self.funcName, 0)
                 # print(self.funcName)
@@ -103,8 +127,6 @@ class TypeChecking:
                         print("Unknown type:   " + supposedType + '  ' + str(expr))
                         # sys.exit(1)
         def checkInt(self, expr):
-                print('in checkInt')
-                print(type(expr))
                 flag = False
                 if (isinstance(expr, list)):
                         nodeList = expr
@@ -138,14 +160,23 @@ class TypeChecking:
                                         # print(' in else; in elif int')
                                         continue
                                 else : 
-                                        print('type conversion required')
-                                        # sys.exit(1)
+                                        
+                                        print('type conversion required for ' + str(node.name))
+                                        sys.exit(1)
                 if (flag):
                         expr = nodeList
                 else:
                         expr = nodeList[0]
                 return expr
         def checkFloat(self, expr):
+                flag = False
+
+                if (isinstance(expr, list)):
+                        nodeList = expr
+                        flag = True
+                else:
+                        nodeList = []
+                        nodeList.append(expr)
                 for elem in expr:
                         for node in elem.preorder():
                                 if ('+-/*%'.find(node.name) != -1):
@@ -157,20 +188,22 @@ class TypeChecking:
                                         print('number is int. expected float')
                                         number= float(int(node.name))
                                         node.name = str(number)
-                                        print(number)
                                         continue
 
                                 else:
-                                        type = st.lookupTC(node.name, self.scope)
-                                        if (type == 'Unknown'):
+                                        Nodetype = st.lookupTC(node.name, self.scope)
+                                        if (Nodetype == 'Unknown'):
                                                 print('unknown token found: ' + node.name)
-                                        elif (type == 'float'):
+                                        elif (Nodetype == 'float'):
                                                 continue
-                                        else : 
-                                                print('type conversion required')
+                                        else :
+                                                print('type conversion required for ' + str(node.name))
                                                 sys.exit(1)
-                return expr
-        
+                if (flag):
+                        expr = nodeList
+                else:
+                        expr = nodeList[0]
+                return expr        
 
     def checkFloat(self, expr):
 
