@@ -10,6 +10,7 @@ from ply_scanner import comparison
 from ply_scanner import alc
 
 
+
 class IR:
     def __init__(self, ast):
         self.IRS = []
