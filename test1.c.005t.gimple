@@ -1,33 +1,37 @@
 main ()
 {
-  int D.1935;
+  int D.1937;
 
   {
     int a;
     int b;
     int c;
 
+    goto <D.1930>;
+    <D.1929>:
     {
       int i;
+      float j;
 
-      i = 1;
-      goto <D.1932>;
-      <D.1931>:
-      goto <D.1929>;
-      <D.1928>:
       i = i + 1;
-      <D.1929>:
-      if (i <= 9) goto <D.1928>; else goto <D.1930>;
-      <D.1930>:
-      i = 10;
-      i = i + 1;
-      <D.1932>:
-      if (i <= 4) goto <D.1931>; else goto <D.1933>;
-      <D.1933>:
+      j = j + 2.0e+0;
     }
+    <D.1930>:
+    if (a <= 2) goto <D.1929>; else goto <D.1931>;
+    <D.1931>:
+    <D.1934>:
+    {
+      int i;
+      float j;
+
+      i = i + 1;
+      j = j + 2.0e+0;
+    }
+    if (a <= 2) goto <D.1934>; else goto <D.1935>;
+    <D.1935>:
   }
-  D.1935 = 0;
-  return D.1935;
+  D.1937 = 0;
+  return D.1937;
 }
 
 

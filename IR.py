@@ -81,23 +81,27 @@ class IR:
 
     def statement(self, nodes):
         for node in nodes.children:
+
             # convert var decl with assignment
             # int a = expr or a = expr
-           
             if (node.name in assignment):
                 self.assign(node)
+
+            # convert the var-decl without assignment
+            # Example: int a 
+            elif (node.name == 'varDecl'):
+                self.varDecl(node)
+
+            # convert function calls.
+            elif ('func-' in str(node.name)):
+                self.funcCall(node, node.name, 0)
 
             # convert simple expressions
             # those are expressions without assignment
             # examples : '1 + 2 + 3', 'a << 1'
-            # 'a > b',  'a || b', simple expression will be useful in loops and if conditions
             # reference to scanner for the alc list,
             elif (node.name in alc):
                 self.simpleExpr(node)
-
-            # convert the var-decl without assignment
-            elif (node.name == 'varDecl'):
-                self.varDecl(node)
 
             # convert the goto stmt, and its label
             elif (node.name == 'goto'):
@@ -114,10 +118,6 @@ class IR:
             # the a = ++a case is handled by the assign() function
             elif (node.name == '++' or node.name == '--'):
                 self.increment(node, node.name)
-
-            # convert function calls.
-            elif ('func-' in str(node.name)):
-                self.funcCall(node, node.name, 0)
 
             # convert while loop
             elif (node.name == 'while'):
@@ -300,8 +300,26 @@ class IR:
                 # self.loopConditions(node, enterLoopLabel, endLoopLable)
         self.IRS.append([endLoopLable])
 
+    # Note: Dowhile loop IR does not have the goto condition label before the stmt body. 
+    # That is the only difference between while and dowhile
     def dowhile(self, nodes):
-        pass
+        enterLoopLabel = self.createLabel(nodes, 'loop')
+        endLoopLable = self.createLabel(nodes, 'loop')
+        self.IRS.append([enterLoopLabel])
+        self.IRS.append(['('])
+
+        for node in nodes.children:
+            if (node.name == 'stmt'):
+                self.statement(node)
+
+        self.IRS.append([')'])
+
+        # self.IRS.append([loopConditionLabel])
+        for node in nodes.children:
+            if (node.name == 'condition'):
+                pass
+                # self.loopConditions(node, enterLoopLabel, endLoopLable)
+        self.IRS.append([endLoopLable])
 
     def forloop(self, nodes):
         enterLoopLabel = self.createLabel(nodes, 'loop')

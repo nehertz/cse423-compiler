@@ -168,7 +168,8 @@ def astConstruct(p, type):
             p[0] = '(' + str(p[4]) + ',' + str(p[6]) + ')elseif' + ',' + p[7]
 
     elif(type == 'doWhile'):
-        p[0] = '(' + str(p[2]) + ',' + str(p[5]) + ')doWhile'
+        # p[0] = '(' + str(p[2]) + ',' + str(p[5]) + ')doWhile'
+        p[0] = '(' + '(' + str(p[5]) + ')condition' + ',' + '(' + str(p[2]) + ')stmt' + ')dowhile'
 
     elif(type == 'forLoop'):
         # p[0] = '(' +  '(' + str(p[3]) + ')' + 'init' + ',' + '(' + str(p[5]) + ')' + \

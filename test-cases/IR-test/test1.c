@@ -53,20 +53,25 @@ int main()
         // b = b + 12 * c / -a;
         // a++;
         // a--; 
-        // while (1+2+3) {
-        //         int i = i + 1;
-        //         float j = j + 2;
-        // }
+        while (a < 3) {
+                int i = i + 1;
+                float j = j + 2;
+        }
+
+        do {
+                int i = i + 1;
+                float j = j + 2;
+        } while (a < 3);
         // if (a > b){
         //         int i = i + 1;
         // }
 
-        for (int i = 1; i < 5; i++){
+        // for (int i = 1; i < 5; i++){
 
-                i = 10;
-                // a = 2;
+        //         i = 10;
+        //         // a = 2;
 
-        }
+        // }
 
         //return 1 + 2 + a +b;
         // return 1+2;
