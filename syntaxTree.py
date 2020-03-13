@@ -171,22 +171,25 @@ def astConstruct(p, type):
         p[0] = '(' + str(p[2]) + ',' + str(p[5]) + ')doWhile'
 
     elif(type == 'forLoop'):
-        p[0] = '(' + '(' + '(' + str(p[3]) + ')' + 'init)' + ',' + '(' + '(' + str(p[5]) + ')' + \
-            'test)' + ',' + \
-            '(' + '(' + str(p[7]) + ')' + 'increment)' + \
-            ',' + str(p[9]) + ')forLoop'
+        # p[0] = '(' +  '(' + str(p[3]) + ')' + 'init' + ',' + '(' + str(p[5]) + ')' + \
+        #     'condition' + ',' + \
+        #     '(' + str(p[7]) + ')' + 'increment' + \
+        #     ',' + '(' + str(p[9]) + ')stmt' + ')forLoop'
+
+        p[0] = '(' + '(' + str(p[9]) + ')stmt' + \
+            ',' + '(' + str(p[3]) + ')init' +\
+            ',' + '(' + str(p[7]) + ')increment' + \
+            ',' + '(' + str(p[5]) + ')condition' + ')forLoop'
 
     elif(type == 'init'):
         if(len(p) == 3):
-            p[0] = str(p[1]) + ',' + str(p[2])
+            p[0] = str(p[2])
         else:
             p[0] = p[1]
 
     elif(type == 'increment'):
         if(len(p) == 2):
             p[0] = p[1]
-        else:
-            p[0] = str(p[1]) + ',' + str(p[2])
 
     elif(type == 'switch'):
         p[0] = '(' + str(p[3]) + ',' + str(p[5]) + ')switch'

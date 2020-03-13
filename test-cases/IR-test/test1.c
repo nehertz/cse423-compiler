@@ -32,13 +32,14 @@ int main()
         // int b, a;
         // b <<= 1; 
         // b >>= 1;
+        // b++;
         // b = 1;
         // b = 1;
         // 1 + 2 + 3;
-        // a = ++b;
+        // // a = ++b;
         // b++;
         // a = b + 1; 
-        // return 1 + 2 + 3;
+        
         // a = b++;
         // c++;
         // d--;
@@ -52,15 +53,24 @@ int main()
         // b = b + 12 * c / -a;
         // a++;
         // a--; 
-        while (1+2+3) {
-                int i = i + 1;
-                float j = j + 2;
-        }
+        // while (1+2+3) {
+        //         int i = i + 1;
+        //         float j = j + 2;
+        // }
         // if (a > b){
         //         int i = i + 1;
         // }
+
+        for (int i = 1; i < 5; i++){
+
+                i = 10;
+                // a = 2;
+
+        }
+
         //return 1 + 2 + a +b;
         // return 1+2;
         // return a = 1 + 2;
         // return add(a, b);
+        // return 1 + 2 + 3;
 }

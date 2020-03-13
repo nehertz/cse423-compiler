@@ -83,6 +83,7 @@ class IR:
         for node in nodes.children:
             # convert var decl with assignment
             # int a = expr or a = expr
+           
             if (node.name in assignment):
                 self.assign(node)
 
@@ -125,12 +126,13 @@ class IR:
             elif (node.name == 'dowhile'):
                 self.dowhile(node)
 
-            elif (node.name == 'for'):
+            elif (node.name == 'forLoop'):
                 self.forloop(node)
 
     def assign(self, nodes):
         subtree = self.getSubtree(nodes)
         operand2 = ''
+        self.queue = []
         for node in reversed(subtree):
             if(node.name not in operators.keys()):
                 self.enqueue(node.name)
@@ -169,6 +171,7 @@ class IR:
                     operand2 = self.dequeue()
                     ir = [operand2, operator2, operand2, operator1, operand1]
                     self.IRS.append(ir)
+            
         return operand2
 
     # simpleExpr converts experssion which does not have assigment
@@ -176,6 +179,7 @@ class IR:
     def simpleExpr(self, nodes):
         subtree = self.getSubtree(nodes)
         operand2 = ''
+        self.queue = []
         for node in reversed(subtree):
             if (node.name not in arithmetic):
                 self.enqueue(node.name)
@@ -277,9 +281,9 @@ class IR:
     def whileloop(self, nodes):
         enterLoopLabel = self.createLabel(nodes, 'loop')
         endLoopLable = self.createLabel(nodes, 'loop')
-        loopConditionLabel = self.createLabel(nodes, 'condition')
+        # loopConditionLabel = self.createLabel(nodes, 'condition')
 
-        gotoLabel = self.createGotoLabel(loopConditionLabel)
+        # gotoLabel = self.createGotoLabel(loopConditionLabel)
         self.IRS.append([enterLoopLabel])
         self.IRS.append(['('])
 
@@ -289,7 +293,7 @@ class IR:
 
         self.IRS.append([')'])
 
-        self.IRS.append([loopConditionLabel])
+        # self.IRS.append([loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
                 pass
@@ -300,7 +304,34 @@ class IR:
         pass
 
     def forloop(self, nodes):
-        pass
+        enterLoopLabel = self.createLabel(nodes, 'loop')
+        endLoopLable = self.createLabel(nodes, 'loop')
+        for node in nodes.children:
+            if (node.name == 'init'):
+                for n in node.children:
+                    if (n.name == '='):
+                        self.assign(n)
+                    else:
+                        self.varDecl(n)
+
+        self.IRS.append([enterLoopLabel])
+        self.IRS.append(['('])
+        for node in nodes.children:
+            if (node.name == 'stmt'):
+                self.statement(node)
+            elif (node.name == 'increment'):
+                for n in node.children:
+                    if (n.name == '++' or n.name == '--'):
+                        self.increment(n, n.name)
+                    elif (n.name in assignment):
+                        self.assign(n)
+        self.IRS.append([')'])
+
+        for node in nodes.children:
+            if (node.name == 'condition'):
+                pass
+        self.IRS.append([endLoopLable])
+
     # def loopConditions(self, nodes, enterLoopLabel, endLoopLable):
     #     for node in nodes.children:
     #         # && and ||, this means the conditions stmt is

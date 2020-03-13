@@ -375,8 +375,8 @@ def p_forLoop(p):
 
 def p_forInit(p):
     '''
-    init : typeSpec varAssign
-         | varAssign
+    init : varDecl
+        | varAssign
     '''
     return astConstruct(p, 'init')
 
@@ -384,10 +384,7 @@ def p_forInit(p):
 def p_forIncrement(p):
     '''
     increase : varAssign
-              | INCREMENT ID
-              | DECREMENT ID
-              | ID INCREMENT
-              | ID DECREMENT 
+              | expr
     '''
     return astConstruct(p, 'increment')
 
