@@ -9,9 +9,6 @@ from ply_scanner import logical
 from ply_scanner import comparison
 from ply_scanner import alc
 
-
-
-
 class IR:
     def __init__(self, ast):
         self.IRS = []
@@ -81,22 +78,27 @@ class IR:
 
     def statement(self, nodes):
         for node in nodes.children:
+
             # convert var decl with assignment
             # int a = expr or a = expr
             if (node.name in assignment):
                 self.assign(node)
 
+            # convert the var-decl without assignment
+            # Example: int a 
+            elif (node.name == 'varDecl'):
+                self.varDecl(node)
+
+            # convert function calls.
+            elif ('func-' in str(node.name)):
+                self.funcCall(node, node.name, 0, 0)
+
             # convert simple expressions
             # those are expressions without assignment
             # examples : '1 + 2 + 3', 'a << 1'
-            # 'a > b',  'a || b', simple expression will be useful in loops and if conditions
             # reference to scanner for the alc list,
             elif (node.name in alc):
                 self.simpleExpr(node)
-
-            # convert the var-decl without assignment
-            elif (node.name == 'varDecl'):
-                self.varDecl(node)
 
             # convert the goto stmt, and its label
             elif (node.name == 'goto'):
@@ -114,20 +116,26 @@ class IR:
             elif (node.name == '++' or node.name == '--'):
                 self.increment(node, node.name)
 
-            # convert function calls.
-            elif ('func-' in str(node.name)):
-                self.funcCall(node, node.name, 0)
-
             # convert while loop
             elif (node.name == 'while'):
                 self.whileloop(node)
 
+            elif (node.name == 'dowhile'):
+                self.dowhile(node)
+
+            elif (node.name == 'forLoop'):
+                self.forloop(node)
+
     def assign(self, nodes):
         subtree = self.getSubtree(nodes)
         operand2 = ''
+        self.queue = []
         for node in reversed(subtree):
-            if(node.name not in operators.keys()):
+            # print(self.queue)
+            # print(node.name)
+            if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args'):
                 self.enqueue(node.name)
+                
             elif(node.name not in assignment and node.name in alc):
                 operand2 = self.dequeue()
                 operand1 = self.dequeue()
@@ -143,6 +151,14 @@ class IR:
                 ir = [operand1, '=', operand1, operator, '1']
                 self.IRS.append(ir)
                 self.enqueue(operand1)
+
+            elif('func' in node.name):
+                ir = " ".join(self.funcCall(node, node.name, 0, 1))
+                tempVar = 't_' + str(self.temporaryVarible)
+                ir = [tempVar, '=', ir]
+                self.enqueue(tempVar)
+                self.IRS.append(ir)
+                self.temporaryVarible += 1
 
             elif(node.name in assignment):
                 if(node.name == '='):
@@ -163,6 +179,7 @@ class IR:
                     operand2 = self.dequeue()
                     ir = [operand2, operator2, operand2, operator1, operand1]
                     self.IRS.append(ir)
+            
         return operand2
 
     # simpleExpr converts experssion which does not have assigment
@@ -170,6 +187,7 @@ class IR:
     def simpleExpr(self, nodes):
         subtree = self.getSubtree(nodes)
         operand2 = ''
+        self.queue = []
         for node in reversed(subtree):
             if (node.name not in arithmetic):
                 self.enqueue(node.name)
@@ -236,8 +254,7 @@ class IR:
                 tempVar = self.simpleExpr(node)
                 self.IRS.append(['ret', tempVar])
             elif ('func-' in str(node.name)):
-                self.funcCall(node, node.name, 1)
-            # TODO: simple experssions like 1+2+3
+                self.funcCall(node, node.name, 1, 0)
             else:
                 self.IRS.append(['ret', node.name])
 
@@ -251,29 +268,43 @@ class IR:
     # funcCall function calls the args function to obtain the call arguments
     # In normal case, it appends the func call to  IRS. e,g 'add(a , b)' will be append to the IRS
     # In special case such as func call in returnStmt, it appends 'ret add(a, b)'
-    def funcCall(self, nodes, funcName, retStmtFlag):
+    # and if funcCall is in expr, such as a * add(i, j). return the IR instead of appending to the IRS
+    def funcCall(self, nodes, funcName, retStmtFlag, exprFlag):
         ir = []
         argsCount = self.args(nodes, funcName, 1)
-        #print("count  = ", argsCount)
+
+        if(exprFlag):
+            tempCount = argsCount
+            while (tempCount > 0):
+                self.dequeue()
+                tempCount -= 1
+
         funcName = funcName.replace('func-', '')
+
         if(retStmtFlag):
             ir.append('ret ' + funcName + ' (')
         else:
             ir.append(funcName + ' (')
+
         while argsCount > 0:
             ir.append(str(self.dequeue()))
             if argsCount != 1:
                 ir.append(',')
             argsCount -= 1
+
         ir.append(')')
-        self.IRS.append(ir)
+
+        if(exprFlag):
+            return ir
+        else:
+            self.IRS.append(ir)
 
     def whileloop(self, nodes):
         enterLoopLabel = self.createLabel(nodes, 'loop')
         endLoopLable = self.createLabel(nodes, 'loop')
-        loopConditionLabel = self.createLabel(nodes, 'condition')
+        # loopConditionLabel = self.createLabel(nodes, 'condition')
 
-        gotoLabel = self.createGotoLabel(loopConditionLabel)
+        # gotoLabel = self.createGotoLabel(loopConditionLabel)
         self.IRS.append([enterLoopLabel])
         self.IRS.append(['('])
 
@@ -283,124 +314,116 @@ class IR:
 
         self.IRS.append([')'])
 
-        self.IRS.append([loopConditionLabel])
+        # self.IRS.append([loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
-                self.loopConditions(node, enterLoopLabel, endLoopLable)
-
+                pass
+                # self.loopConditions(node, enterLoopLabel, endLoopLable)
         self.IRS.append([endLoopLable])
 
-    def loopConditions(self, nodes, enterLoopLabel, endLoopLable):
+    # Note: Dowhile loop IR does not have the goto condition label before the stmt body. 
+    # That is the only difference between while and dowhile
+    def dowhile(self, nodes):
+        enterLoopLabel = self.createLabel(nodes, 'loop')
+        endLoopLable = self.createLabel(nodes, 'loop')
+        self.IRS.append([enterLoopLabel])
+        self.IRS.append(['('])
+
         for node in nodes.children:
-            # && and ||, this means the conditions stmt is
-            # composed by multiple conditions expression
-            # for example, a > b && b > c
-            if(node.name in logical):
-                if (node.name == '&&'):
-                    pass
-                elif (node.name == '||'):
-                    pass
-            # >, < , != etc, this means the condition stmt only
-            # has one condition expression
-            # TODO: need discussion
-            elif (node.name in comparison):
-                subtree = self.getSubtree(node)
-                operand2 = ''
-                for n in reversed(subtree):
-                    if (n.name not in comparison):
-                        self.enqueue(n.name)
-                    elif (n.name in comparison):
-                        pass
+            if (node.name == 'stmt'):
+                self.statement(node)
 
-            # the condition is arithmetric express
-            # example: while(1 + 2)
-            elif (node.name in arithmetic):
-                tempVar = self.simpleExpr(node)
-                ir = ['if', '(', str(tempVar), '!=', '0', ')',
-                      'goto', enterLoopLabel]
-                self.IRS.append(ir)
-                ir = ['else', 'goto', endLoopLable]
-                self.IRS.append(ir)
-                self.enqueue(operand1)
+        self.IRS.append([')'])
 
-            elif(node.name in assignment):
-                if(node.name == '='):
-                    operand1 = self.dequeue()
-                    operand2 = self.dequeue()
-                    ir = [operand2, '=', operand1]
-                    self.IRS.append(ir)
-                else:
-                    # e,g : if we have +=, operator1 is '+', operator2 is '='
-                    if (len(node.name) == 2):
-                        operator1 = node.name[0]
-                        operator2 = node.name[1]
-                    # >>= and <<=
-                    elif(len(node.name) == 3):
-                        operator1 = node.name[0] + node.name[1]
-                        operator2 = node.name[2]
-                    operand1 = self.dequeue()
-                    operand2 = self.dequeue()
-                    ir = [operand2, operator2, operand2, operator1, operand1]
-                    self.IRS.append(ir)
-        return operand2
-
-    def varDecl(self, nodes):
-        for node in nodes:
-            if(node.name != None):
-                self.IRS.append([node.name])
-
-    # return statement support var assign and func calls
-    # return 1; return b;
-    # return 1+2;
-    # return a = 1 + 2;
-    # return add();
-    def returnStmt(self, nodes):
+        # self.IRS.append([loopConditionLabel])
         for node in nodes.children:
-            if (node.name in assignment):
-                operand = self.assign(node)
-                self.IRS.append(['ret', operand])
-            elif ('func-' in str(node.name)):
-                self.funcCall(node, node.name, 1)
-            # TODO: simple experssions like 1+2+3
-            else:
-                self.IRS.append(['ret', node.name])
+            if (node.name == 'condition'):
+                pass
+                # self.loopConditions(node, enterLoopLabel, endLoopLable)
+        self.IRS.append([endLoopLable])
 
-    # the increment function inputs '++' or '--' node and name of the node
-    # convert a++ to a = a + 1, and append it to the IRS
-    def increment(self, nodes, name):
-        operator = name[0]
+    def forloop(self, nodes):
+        enterLoopLabel = self.createLabel(nodes, 'loop')
+        endLoopLable = self.createLabel(nodes, 'loop')
         for node in nodes.children:
-            self.IRS.append([node.name, '=', node.name, operator, '1'])
+            if (node.name == 'init'):
+                for n in node.children:
+                    if (n.name == '='):
+                        self.assign(n)
+                    else:
+                        self.varDecl(n)
 
-    # funcCall function calls the args function to obtain the call arguments
-    # In normal case, it appends the func call to  IRS. e,g 'add(a , b)' will be append to the IRS
-    # In special case such as func call in returnStmt, it appends 'ret add(a, b)'
+        self.IRS.append([enterLoopLabel])
+        self.IRS.append(['('])
+        for node in nodes.children:
+            if (node.name == 'stmt'):
+                self.statement(node)
+            elif (node.name == 'increment'):
+                for n in node.children:
+                    if (n.name == '++' or n.name == '--'):
+                        self.increment(n, n.name)
+                    elif (n.name in assignment):
+                        self.assign(n)
+        self.IRS.append([')'])
 
-    def funcCall(self, nodes, funcName, retStmtFlag):
-        ir = []
-        argsCount = self.args(nodes, funcName, 1)
-        #print("count  = ", argsCount)
-        funcName = funcName.replace('func-', '')
-        if(retStmtFlag):
-            ir.append('ret ' + funcName + ' (')
-        else:
-            ir.append(funcName + ' (')
-        while argsCount > 0:
-            ir.append(str(self.dequeue()))
-            if argsCount != 1:
-                ir.append(',')
-            argsCount -= 1
-        ir.append(')')
-        self.IRS.append(ir)
+        for node in nodes.children:
+            if (node.name == 'condition'):
+                pass
+        self.IRS.append([endLoopLable])
 
-    def getSubtree(self, nodes):
-        subtree = []
-        for node in nodes.levelorder():
-            subtree.append(node)
-        return subtree
+    # def loopConditions(self, nodes, enterLoopLabel, endLoopLable):
+    #     for node in nodes.children:
+    #         # && and ||, this means the conditions stmt is
+    #         # composed by multiple conditions expression
+    #         # for example, a > b && b > c
+    #         if(node.name in logical):
+    #             if (node.name == '&&'):
+    #                 pass
+    #             elif (node.name == '||'):
+    #                 pass
+    #         # >, < , != etc, this means the condition stmt only
+    #         # has one condition expression
+    #         # TODO: need discussion
+    #         elif (node.name in comparison):
+    #             subtree = self.getSubtree(node)
+    #             operand2 = ''
+    #             for n in reversed(subtree):
+    #                 if (n.name not in comparison):
+    #                     self.enqueue(n.name)
+    #                 elif (n.name in comparison):
+    #                     pass
 
-    def enqueue(self, item):
-        self.queue.append(item)
+    #         # the condition is arithmetric express
+    #         # example: while(1 + 2)
+    #         elif (node.name in arithmetic):
+    #             tempVar = self.simpleExpr(node)
+    #             ir = ['if', '(', str(tempVar), '!=', '0', ')',
+    #                   'goto', enterLoopLabel]
+    #             self.IRS.append(ir)
+    #             ir = ['else', 'goto', endLoopLable]
+    #             self.IRS.append(ir)
+    #             self.enqueue(operand1)
+
+    #         elif(node.name in assignment):
+    #             if(node.name == '='):
+    #                 operand1 = self.dequeue()
+    #                 operand2 = self.dequeue()
+    #                 ir = [operand2, '=', operand1]
+    #                 self.IRS.append(ir)
+    #             else:
+    #                 # e,g : if we have +=, operator1 is '+', operator2 is '='
+    #                 if (len(node.name) == 2):
+    #                     operator1 = node.name[0]
+    #                     operator2 = node.name[1]
+    #                 # >>= and <<=
+    #                 elif(len(node.name) == 3):
+    #                     operator1 = node.name[0] + node.name[1]
+    #                     operator2 = node.name[2]
+    #                 operand1 = self.dequeue()
+    #                 operand2 = self.dequeue()
+    #                 ir = [operand2, operator2, operand2, operator1, operand1]
+    #                 self.IRS.append(ir)
+    #     return operand2
 
     def getSubtree(self, nodes):
         subtree = []

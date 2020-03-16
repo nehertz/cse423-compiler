@@ -50,7 +50,7 @@ def p_declaration(p):
                 | enumDeclaration
     '''
     return astConstruct(p, 'declaration')
-
+    
 
 def p_enumInScope(p):
     '''
@@ -210,7 +210,8 @@ def p_varDeclList(p):
 def p_varDecl(p):
     '''
     varDecl : combineTypeSpec
-            | typeSpec ID
+            | typeSpec ID 
+            | typeSpec ID COMMA varCommaList
             | typeSpec varAssign afterVarAssign
             | combineTypeSpec ID    
             | TYPEDEF typeSpec ID
@@ -220,6 +221,13 @@ def p_varDecl(p):
     '''
     st.symbolTableConstruct(p, 'varDecl')
     return astConstruct(p, 'varDecl')
+
+def p_varCommaList(p):
+    '''
+    varCommaList : ID COMMA varCommaList
+                | ID 
+    '''
+    return astConstruct(p, 'varCommaList')
 
 
 def p_afterVarAssign(p):
@@ -375,8 +383,8 @@ def p_forLoop(p):
 
 def p_forInit(p):
     '''
-    init : typeSpec varAssign
-         | varAssign
+    init : varDecl
+        | varAssign
     '''
     return astConstruct(p, 'init')
 
@@ -384,10 +392,7 @@ def p_forInit(p):
 def p_forIncrement(p):
     '''
     increase : varAssign
-              | INCREMENT ID
-              | DECREMENT ID
-              | ID INCREMENT
-              | ID DECREMENT 
+              | expr
     '''
     return astConstruct(p, 'increment')
 
