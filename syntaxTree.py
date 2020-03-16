@@ -9,9 +9,9 @@
 
 
 def astConstruct(p, type):
-    if(type == 'program' or type == 'declaration' or type == 'statement' or type == 'expr' or type == 'breakStmt' or type == 'continueStmt'):
+    if(type == 'program' or type == 'statement' or type == 'declaration' or type == 'expr' or type == 'breakStmt' or type == 'continueStmt'):
         p[0] = p[1]
-
+    
     elif (type == 'operand'):
         if(len(p) == 2):
             p[0] = p[1]
@@ -107,8 +107,17 @@ def astConstruct(p, type):
             # elif (str(p[3]) == 'None'):
             #     p[0] = str(p[2])
         elif (len(p) == 5):
-            #p[0] = '(' + str(p[3]) + ',' + str(p[4]) + ')' + str(p[1])+'-'+str(p[2])
-            p[0] = '(' + str(p[4]) + ')varDecl'
+            if (p[1] == 'CONST'):
+                p[0] = '(' + str(p[4]) + ')varDecl'
+            else :
+                p[0] = '(' + str(p[2]) + ')varDecl' + ',' + str(p[4])
+
+    elif (type == 'varCommaList'):
+        if (len(p) == 2):
+             p[0] = '(' + str(p[1]) + ')varDecl'
+        else:
+            p[0] = '(' + str(p[1]) + ')varDecl' + ',' + str(p[3])
+
     elif(type == 'typeSpecList'):
         if(len(p) == 3):
             # p[0] ='(' + str(p[1]) + ',' + str(p[2]) + ')'

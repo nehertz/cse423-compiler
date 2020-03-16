@@ -9,9 +9,6 @@ from ply_scanner import logical
 from ply_scanner import comparison
 from ply_scanner import alc
 
-
-
-
 class IR:
     def __init__(self, ast):
         self.IRS = []
@@ -94,7 +91,7 @@ class IR:
 
             # convert function calls.
             elif ('func-' in str(node.name)):
-                self.funcCall(node, node.name, 0)
+                self.funcCall(node, node.name, 0, 0)
 
             # convert simple expressions
             # those are expressions without assignment
@@ -134,8 +131,11 @@ class IR:
         operand2 = ''
         self.queue = []
         for node in reversed(subtree):
-            if(node.name not in operators.keys()):
+            # print(self.queue)
+            # print(node.name)
+            if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args'):
                 self.enqueue(node.name)
+                
             elif(node.name not in assignment and node.name in alc):
                 operand2 = self.dequeue()
                 operand1 = self.dequeue()
@@ -151,6 +151,14 @@ class IR:
                 ir = [operand1, '=', operand1, operator, '1']
                 self.IRS.append(ir)
                 self.enqueue(operand1)
+
+            elif('func' in node.name):
+                ir = " ".join(self.funcCall(node, node.name, 0, 1))
+                tempVar = 't_' + str(self.temporaryVarible)
+                ir = [tempVar, '=', ir]
+                self.enqueue(tempVar)
+                self.IRS.append(ir)
+                self.temporaryVarible += 1
 
             elif(node.name in assignment):
                 if(node.name == '='):
@@ -246,8 +254,7 @@ class IR:
                 tempVar = self.simpleExpr(node)
                 self.IRS.append(['ret', tempVar])
             elif ('func-' in str(node.name)):
-                self.funcCall(node, node.name, 1)
-            # TODO: simple experssions like 1+2+3
+                self.funcCall(node, node.name, 1, 0)
             else:
                 self.IRS.append(['ret', node.name])
 
@@ -261,22 +268,36 @@ class IR:
     # funcCall function calls the args function to obtain the call arguments
     # In normal case, it appends the func call to  IRS. e,g 'add(a , b)' will be append to the IRS
     # In special case such as func call in returnStmt, it appends 'ret add(a, b)'
-    def funcCall(self, nodes, funcName, retStmtFlag):
+    # and if funcCall is in expr, such as a * add(i, j). return the IR instead of appending to the IRS
+    def funcCall(self, nodes, funcName, retStmtFlag, exprFlag):
         ir = []
         argsCount = self.args(nodes, funcName, 1)
-        #print("count  = ", argsCount)
+
+        if(exprFlag):
+            tempCount = argsCount
+            while (tempCount > 0):
+                self.dequeue()
+                tempCount -= 1
+
         funcName = funcName.replace('func-', '')
+
         if(retStmtFlag):
             ir.append('ret ' + funcName + ' (')
         else:
             ir.append(funcName + ' (')
+
         while argsCount > 0:
             ir.append(str(self.dequeue()))
             if argsCount != 1:
                 ir.append(',')
             argsCount -= 1
+
         ir.append(')')
-        self.IRS.append(ir)
+
+        if(exprFlag):
+            return ir
+        else:
+            self.IRS.append(ir)
 
     def whileloop(self, nodes):
         enterLoopLabel = self.createLabel(nodes, 'loop')
@@ -403,64 +424,6 @@ class IR:
     #                 ir = [operand2, operator2, operand2, operator1, operand1]
     #                 self.IRS.append(ir)
     #     return operand2
-
-    def varDecl(self, nodes):
-        for node in nodes:
-            if(node.name != None):
-                self.IRS.append([node.name])
-
-    # return statement support var assign and func calls
-    # return 1; return b;
-    # return 1+2;
-    # return a = 1 + 2;
-    # return add();
-    def returnStmt(self, nodes):
-        for node in nodes.children:
-            if (node.name in assignment):
-                operand = self.assign(node)
-                self.IRS.append(['ret', operand])
-            elif ('func-' in str(node.name)):
-                self.funcCall(node, node.name, 1)
-            # TODO: simple experssions like 1+2+3
-            else:
-                self.IRS.append(['ret', node.name])
-
-    # the increment function inputs '++' or '--' node and name of the node
-    # convert a++ to a = a + 1, and append it to the IRS
-    def increment(self, nodes, name):
-        operator = name[0]
-        for node in nodes.children:
-            self.IRS.append([node.name, '=', node.name, operator, '1'])
-
-    # funcCall function calls the args function to obtain the call arguments
-    # In normal case, it appends the func call to  IRS. e,g 'add(a , b)' will be append to the IRS
-    # In special case such as func call in returnStmt, it appends 'ret add(a, b)'
-
-    def funcCall(self, nodes, funcName, retStmtFlag):
-        ir = []
-        argsCount = self.args(nodes, funcName, 1)
-        #print("count  = ", argsCount)
-        funcName = funcName.replace('func-', '')
-        if(retStmtFlag):
-            ir.append('ret ' + funcName + ' (')
-        else:
-            ir.append(funcName + ' (')
-        while argsCount > 0:
-            ir.append(str(self.dequeue()))
-            if argsCount != 1:
-                ir.append(',')
-            argsCount -= 1
-        ir.append(')')
-        self.IRS.append(ir)
-
-    def getSubtree(self, nodes):
-        subtree = []
-        for node in nodes.levelorder():
-            subtree.append(node)
-        return subtree
-
-    def enqueue(self, item):
-        self.queue.append(item)
 
     def getSubtree(self, nodes):
         subtree = []
