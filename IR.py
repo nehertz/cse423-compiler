@@ -13,6 +13,8 @@ class IR:
     def __init__(self, ast):
         self.IRS = []
         self.queue = []
+        self.logicQueue = []
+        self.compQueue = []
         self.treeString = ast
         self.tree = TreeNode.read(StringIO(ast))
         self.temporaryVarible = 0
@@ -301,7 +303,7 @@ class IR:
 
     def whileloop(self, nodes):
         enterLoopLabel = self.createLabel(nodes, 'loop')
-        endLoopLable = self.createLabel(nodes, 'loop')
+        endLoopLabel = self.createLabel(nodes, 'loop')
         # loopConditionLabel = self.createLabel(nodes, 'condition')
 
         # gotoLabel = self.createGotoLabel(loopConditionLabel)
@@ -317,9 +319,10 @@ class IR:
         # self.IRS.append([loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
+                self.conditions(node, enterLoopLabel, endLoopLabel)
                 pass
                 # self.loopConditions(node, enterLoopLabel, endLoopLable)
-        self.IRS.append([endLoopLable])
+        self.IRS.append([endLoopLabel])
 
     # Note: Dowhile loop IR does not have the goto condition label before the stmt body. 
     # That is the only difference between while and dowhile
@@ -370,6 +373,80 @@ class IR:
             if (node.name == 'condition'):
                 pass
         self.IRS.append([endLoopLable])
+
+    def conditions(self, nodes, enterLoopLabel, endLoopLabel):
+        labels = []
+        subtree = self.getSubtree(nodes)
+        for node in subtree:
+            if (node.name in comparison):
+                labels.append(self.createLabel(node, 'condition'))
+
+        labels.append(self.createLabel(node, 'condition'))
+
+        for node in nodes.children:
+            if (node.name in logical):
+                self.logical(node)
+            
+    def enqueueLogic(self, item):
+        self.logicQueue.append(item)
+
+    def dequeueLogic(self):
+        return self.logicQueue.pop(0)
+
+    def enqueueComp(self, item):
+        self.compQueue.append(item)
+
+    def dequeueComp(self):
+        return self.compQueue.pop(0)
+    
+
+    def logical(self, nodes):
+        i = 0
+        logic = []
+        root = ' '
+        for node in nodes.traverse():
+            if (i == 0):
+                root = node.name
+                i = 1
+                continue   
+            if (node.name in comparison):
+                self.enqueueComp(node.name)
+            elif (node.name in logical):
+                self.enqueueLogic(node.name)
+            elif (node.name in arithmetic):
+                self.enqueue(node.name)
+
+        
+        if (len(self.logicQueue % 2 != 0)):
+            logicOp = root
+            opnd1 = self.dequeue()
+            opnd2 = self.dequeue()
+
+
+        print(self.logicQueue)
+        print(self.compQueue)
+        print(self.queue)
+
+            # print(node.name)
+            
+
+            # elif node.name in logical:
+            # if node.name in comparison:
+            #     for child in node.children:
+            #         print(child.name)
+           
+
+
+            # if (node.name in comparison):
+            #     print(node.children)
+            #     print('Label: ', self.CL)
+            #     self.CL += 1
+            # elif (node.name in logical):
+            #     pass
+            # print(node.name)
+
+        # for node in nodes.traverse():
+        #     print(node.name)
 
     # def loopConditions(self, nodes, enterLoopLabel, endLoopLable):
     #     for node in nodes.children:

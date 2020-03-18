@@ -43,13 +43,13 @@ class TypeChecking:
         self.funcName = ''
 
     def run(self):
-    '''
-    returns the modified AST which reflects the type-conversion
-    NOTE: ast.txt file is created and will have the newick form written in it. 
-    Currently skbio.tree doesn't have any other methods with which we can store 
-    the newick string to a variable. 
-    Quite inefficient, but works! 
-    '''
+        '''
+        returns the modified AST which reflects the type-conversion
+        NOTE: ast.txt file is created and will have the newick form written in it. 
+        Currently skbio.tree doesn't have any other methods with which we can store 
+        the newick string to a variable. 
+        Quite inefficient, but works! 
+        '''
         for node in self.tree.children:
             if (node.name == '='):
                 # Variable assignment / Declaration w assignment is handled 

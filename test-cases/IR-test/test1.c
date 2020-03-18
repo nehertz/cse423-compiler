@@ -29,10 +29,10 @@ int main()
         // a = ++b;
         // a *= (a + b) * 2;
         // b = b + 12 * c / -a; 
-        // while (a < 3) {
-        //         int i = i + 1;
-        //         float j = j + 2;
-        // }
+        while (a < 3 || (b > 0 && c != 0)) {
+                int i = i + 1;
+                float j = j + 2;
+        }
 
         // do {
         //         int i = i + 1;
