@@ -17,11 +17,11 @@ main ()
       j = j + 2.0e+0;
     }
     <D.1930>:
-    if (a <= 2) goto <D.1929>; else goto <D.1933>;
+    if (a <= 4) goto <D.1929>; else goto <D.1933>;
     <D.1933>:
     if (b > 0) goto <D.1934>; else goto <D.1931>;
     <D.1934>:
-    if (c != 0) goto <D.1929>; else goto <D.1931>;
+    if (b != 0) goto <D.1929>; else goto <D.1931>;
     <D.1931>:
   }
   D.1935 = 0;

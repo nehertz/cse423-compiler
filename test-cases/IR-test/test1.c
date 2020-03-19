@@ -29,7 +29,7 @@ int main()
         // a = ++b;
         // a *= (a + b) * 2;
         // b = b + 12 * c / -a; 
-        while (a < 3 || (b > 0 && c != 0)) {
+        while ((a < b && a > c) && (b > 0 && b != 0)) {
                 int i = i + 1;
                 float j = j + 2;
         }
