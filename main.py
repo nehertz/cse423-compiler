@@ -18,6 +18,7 @@ def printHelp():
     print("-t   :print the sequence of tokens and labels")
     print("-p   :print abstract syntax tree ")
     print("-s   :print symbol table ")
+    print("-i   :print IR ")
     print("-h   :print the usage information")
     print("Default   :print option -t")
 
@@ -41,6 +42,9 @@ if __name__ == "__main__":
     cmdArgument = sys.argv
     listArgs = cmdArgument[1:]
     flag = 0  # flag that tells us which options are enabled
+    inputFile = ' '
+    outputFile = ' '
+    ir = ' '
 
     # Check that the user has supplied enough arguments
     if not len(listArgs):
@@ -48,17 +52,10 @@ if __name__ == "__main__":
         printHelp()
         sys.exit()
 
-    # Check that the user has supplied a valid input file (as last arg)
-    inputFile = listArgs[-1]
-    if (not path.exists(inputFile)):
-        print("File {} doesn't exist ".format(inputFile))
-        printHelp()
-        sys.exit()
-
     # Currently we have options h for help, t to print tokens and labels,
     # and p to print parse tree
-    unixOptions = "htpsi"
-    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR"]
+    unixOptions = "htpsior"
+    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR", "output-to-file", "read-from-file"]
 
     try:
         arguments, values = getopt.getopt(listArgs, unixOptions, gnuOptions)
@@ -69,49 +66,108 @@ if __name__ == "__main__":
 
     for currentArgument, currentValue in arguments:
         if (currentArgument in ("-t", "--tokenize")):
-            flag = flag | 1
+            flag = 1
         if (currentArgument in ("-p", "--parse-tree")):
-            flag = flag | 10
+            flag = 2
         if (currentArgument in ("-s", "--symbol-table")):
-            flag = flag | 100
+            flag = 3
         if (currentArgument in ("-i", "--IR")):
-            flag = flag | 10000
+            flag = 4
+        if (currentArgument in ("-o", '--output-to-file')):
+            flag = 5
+        if (currentArgument in ("-r", '--read-from-file')):
+            flag = 6
         if (currentArgument in ("-h", "--help")):
             printHelp()
             sys.exit()
+    
+    # Check that the user has supplied a valid input file (as last arg)
+    if (flag == 5):
+        inputFile = listArgs[1]
+        outputFile = listArgs[-1]
+    else:
+        inputFile = listArgs[-1]
+
+    if (not path.exists(inputFile)):
+        print("File {} doesn't exist ".format(inputFile))
+        printHelp()
+        sys.exit()
+
     try:
         f = open(inputFile, 'r')
     except OSError:
         print("ERROR: Could not open/read " + inputFile + ".")
-
     with f:
         # Read file, store the entire file in a string
-        fileString = f.read()
-    
+        if (flag == 6):
+            fileString = f.readlines()
+        else :
+            fileString = f.read()
+        f.close()
+
     # Goes to the tokenizer
-    lexer = tokenizer(fileString)
-    ast = parser(lexer.clone())
+    if (flag != 6):
+        lexer = tokenizer(fileString)
+        ast = parser(lexer.clone())
+        ir = IR(ast)
+    else:
+        ir = IR(None)
+
     # st.print()
     # tc = TypeChecking(ast)
     # ast = tc.run()
     # printAST(ast)
     # print(ast)
-    # # printAST(ast)
-    if (flag & 1 or flag == 0):
-       # prints the tokens
+
+    # print tokens with label
+    if (flag == 1 or flag == 0):
         printTokens(lexer)
-        pass
-    elif (flag & 10):
-        # goes to parser and print the ast 
+
+    # goes to parser and print the ast 
+    elif (flag == 2):       
         printAST(ast)
-     # Get the symbolTable  
-    elif (flag & 100):
+
+    # print the symbolTable 
+
+    elif (flag == 3):
         st.print()
-    # #gets the ir
-    elif (flag & 10000):
+
+    # print the IR
+    elif (flag == 4):
         printAST(ast)
-        ir = IR(ast)
         ir.run()
         ir.printIR()
+    
+    # write the IR into output file
+    elif (flag == 5):
+        IR = ir.run()
+        try:
+            f = open(outputFile, 'w')
+        except OSError:
+            print("ERROR: Could not write to " + inputFile + ".")
+        with f:
+            str1 = " "
+            indentFlag = 0
+            for list in IR:
+                if (str1.join(list) == '{'):
+                    indentFlag = 1
+                    f.write(str1.join(list) + '\n')
+                    continue
+                elif (str1.join(list) == '}'):
+                    indentFlag = 0
+                    f.write(str1.join(list) + '\n')
+                    continue
+                elif (indentFlag):
+                    f.write('\t' + str1.join(list) + '\n')
+                else:
+                    f.write(str1.join(list) + '\n' )
+            f.close()
+
+    # Read the IR from file
+    elif (flag == 6):
+        ir.readIR(fileString)
+        ir.printIR()
+    
+
 
     

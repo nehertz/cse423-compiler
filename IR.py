@@ -13,8 +13,9 @@ class IR:
     def __init__(self, ast):
         self.IRS = []
         self.queue = []
-        self.treeString = ast
-        self.tree = TreeNode.read(StringIO(ast))
+        if (ast != None):
+            self.treeString = ast
+            self.tree = TreeNode.read(StringIO(ast))
         self.temporaryVarible = 0
 
         # LL stands for Loop Label
@@ -37,6 +38,8 @@ class IR:
             # handle global varible declration with assigment
             elif (node.name in assignment):
                 self.assign(node)
+
+        return self.IRS
 
     def funcNode(self, nodes, funcName):
         funcName = funcName.replace('func-', '')
@@ -133,7 +136,7 @@ class IR:
         for node in reversed(subtree):
             # print(self.queue)
             # print(node.name)
-            if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args'):
+            if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
                 self.enqueue(node.name)
                 
             elif(node.name not in assignment and node.name in alc):
@@ -159,7 +162,13 @@ class IR:
                 self.enqueue(tempVar)
                 self.IRS.append(ir)
                 self.temporaryVarible += 1
-
+            
+            elif(node.name == 'cast'):
+                operand = self.dequeue() 
+                typeSpec = self.dequeue()
+                ir = '(' + str(typeSpec) + ')' +  str(operand)
+                self.enqueue(ir)
+                
             elif(node.name in assignment):
                 if(node.name == '='):
                     operand1 = self.dequeue()
@@ -453,3 +462,11 @@ class IR:
                 print('\t', str1.join(list))
             else:
                 print(str1.join(list))
+
+    def readIR(self, fileString):
+        fileString = [x.strip() for x in fileString]  
+        fileString = [x.replace('\t', ' ') for x in fileString]  
+        for line in fileString:
+            list = line.split()
+            self.IRS.append(list)
+    

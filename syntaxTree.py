@@ -267,7 +267,8 @@ def astConstruct(p, type):
         if (len(p) == 2):
             p[0] = p[1]
         else:
-            p[0] = '(' + str(p[2]) + ')' + str(p[1])
+            p[0] = '(' + str(p[2]) + ',' + str(p[4]) + ')cast'
+
     # TODO: Remove Quotation marks
     elif(type == 'unaryExpr'):
         if (len(p) == 2):

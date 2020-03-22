@@ -2,12 +2,16 @@
 // {
 //   return a + b + c;
 // }
+enum week{Mon, Tue, Wed, Thur, Fri, Sat, Sun};
+
 
 int main()
 {
         int a;
         int b;
         int c; 
+        float d;
+        a = (int) b;
         // int a, b, c;
 
         // c = a > b;
