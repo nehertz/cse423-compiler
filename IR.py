@@ -132,8 +132,8 @@ class IR:
         self.queue = []
         for node in reversed(subtree):
             # print(self.queue)
-            # print(node.name)
-            if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args'):
+            print(node.name)
+            if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
                 self.enqueue(node.name)
                 
             elif(node.name not in assignment and node.name in alc):
@@ -159,7 +159,13 @@ class IR:
                 self.enqueue(tempVar)
                 self.IRS.append(ir)
                 self.temporaryVarible += 1
-
+            
+            elif(node.name == 'cast'):
+                operand = self.dequeue() 
+                typeSpec = self.dequeue()
+                ir = '(' + str(typeSpec) + ')' +  str(operand)
+                self.enqueue(ir)
+                
             elif(node.name in assignment):
                 if(node.name == '='):
                     operand1 = self.dequeue()

@@ -8,6 +8,8 @@ int main()
         int a;
         int b;
         int c; 
+        float d;
+        a = (int) d / c + b;
         // int a, b, c;
 
         // c = a > b;
