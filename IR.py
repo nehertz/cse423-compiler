@@ -14,7 +14,6 @@ class IR:
         self.IRS = []
         self.queue = []
         self.cndQueue = []
-        self.compQueue = []
         self.treeString = ast
         self.tree = TreeNode.read(StringIO(ast))
         self.temporaryVarible = 0
@@ -374,101 +373,41 @@ class IR:
                 pass
         self.IRS.append([endLoopLable])
 
+
+
     def conditions(self, nodes, enterLoopLabel, endLoopLabel, loopConditionLabel):
-        for node in nodes.children:
-            if (node.name in logical):
-                self.logical(node,enterLoopLabel, endLoopLabel, loopConditionLabel)
-            
-    def enqueueCnd(self, item):
-        self.cndQueue.append(item)
-
-    def dequeueCnd(self):
-        return self.cndQueue.pop(0)
-
-    def enqueueComp(self, item):
-        self.compQueue.append(item)
-
-    def dequeueComp(self):
-        return self.compQueue.pop(0)
-    
-
-    def logical(self, nodes, enterLoopLabel, endLoopLabel, loopConditionLabel):
+        self.queue = []
+        labels = self.labelInitiliz(nodes)
         
-        self.IRS.append([str(loopConditionLabel)])
+        for node in nodes.postorder():
+            if (node.name not in comparison and node.name not in logical):
+                self.enqueue(node.name)
+            elif (node.name in comparison):
+                LHS = self.dequeue()
+                RHS = self.dequeue()
+                rlop = node.name
+                ir = str(LHS) + ' ' + str(rlop) + ' ' + str(RHS)
+                self.enqueue2(ir)
+            elif (node.name in logical):
+                LHS = self.dequeue2()
+                RHS = self.dequeue2()
+                llop = node.name
+                ir = str(LHS) + ' ' + str(llop) + ' ' + str(RHS)
+                self.enqueue2(ir)
 
-        for node in nodes.traverse():
+        print(self.cndQueue)
+
+            
+    def labelInitiliz(self, nodes):
+        self.labels = []
+        for node in nodes:
             if (node.name in comparison):
-                self.enqueueComp(node)
-                for child in node.children:
-                    if (child.name in arithmetic):
-                        tempVar = self.simpleExpr(child)
-                        self.enqueueCnd(tempVar)
-                    else :
-                        self.enqueueCnd(child.name)
-            
-        # print(self.cndQueue)
-        # print('\n')
-        # print(self.compQueue)
-
+                label = 'CL' + self.CL + ':'
+                self.CL += 1
+                label.append(label)
+        return labels
         
-        count = 0
-        count2 = 0
-        initCond = 1
-        currenLabel = loopConditionLabel
-
-        while len(self.cndQueue) != 0:
-            nextLabel = 'CL' + str(self.CL) + ':'
-            self.CL += 1
-           
-            opnd1 = self.dequeueCnd()
-            opnd2 = self.dequeueCnd()
-
-            comp = self.dequeueComp()
-            logic = self.findParent(nodes, comp)
-            nestLogic = self.findParent(nodes, logic)
-
-            if (logic.name == '||'):
-                if nestLogic.name == '&&' and count2:                    
-                    ir = ['if', opnd1, comp.name, opnd2, 
-                            'goto', nextLabel,
-                            'else goto', endLoopLabel]
-                    count2 = 0
-
-                elif nestLogic.name == '&&' and not count2:
-                    ir = ['if', opnd1, comp.name, opnd2, 
-                            'goto', nextLabel,
-                            'else goto', nextLabel]
-                    count2 = 1
-                    
-                else:
-                    ir = ['if', opnd1, comp.name, opnd2, 
-                            'goto', enterLoopLabel,
-                            'else goto', nextLabel]
-                    
-            elif (logic.name == '&&'):
-                if count:
-                    ir = ['if', opnd1, comp.name, opnd2, 
-                            'goto', enterLoopLabel,
-                            'else goto', endLoopLabel]
-                    count = 0
-                else:
-                    ir = ['if', opnd1, comp.name, opnd2, 
-                        'goto', nextLabel,
-                        'else goto', endLoopLabel]
-                    count += 1
-
-            if (not initCond):
-                self.IRS.append([currenLabel])          
-            initCond = 0
-
-            currenLabel = nextLabel
-            self.IRS.append(ir)
-
-            # print(opnd1)
-            # print(opnd2)
-            # print(comp.name)
-            # print(logic)
-
+      
         
     def findParent(self, nodes, target):
         for node in nodes.traverse():
@@ -541,6 +480,12 @@ class IR:
 
     def dequeue(self):
         return self.queue.pop(0)
+
+    def enqueue2(self, item):
+        self.cndQueue.append(item)
+
+    def dequeue2(self):
+        return self.cndQueue.pop(0)
 
     def printIR(self):
         str1 = " "
