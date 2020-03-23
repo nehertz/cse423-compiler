@@ -13,6 +13,9 @@ class IR:
     def __init__(self, ast):
         self.IRS = []
         self.queue = []
+        self.enumConst = []
+        self.enumList = {}
+        self.enumInstance = {}
         if (ast != None):
             self.treeString = ast
             self.tree = TreeNode.read(StringIO(ast))
@@ -32,9 +35,18 @@ class IR:
             if ('func-' in str(node.name)):
                 self.funcNode(node, node.name)
 
+            elif ('enum-' in str(node.name)):
+                enumPair = self.enumDeclaration(node)
+                enumName = str(node.name).replace('enum-', '')
+                dict = {enumName : enumPair}
+                self.enumList.update(dict)
+                self.enumConst.append(enumPair)
+                # print(enumConst)
+
             # handle global varible declration without assigment
             elif (node.name == 'varDecl'):
                 self.varDecl(node)
+
             # handle global varible declration with assigment
             elif (node.name in assignment):
                 self.assign(node)
@@ -96,6 +108,8 @@ class IR:
             elif ('func-' in str(node.name)):
                 self.funcCall(node, node.name, 0, 0)
 
+            elif ('enum-' in str(node.name)):
+                self.enumInst(node, node.name)
             # convert simple expressions
             # those are expressions without assignment
             # examples : '1 + 2 + 3', 'a << 1'
@@ -128,6 +142,31 @@ class IR:
 
             elif (node.name == 'forLoop'):
                 self.forloop(node)
+            
+    def enumDeclaration(self, nodes):
+        enumConst = {}
+        value = 1
+        for node in nodes.children:
+            print
+            if (node.name != '=' ):
+                dict = {node.name : value}
+                enumConst.update(dict)
+                value += 1
+            elif (node.name == '='):
+                enumName = str(node.children[0]).replace(';', '').replace('\n', '')
+                value = node.children[1]
+                value = int(str(value).replace(';', '').replace('\n', ''))
+                dict = {enumName : value}
+                enumConst.update(dict)
+                value += 1
+        return enumConst      
+
+    def enumInst(self, nodes, name):
+        eName = str(nodes.children[0]).replace(';', '').replace('\n', '')
+        dict = self.enumList.get(str(name).replace('enum-', ''))
+        dict = {eName : dict}
+        self.enumInstance.update(dict)
+        
 
     def assign(self, nodes):
         subtree = self.getSubtree(nodes)
@@ -138,23 +177,31 @@ class IR:
             # print(node.name)
             if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
                 self.enqueue(node.name)
-                
+
             elif(node.name not in assignment and node.name in alc):
                 operand2 = self.dequeue()
                 operand1 = self.dequeue()
                 operator = node.name
-                tempVar = 't_' + str(self.temporaryVarible)
-                ir = [tempVar, '=', operand1, operator, operand2]
-                self.IRS.append(ir)
-                self.enqueue(tempVar)
-                self.temporaryVarible += 1
+                flag = 1
+                for enum in self.enumConst:
+                    if (operand1 in enum):
+                        tempVar = ['enumExpr', str(operand1) , str(operator) , str(operand2)]
+                        self.enqueue(tempVar)
+                        flag = 0
+                if (flag):        
+                    tempVar = 't_' + str(self.temporaryVarible)
+                    ir = [tempVar, '=', operand1, operator, operand2]
+                    self.IRS.append(ir)
+                    self.enqueue(tempVar)
+                    self.temporaryVarible += 1
+
+
             elif(node.name == '++' or node.name == '--'):
                 operand1 = self.dequeue()
                 operator = node.name[0]
                 ir = [operand1, '=', operand1, operator, '1']
                 self.IRS.append(ir)
                 self.enqueue(operand1)
-
             elif('func' in node.name):
                 ir = " ".join(self.funcCall(node, node.name, 0, 1))
                 tempVar = 't_' + str(self.temporaryVarible)
@@ -162,7 +209,6 @@ class IR:
                 self.enqueue(tempVar)
                 self.IRS.append(ir)
                 self.temporaryVarible += 1
-            
             elif(node.name == 'cast'):
                 operand = self.dequeue() 
                 typeSpec = self.dequeue()
@@ -173,8 +219,18 @@ class IR:
                 if(node.name == '='):
                     operand1 = self.dequeue()
                     operand2 = self.dequeue()
-                    ir = [operand2, '=', operand1]
-                    self.IRS.append(ir)
+                    if (operand2 in self.enumInstance):
+                        dict = self.enumInstance.get(operand2)
+                        if ('enumExpr' in operand1):
+                            value = dict.get(operand1[1])
+                            value = self.simpleArithmetic(int(value), operand1[2], int(operand1[3]))
+                        else :
+                            value = dict.get(operand1)
+                        ir = [operand2, '=', str(value)]
+                        self.IRS.append(ir)
+                    else:
+                        ir = [operand2, '=', operand1]
+                        self.IRS.append(ir)
                 else:
                     # e,g : if we have +=, operator1 is '+', operator2 is '='
                     if (len(node.name) == 2):
@@ -445,6 +501,30 @@ class IR:
 
     def dequeue(self):
         return self.queue.pop(0)
+
+    def simpleArithmetic(self, opnd1, oprt, opnd2):
+        result = 0 
+        if (oprt == '+'):
+            result = opnd1 + opnd2
+        elif (oprt == '-'):
+            result = opnd1 - opnd2
+        elif (oprt == '*'):
+            result = opnd1 * opnd2
+        elif (oprt == '/'):
+            result = opnd1 / opnd2
+        elif (oprt == '%'):
+            result = opnd1 % opnd2
+        elif (oprt == '|'):
+            result = opnd1 | opnd2
+        elif (oprt == '&'):
+            result = opnd1 & opnd2
+        elif (oprt == '^'):
+            result = opnd1 ^ opnd2
+        elif (oprt == '<<'):
+            result = opnd1 << opnd2
+        elif (oprt == '>>'):
+            result = opnd1 >> opnd2
+        return result
 
     def printIR(self):
         str1 = " "

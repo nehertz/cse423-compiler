@@ -1,17 +1,14 @@
 main ()
 {
-  int D.1929;
+  int D.1934;
 
   {
-    int a;
-    int b;
-    int c;
-    float d;
+    week day;
 
-    a = (int) d;
+    day = 10;
   }
-  D.1929 = 0;
-  return D.1929;
+  D.1934 = 0;
+  return D.1934;
 }
 
 
