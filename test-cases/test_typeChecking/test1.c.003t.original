@@ -1,0 +1,19 @@
+
+;; Function main (null)
+;; enabled by -tree-original
+
+
+{
+  unsigned int a = 12;
+  int b = (int) (a + 4294967282);
+
+    unsigned int a = 12;
+    int b = (int) (a + 4294967282);
+  if (a != 4294967294)
+    {
+      a = 32;
+    }
+  return (int) a;
+}
+return 0;
+
