@@ -197,3 +197,149 @@ class TypeChecking:
         else:
             expr = nodeList[0]
         return expr
+    def checkUInt(self, expr):
+        flag = False
+
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for elem in expr:
+            for node in elem.preorder():
+                if ('+-/*%'.find(node.name) != -1):
+                    continue
+                elif (self.numbersFloat.match(node.name)):
+                    print('number is float. expected float ' + node.name)
+                    continue
+                elif (self.numbersInt.match(node.name)):
+                    print('number is int. expected float')
+                    number = float(int(node.name))
+                    node.name = str(number)
+                    continue
+
+                else:
+                    Nodetype = st.lookupTC(node.name, self.scope)
+                    if (Nodetype == 'Unknown'):
+                        print('unknown token found: ' + node.name)
+                    elif (Nodetype == 'float'):
+                        continue
+                    else:
+                        print('type conversion required for ' + str(node.name))
+                        sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
+
+    def checkLong(self, expr):
+        flag = False
+
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for elem in expr:
+            for node in elem.preorder():
+                if ('+-/*%'.find(node.name) != -1):
+                    continue
+                elif (self.numbersFloat.match(node.name)):
+                    print('number is float. expected float ' + node.name)
+                    continue
+                elif (self.numbersInt.match(node.name)):
+                    print('number is int. expected float')
+                    number = float(int(node.name))
+                    node.name = str(number)
+                    continue
+
+                else:
+                    Nodetype = st.lookupTC(node.name, self.scope)
+                    if (Nodetype == 'Unknown'):
+                        print('unknown token found: ' + node.name)
+                    elif (Nodetype == 'float'):
+                        continue
+                    else:
+                        print('type conversion required for ' + str(node.name))
+                        sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
+    def checkLongLong(self, expr):
+        flag = False
+
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for elem in expr:
+            for node in elem.preorder():
+                if ('+-/*%'.find(node.name) != -1):
+                    continue
+                elif (self.numbersFloat.match(node.name)):
+                    print('number is float. expected float ' + node.name)
+                    continue
+                elif (self.numbersInt.match(node.name)):
+                    print('number is int. expected float')
+                    number = float(int(node.name))
+                    node.name = str(number)
+                    continue
+
+                else:
+                    Nodetype = st.lookupTC(node.name, self.scope)
+                    if (Nodetype == 'Unknown'):
+                        print('unknown token found: ' + node.name)
+                    elif (Nodetype == 'float'):
+                        continue
+                    else:
+                        print('type conversion required for ' + str(node.name))
+                        sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
+        
+    def checkDouble(self, expr):
+        flag = False
+
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for elem in expr:
+            for node in elem.preorder():
+                if ('+-/*%'.find(node.name) != -1):
+                    continue
+                elif (self.numbersFloat.match(node.name)):
+                    print('number is float. expected float ' + node.name)
+                    continue
+                elif (self.numbersInt.match(node.name)):
+                    print('number is int. expected float')
+                    number = float(int(node.name))
+                    node.name = str(number)
+                    continue
+
+                else:
+                    Nodetype = st.lookupTC(node.name, self.scope)
+                    if (Nodetype == 'Unknown'):
+                        print('unknown token found: ' + node.name)
+                    elif (Nodetype == 'float'):
+                        continue
+                    else:
+                        print('type conversion required for ' + str(node.name))
+                        sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
