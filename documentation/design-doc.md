@@ -80,6 +80,26 @@ KEY | | |
         - The error function is called whenever the parser runs into input that is not handled by a grammar rule; returns the value and line number of the token that threw the error
     - parser() calls the appropriate PLY functions that parse the output based on the defined grammar rules and returns
     - The output is formatted into an AST using skbio
+- Symbol Table
+- Type checking (Obtaines the Tasks from: https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-035-computer-language-engineering-spring-2010/lecture-notes/MIT6_035S10_lec06.pdf)
+    - Number of arguments matches the number of formals and the corresponding types are equivalent
+    - If called as an expression, should return a type
+    - Each access of a variable should match the declaration (arrays, structures, etc.) 
+    - Identifiers in an expression should be "evaluatable"
+    - LHS of an assignment should be "assignable"
+    - In an expression all the types of variables, method return types and operators should be "compatible"
+    - Type Promotion and Demotion:
+        - When LHS has a higher type than the RHS, the RHS type will be promoted always. We perform type promotion with only specific types.
+        - When LHS has a lower type than the RHS, the truncation or type demotion will happen. We perform type demotion with only specific types. 
+        - Type prmotion and type demotion are performed with a following types
+        (+ve = type promotion and -ve = type demotion)
+            - lvalue: INT
+                - rvalue: LONG (-ve)
+                - rvalue: float (conversion if a NUMCONST Not on ID)
+                - rvalue: unsigned int (conversion)
+                - rvalue: 
+
+
 
 # Known Errors
 - Our grammar will throw shift/reduce conflict warnings occasionally; we are working on fixing them
