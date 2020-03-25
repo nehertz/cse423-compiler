@@ -213,7 +213,6 @@ class TypeChecking:
         '''
 
         flag = False
-
         if (isinstance(expr, list)):
             nodeList = expr
             flag = True
@@ -260,11 +259,11 @@ class TypeChecking:
             for node in elem.preorder():
                 if ('+-/*%'.find(node.name) != -1):
                     continue
-                elif (self.numbersFloat.match(node.name)):
-                    print('number is float. expected float ' + node.name)
-                    continue
                 elif (self.numbersInt.match(node.name)):
-                    print('number is int. expected float')
+                    print('number is unsigned int. expected unsigned int ' + node.name)
+                    continue
+                elif (self.numbersFloat.match(node.name)):
+                    print('number is float. expected int')
                     number = float(int(node.name))
                     node.name = str(number)
                     continue
@@ -273,7 +272,7 @@ class TypeChecking:
                     Nodetype = st.lookupTC(node.name, self.scope)
                     if (Nodetype == 'Unknown'):
                         print('unknown token found: ' + node.name)
-                    elif (Nodetype == 'float'):
+                    elif (Nodetype == 'unsigned int'):
                         continue
                     else:
                         print('type conversion required for ' + str(node.name))

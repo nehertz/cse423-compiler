@@ -1,0 +1,23 @@
+main ()
+{
+  int D.1799;
+
+  {
+    unsigned int a;
+    int b;
+
+    a = 12;
+    _1 = a + 4294967282;
+    b = (int) _1;
+    if (a != 4294967294) goto <D.1797>; else goto <D.1798>;
+    <D.1797>:
+    a = 32;
+    <D.1798>:
+    D.1799 = (int) a;
+    return D.1799;
+  }
+  D.1799 = 0;
+  return D.1799;
+}
+
+
