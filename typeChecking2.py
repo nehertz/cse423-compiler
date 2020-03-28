@@ -1,3 +1,21 @@
+"""
+Checks types of every expression. 
+Approach used: Reads the AST, then 2 types are handled:
+- Variable assignment/declaration: When variable is declared with an assignment,
+    the variables type is compared with the rvalue. The type of expression is evaluated by
+    traversing the subtree and checking every ID/NUMCONST's type using either Symbol Table (for identifiers)
+    and regex (for NUMCONST)
+    - same applies to variable assignment. lvalue type is obtained using the symbol table and variable scope is 
+        calculated based on the number of functions encountered. i.e. if there are 2 functions defined before main, 
+        then the variable declared in main will have a scope of 3. The symbol table has a special function for TypeChecking, 
+        where this scoping mechanism is implemented identically.
+- Function TypeChecking: Function type checking is implemented for return statement. If the expression for return statement 
+    matches the Function return type, then the function is OK, otherwise type-conversion of the expression is required. 
+-Type Conversion: We have only implemented type conversion for Numconst from int to float and vice versa. This change will also
+  be reflected in the AST and that's why the run() method returns the AST in newick form.
+NOTE: Since type-casting is not supported yet, we don't convert the type of an identifier.
+"""
+
 # from ply_parser import st
 from io import BytesIO
 from io import StringIO
@@ -10,35 +28,46 @@ import bitstring
 
 
 class TypeChecking:
+    st = st
     def __init__(self, ast):
         self.treeString = ast.replace('"', '')
 
         self.tree = TreeNode.read(StringIO(self.treeString))
         self.numbersFloat = re.compile(r'\d+\.{1}\d+')
-        self.numbersInt = re.compile(r'\d+')
+        self.numbersInt = re.compile(r'^[-]{0,1}\d+')
+        self.arithOps = re.compile(r'[\/\+\-\*\%]')
         self.logicalExpr = re.compile(r'(\|\|)|(&&)|(\!)')
         self.compOps = re.compile(r'(==)|(\!=)|(>=)|(<=)')
+        # global scope = 0
+        # scope is incremented as the functions are encountered.
         self.scope = 0
+        # Function name is stored
         self.funcName = ''
-        # self.scope = 0
 
     def run(self):
+    '''
+    returns the modified AST which reflects the type-conversion
+    NOTE: ast.txt file is created and will have the newick form written in it. 
+    Currently skbio.tree doesn't have any other methods with which we can store 
+    the newick string to a variable. 
+    Quite inefficient, but works! 
+    '''
         for node in self.tree.children:
-            # print(node)
             if (node.name == '='):
-                # global variable
-                # print('global variable')
+                # Variable assignment / Declaration w assignment is handled 
+                # variable could either be local or global 
+                # Both have the same implementation
                 node.children = self.variablesTC(node.children)
-                # print(node.children)
                 continue
             elif ('func-' in node.name):
-                # print(node.children)
+                # Scope is incremented
                 self.funcName = node.name.replace('func-', '')
                 self.scope += 1
                 node.children = self.functionsTC(node.children)
                 continue
             else:
                 continue
+
         with open('ast.txt', mode='w', encoding='utf-8') as f:
             self.tree.write(f, format='newick')
 
@@ -57,10 +86,12 @@ class TypeChecking:
         return nodes
 
     def checkStatement(self, nodes):
+        '''
+        Handles the statements for now. 
+        TODO: While loop, for loop, switch statements
+        '''
         for node in nodes:
-            # print(node.name)
             if ('=' == node.name):
-                # print(node.name)
                 node.children = self.variablesTC(node.children)
                 continue
             elif ('return' == node.name):
@@ -74,6 +105,9 @@ class TypeChecking:
         return nodes
 
     def checkConditionals(self, nodes):
+        '''
+        For if statements or any loops, it checks for condition of the control statements
+        '''
         for node in nodes:
 
             if (node.name == 'if' or node.name == 'elseif' or node.name == 'else'):
@@ -83,6 +117,9 @@ class TypeChecking:
         return nodes
 
     def checkLogicalExpr(self, node):
+        '''
+        Checks logical expression types. Not really needed, but there to support for later updates
+        '''
         for elem in node.traverse():
             if (self.logicalExpr.match(elem.name)):
                 continue
@@ -94,31 +131,73 @@ class TypeChecking:
         return node
 
     def returnTC(self, nodes):
+        '''
+        Checks for return type of function by using SymbolTable's lookupTC() method.
+        It sends 0 as the scope because 0 is defined as default global scope which is 
+        where the functions are declared/defined.
+        After obtaining type, it sends the rvalue to checkType()
+        '''
         supposedType = st.lookupTC(self.funcName, 0)
-        # print(self.funcName)
-        # print(supposedType)
         return self.checkType(nodes, supposedType)
 
     def variablesTC(self, nodes):
+        '''
+        Checks for the lvalue variable's type from SymbolTable. The scope here is 
+        incremented as the functions are encountered in self.run()
+        Sends the variable to checkType()
+        '''
         supposedType = st.lookupTC(nodes[0].name, self.scope)
-        # print(supposedType + '   token:   ' + nodes[0].name)
-        # print(nodes[1])
         nodes[1] = self.checkType(nodes[1], supposedType)
         return nodes
 
     def checkType(self, expr, supposedType):
+        '''
+        SupposedType is the type of lvalue variable
+        Sends the rvalue nodes to checkFloat() if supposedType is float
+        and to checkInt() if supposedType is int. 
+        '''
         if (supposedType == 'float'):
-            # print(expr)
             return self.checkFloat(expr)
-        elif (supposedType == 'int'):
-            # print('type of  ' + str(expr) +  '  supposed to be int')
+        elif (supposedType == 'int' or supposedType == 'signed int'):
             return self.checkInt(expr)
-
+        elif (supposedType == 'unsigned int'):
+            return self.checkUInt(expr)
         else:
             print("Unknown type:   " + supposedType + '  ' + str(expr))
-            # sys.exit(1)
-
+            sys.exit(1)
+    def convertInt2Float(self, expr):
+        # here expr is a string
+        s = expr + '.00'
+        return s
+    def convertFloat2Int(self, expr):
+        return str(int(float(expr)))
+    def convertFloat2UInt(self, expr):
+        if ('-'.find(expr)):
+            # if floating number is negative, 
+            # then 
+            num = int(float(expr))
+            num = num + (2 ** 32)
+            num &= 0xFFFFFFFF
+            return str(num)
+        else:
+            return str(int(float(expr)))
+    def convertInt2UInt(self, expr):
+        if ('-'.find(expr)):
+        # if number is negative then add (1U << 32) to it
+        # and then keep only least 32 bits
+            num = int(expr)
+            num += 2 ** 32 
+            num &= 0xFFFFFFFF
+            return str(num)
+        else: 
+            return str(int(expr) & 0xFFFFFFFF)
     def checkInt(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
+        type casting.
+        '''
         flag = False
         if (isinstance(expr, list)):
             nodeList = expr
@@ -126,33 +205,25 @@ class TypeChecking:
         else:
             nodeList = []
             nodeList.append(expr)
-        # for elem in expr:
         for node in nodeList:
             if ('+-/*%'.find(node.name) != -1):
-                # print(node.name)
-                # print('what?')
                 continue
             elif (self.numbersFloat.match(node.name) != None):
                 print('number is float. expected Int')
-                number = int(float(node.name))
-                # print(number)
-                node.name = str(number)
+                node.name = self.convertFloat2Int(node.name)
                 print('in checkint   ' + node.name)
                 continue
             elif (self.numbersInt.match(node.name) != None):
-                # print('expected int, matched int  ' + node.name)
+                node.name = str(int(node.name) & 0xFFFFFFFF)
                 continue
-
             else:
                 typeNode = st.lookupTC(node.name, self.scope)
                 if (typeNode == 'Unknown'):
                     print('unknown token found: ' + node.name)
                     continue
                 elif (typeNode == 'int'):
-                    # print(' in else; in elif int')
                     continue
                 else:
-
                     print('type conversion required for ' + str(node.name))
                     sys.exit(1)
         if (flag):
@@ -162,7 +233,15 @@ class TypeChecking:
         return expr
 
     def checkFloat(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is int, unsigned int, etc.; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not float, then error occurs as we don't support 
+        type casting.
+        '''
+
         flag = False
+
         if (isinstance(expr, list)):
             nodeList = expr
             flag = True
@@ -171,17 +250,15 @@ class TypeChecking:
             nodeList.append(expr)
         for elem in expr:
             for node in elem.preorder():
-                if ('+-/*%'.find(node.name) != -1):
+                if (self.arithOps.match(node.name)):
                     continue
                 elif (self.numbersFloat.match(node.name)):
                     print('number is float. expected float ' + node.name)
                     continue
                 elif (self.numbersInt.match(node.name)):
                     print('number is int. expected float')
-                    number = float(int(node.name))
-                    node.name = str(number)
+                    node.name = self.convertInt2Float(node.name)
                     continue
-
                 else:
                     Nodetype = st.lookupTC(node.name, self.scope)
                     if (Nodetype == 'Unknown'):
@@ -197,118 +274,55 @@ class TypeChecking:
             expr = nodeList[0]
         return expr
     def checkUInt(self, expr):
-        flag = False
-
-        if (isinstance(expr, list)):
-            nodeList = expr
-            flag = True
-        else:
-            nodeList = []
-            nodeList.append(expr)
-        for elem in expr:
-            for node in elem.preorder():
-                if ('+-/*%'.find(node.name) != -1):
+            '''
+            if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+            Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
+            the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
+            type casting.
+            '''
+            flag = False
+            if (isinstance(expr, list)):
+                nodeList = expr
+                flag = True
+            else:
+                nodeList = []
+                nodeList.append(expr)
+            for node in nodeList:
+                # if ('+-/*%'.find(node.name) != -1):
+                if (self.arithOps.match(node.name)):
                     continue
-                elif (self.numbersInt.match(node.name)):
-                    print('number is unsigned int. expected unsigned int ' + node.name)
+                elif (self.numbersFloat.match(node.name) != None):
+                    print('number is float. expected unsigned Int')
+                    node.name = self.convertFloat2UInt(node.name)
+                    print('in checkint   ' + node.name)
                     continue
-                elif (self.numbersFloat.match(node.name)):
-                    print('number is float. expected int')
-                    number = float(int(node.name))
-                    node.name = str(number)
+                elif (self.numbersInt.match(node.name) != None):
+                    if('-'.find(node.name) != -1):
+                        node.name = self.convertInt2UInt(node.name)
                     continue
-
                 else:
-                    Nodetype = st.lookupTC(node.name, self.scope)
-                    if (Nodetype == 'Unknown'):
+                    typeNode = st.lookupTC(node.name, self.scope)
+                    if (typeNode == 'Unknown'):
                         print('unknown token found: ' + node.name)
-                    elif (Nodetype == 'unsigned int'):
+                        continue
+                    elif (typeNode == 'int'):
                         continue
                     else:
                         print('type conversion required for ' + str(node.name))
                         sys.exit(1)
-        if (flag):
-            expr = nodeList
-        else:
-            expr = nodeList[0]
-        return expr
-
-    def checkLong(self, expr):
-        flag = False
-
-        if (isinstance(expr, list)):
-            nodeList = expr
-            flag = True
-        else:
-            nodeList = []
-            nodeList.append(expr)
-        for elem in expr:
-            for node in elem.preorder():
-                if ('+-/*%'.find(node.name) != -1):
-                    continue
-                elif (self.numbersFloat.match(node.name)):
-                    print('number is float. expected float ' + node.name)
-                    continue
-                elif (self.numbersInt.match(node.name)):
-                    print('number is int. expected float')
-                    number = float(int(node.name))
-                    node.name = str(number)
-                    continue
-
-                else:
-                    Nodetype = st.lookupTC(node.name, self.scope)
-                    if (Nodetype == 'Unknown'):
-                        print('unknown token found: ' + node.name)
-                    elif (Nodetype == 'float'):
-                        continue
-                    else:
-                        print('type conversion required for ' + str(node.name))
-                        sys.exit(1)
-        if (flag):
-            expr = nodeList
-        else:
-            expr = nodeList[0]
-        return expr
-    def checkLongLong(self, expr):
-        flag = False
-
-        if (isinstance(expr, list)):
-            nodeList = expr
-            flag = True
-        else:
-            nodeList = []
-            nodeList.append(expr)
-        for elem in expr:
-            for node in elem.preorder():
-                if ('+-/*%'.find(node.name) != -1):
-                    continue
-                elif (self.numbersFloat.match(node.name)):
-                    print('number is float. expected float ' + node.name)
-                    continue
-                elif (self.numbersInt.match(node.name)):
-                    print('number is int. expected float')
-                    number = float(int(node.name))
-                    node.name = str(number)
-                    continue
-
-                else:
-                    Nodetype = st.lookupTC(node.name, self.scope)
-                    if (Nodetype == 'Unknown'):
-                        print('unknown token found: ' + node.name)
-                    elif (Nodetype == 'float'):
-                        continue
-                    else:
-                        print('type conversion required for ' + str(node.name))
-                        sys.exit(1)
-        if (flag):
-            expr = nodeList
-        else:
-            expr = nodeList[0]
-        return expr
-        
+            if (flag):
+                expr = nodeList
+            else:
+                expr = nodeList[0]
+            return expr
     def checkDouble(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is int, unsigned int, etc.; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not float, then error occurs as we don't support 
+        type casting.
+        '''
         flag = False
-
         if (isinstance(expr, list)):
             nodeList = expr
             flag = True
@@ -324,15 +338,13 @@ class TypeChecking:
                     continue
                 elif (self.numbersInt.match(node.name)):
                     print('number is int. expected float')
-                    number = float(int(node.name))
-                    node.name = str(number)
+                    node.name = self.convertInt2Float(node.name)
                     continue
-
                 else:
                     Nodetype = st.lookupTC(node.name, self.scope)
                     if (Nodetype == 'Unknown'):
                         print('unknown token found: ' + node.name)
-                    elif (Nodetype == 'float'):
+                    elif (Nodetype == 'double'):
                         continue
                     else:
                         print('type conversion required for ' + str(node.name))

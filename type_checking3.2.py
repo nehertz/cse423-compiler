@@ -56,4 +56,89 @@ class TypeChecking:
             elif ('return' == node.name):
                 node.children = self.returnTC(node.children)
                 continue
+            elif('ifStmt' == node.name):
+                node.children = self.checkConditionals(nodes)
+                continue 
+            elif ('++' == node.name or '--' == node.name):
+                node.children = self.checkInt(node.children)
+        return nodes 
+
+
+    def checkConditionals(self, nodes):
+        for node in nodes:
+
+            if (node.name == 'if' or node.name == 'elseif' or node.name == 'else'):
+                node.children[0] = self.checkLogicalExpr(node.children[0])
+            else:
+                continue 
+            return nodes 
+
+    def checkLogicalExpr(self, node):
+        for elem in node.traverse():
+            if (self.logicalExpr.match(elem.name)):
+                continue 
+            elif(self.compOps.match(elem.name)):
+                continue 
+            else:
+                print('id encountered')
+                continue
+        return node 
+    
+    def returnTC(self, nodes):
+        supposedType = st.lookupTC(self.funcName, 0)
+        return self.checkType(nodes, supposedType)
+
+    def variablesTC(self, nodes):
+        supposedType = st.lookupTC(nodes[0].name, self.scope)
+        nodes[1] = self.checkType(nodes[1], supposedType)
+        return nodes 
+    def checkTypes(self, expr, supposedType):
+        if (supposedType == 'float'):
+            return self.checkFloat(expr)
+        elif(supposedType == 'int' or supposedType == 'signed int'):
+            return self.checkInt(expr)
+        elif(supposedType == 'unsigned int'):
+            return self.checkUInt(expr)
+        elif (supposedType == 'double'):
+            return self.checkDouble(expr)
+        else: 
+            print("Unknown Type: " + supposedType + ' ' + str(expr))
+            sys.exit(1)
+    def checkInt(self, expr):
+        flag = False 
+        if (isinstance(expr, list)):
+            nodeList = expr 
+            flag = True 
+        else:
+            nodeList = []
+            nodeList.append(expr)
+
+        for node in nodeList:
+            if ('+-/*%'.find(node.name) != -1):
+                continue 
+            elif (self.numbersFloat.match(node.name) != None):
+                print('number is float. expected int')
+                number = int(float(node.name))
+                node.name = str(number)
+                continue 
+            elif (self.numbersInt.match(node.name) != None):
+                continue 
+            else:
+                typeNode = st.lookupTC(node.name, self.scope)
+                if (typeNode == 'Unknown'):
+                    print('unknown token found: ' + node.name)
+                    continue 
+                elif (typeNode == 'int'):
+                    continue 
+                else:
+                    print('type conversion required for ' + str(node.name))
+                    sys.exit(1)
+
+        if (flag):
+            expr = nodeList 
+        else:
+            expr = nodeList[0]
+        return expr 
+
+
         

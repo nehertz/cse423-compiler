@@ -1,23 +1,8 @@
-'''
-SymbolTable.py contains a list of the tuples. Each typle contain identifier name, type of the identifier, and 
-scope of the identifier. 
-Scope is defined as the following:
- -Default global Scope = 0
- -function scope is incremented as the function is encountered. i.e. If there are two functions defined before main,
-    the scope of the variables defined in main() will be 3.
- - Nested Scope is defined by LSHIFTing the current scope to 1. i.e. if there's a variable defined in a while loop inside of main,
- assuming no other functions are defined before main, then the scope of the variables will start at 11. Nested scope always performs 
- LSHIFTING. 
-    - Getting out of scope is defined as RSHIFT. nestedScope >>= 1 is done when RBRACE is encountered. If no corresponding LBRACE is found,
-    then error occurs.
-- EXTRA: loops, conditionals or any other type of scope can not be defined in global scope (weak implementation)
-'''
 import sys
+
+
 class SymbolTable:
     def __init__(self):
-        '''
-        Defined three scopes: global scope, currentScope, nested scope
-        '''
         self.symbolTable = []
         self.currentScope = 0
         self.globalScope = 0
@@ -27,22 +12,16 @@ class SymbolTable:
         self.ID = ''
 
     def insert(self, token, type, scope=-1):
-        '''
-        if scope = -1, then the declaration occurs inside of a scope i.e. function, loop, or conditionals.
-        else the declaration occurs in a global scope.
-        '''
         if (scope == -1):
             if (self.nestedScope == 0b0):
                 self.symbolTable.append(
                     (token, type, str(self.currentScope), str(self.currentScope)))
             else:
-                self.symbolTable.append((token, type, str(self.currentScope) + str(self.nestedScope), str(self.currentScope)))
+                self.symbolTable.append((token, type, str(
+                    self.currentScope) + str(self.nestedScope), str(self.currentScope)))
         else:
             self.symbolTable.append((token, type, scope, str(0)))
 
-    '''
-    lookup function is called from ply_parser() and looks up the token from the table
-    '''
     def lookup(self, token):
         acceptableScopes = []
         nested = self.nestedScope
@@ -64,22 +43,23 @@ class SymbolTable:
 
     def print(self):
         print(self.symbolTable)
+    # TODO: var-assign with declaration not supported
 
     def symbolTableConstruct(self, p, type):
-        ''' 
-        SymbolTable is constructed with ply_parser.py 
-        For function declaration, function is added to the table with 0 scope
-        For variable declaration w definition, variable is added to the symbol table with scope details.
-        '''
         if (type == 'varDecl'):
             # if (len(p) == 3):
             if (self.ID != '' and self.afterVarAssign):
+                # print("in if var decl: ID: {0}  type: {1}".format(self.ID, p[1]))
                 self.insert(self.ID, p[1])
                 self.ID = ''
                 self.afterVarAssign = False
                 return
 
+            # print("var decl: ID: {0}  type: {1}".format(p[2], p[1]))
             self.insert(str(p[2]), str(p[1]))
+
+            # else:
+            # print("currently not supporting")
 
         if (type == 'funcDecl'):
             if (self.globalScope == 1):
@@ -96,7 +76,6 @@ class SymbolTable:
                 self.args.append((p[2], p[1]))
             else:
                 print("typespec list: unexpected")
-                sys.exit(1)
                 return
 
     def symbolTable_afterVarAssign(self):
@@ -140,14 +119,13 @@ class SymbolTable:
         return
 
     def lookupTC(self, token, scope):
-        '''
-        This method is useful for type_checking in the later phase.
-        Here the scope is incremented as one function is encountered and nestedscope serves
-        no purpose. So the scope is compared with the parameter and then token is compared.
-        '''
+        # print(token)
+        # print(scope)
         token = token.replace(';', '')
         for elem in self.symbolTable:
             if ((elem[0] == token) and (elem[3] == str(scope))):
+                # print(elem)
                 return elem[1]
+            # print(elem)
 
         return 'Unknown'
