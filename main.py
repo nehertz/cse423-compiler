@@ -19,6 +19,8 @@ def printHelp():
     print("-p   :print abstract syntax tree ")
     print("-s   :print symbol table ")
     print("-i   :print IR ")
+    print("-o   :write IR into a file")
+    print("-r   :read IR from a file")
     print("-h   :print the usage information")
     print("Default   :print option -t")
 
@@ -55,7 +57,7 @@ if __name__ == "__main__":
     # Currently we have options h for help, t to print tokens and labels,
     # and p to print parse tree
     unixOptions = "htpsior"
-    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR", "output-to-file", "read-from-file"]
+    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR", "write-to-file", "read-from-file"]
 
     try:
         arguments, values = getopt.getopt(listArgs, unixOptions, gnuOptions)
@@ -73,7 +75,7 @@ if __name__ == "__main__":
             flag = 3
         if (currentArgument in ("-i", "--IR")):
             flag = 4
-        if (currentArgument in ("-o", '--output-to-file')):
+        if (currentArgument in ("-o", '--write-to-file')):
             flag = 5
         if (currentArgument in ("-r", '--read-from-file')):
             flag = 6
@@ -98,20 +100,16 @@ if __name__ == "__main__":
     except OSError:
         print("ERROR: Could not open/read " + inputFile + ".")
     with f:
-        # Read file, store the entire file in a string
+        # Read the IR from a file, skip the tokenizer and parser
         if (flag == 6):
             fileString = f.readlines()
+            ir = IR(None)
         else :
             fileString = f.read()
-        f.close()
-
-    # Goes to the tokenizer
-    if (flag != 6):
-        lexer = tokenizer(fileString)
-        ast = parser(lexer.clone())
-        ir = IR(ast)
-    else:
-        ir = IR(None)
+            lexer = tokenizer(fileString)
+            ast = parser(lexer.clone())
+            ir = IR(ast)
+        f.close()        
 
     # st.print()
     # tc = TypeChecking(ast)

@@ -27,14 +27,12 @@ class IR:
         # CL Stands for condition label
         self.CL = 0
 
+    # Run function scans the first level of the ast. 
     def run(self):
-
-        # TODO: change to levelorder, and only use the first level.
         for node in self.tree.children:
             # handle function name node
             if ('func-' in str(node.name)):
                 self.funcNode(node, node.name)
-
             elif ('enum-' in str(node.name)):
                 enumPair = self.enumDeclaration(node)
                 enumName = str(node.name).replace('enum-', '')
@@ -42,17 +40,15 @@ class IR:
                 self.enumList.update(dict)
                 self.enumConst.append(enumPair)
                 # print(enumConst)
-
             # handle global varible declration without assigment
             elif (node.name == 'varDecl'):
                 self.varDecl(node)
-
             # handle global varible declration with assigment
             elif (node.name in assignment):
                 self.assign(node)
-
         return self.IRS
 
+    # Translates function name and parameters into IR
     def funcNode(self, nodes, funcName):
         funcName = funcName.replace('func-', '')
         for node in nodes.children:
@@ -93,7 +89,6 @@ class IR:
 
     def statement(self, nodes):
         for node in nodes.children:
-
             # convert var decl with assignment
             # int a = expr or a = expr
             if (node.name in assignment):
@@ -142,12 +137,13 @@ class IR:
 
             elif (node.name == 'forLoop'):
                 self.forloop(node)
-            
+
+    # Construct a dict structure to store the enum declaration
+    # key is the enum constant, value is the corresponding value of that constant      
     def enumDeclaration(self, nodes):
         enumConst = {}
         value = 1
         for node in nodes.children:
-            print
             if (node.name != '=' ):
                 dict = {node.name : value}
                 enumConst.update(dict)
@@ -161,13 +157,14 @@ class IR:
                 value += 1
         return enumConst      
 
+    # bind the corresponding enum structure to the enum instance 
     def enumInst(self, nodes, name):
         eName = str(nodes.children[0]).replace(';', '').replace('\n', '')
         dict = self.enumList.get(str(name).replace('enum-', ''))
         dict = {eName : dict}
         self.enumInstance.update(dict)
-        
-
+    
+    # assign function translates all assignment expression into the IR. 
     def assign(self, nodes):
         subtree = self.getSubtree(nodes)
         operand2 = ''
@@ -177,7 +174,6 @@ class IR:
             # print(node.name)
             if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
                 self.enqueue(node.name)
-
             elif(node.name not in assignment and node.name in alc):
                 operand2 = self.dequeue()
                 operand1 = self.dequeue()
@@ -194,8 +190,6 @@ class IR:
                     self.IRS.append(ir)
                     self.enqueue(tempVar)
                     self.temporaryVarible += 1
-
-
             elif(node.name == '++' or node.name == '--'):
                 operand1 = self.dequeue()
                 operator = node.name[0]
@@ -214,7 +208,6 @@ class IR:
                 typeSpec = self.dequeue()
                 ir = '(' + str(typeSpec) + ')' +  str(operand)
                 self.enqueue(ir)
-                
             elif(node.name in assignment):
                 if(node.name == '='):
                     operand1 = self.dequeue()
@@ -244,7 +237,6 @@ class IR:
                     operand2 = self.dequeue()
                     ir = [operand2, operator2, operand2, operator1, operand1]
                     self.IRS.append(ir)
-            
         return operand2
 
     # simpleExpr converts experssion which does not have assigment
@@ -337,28 +329,22 @@ class IR:
     def funcCall(self, nodes, funcName, retStmtFlag, exprFlag):
         ir = []
         argsCount = self.args(nodes, funcName, 1)
-
         if(exprFlag):
             tempCount = argsCount
             while (tempCount > 0):
                 self.dequeue()
                 tempCount -= 1
-
         funcName = funcName.replace('func-', '')
-
         if(retStmtFlag):
             ir.append('ret ' + funcName + ' (')
         else:
             ir.append(funcName + ' (')
-
         while argsCount > 0:
             ir.append(str(self.dequeue()))
             if argsCount != 1:
                 ir.append(',')
             argsCount -= 1
-
         ir.append(')')
-
         if(exprFlag):
             return ir
         else:
@@ -417,7 +403,6 @@ class IR:
                         self.assign(n)
                     else:
                         self.varDecl(n)
-
         self.IRS.append([enterLoopLabel])
         self.IRS.append(['('])
         for node in nodes.children:
