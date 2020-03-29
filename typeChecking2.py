@@ -191,6 +191,19 @@ class TypeChecking:
             return str(num)
         else: 
             return str(int(expr) & 0xFFFFFFFF)
+
+    def convertInt2Long(self, expr):
+        return str(int(expr) & 0xFFFFFFFFFFFFFFFF)
+    def convertLong2Int(self, expr):
+        return str(int(expr) & 0xFFFFFFFF)
+    def convertLong2Float(self, expr):
+        num = int(expr)
+        num &= 0xFFFFFFFF
+        return str(num) + '.00'
+    def convertLongLong2Float(self, expr):
+        return self.convertLong2Float(self, expr)
+    def convertUChar2Int(self, expr):
+        return
     def checkInt(self, expr):
         '''
         if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
@@ -305,7 +318,7 @@ class TypeChecking:
                     if (typeNode == 'Unknown'):
                         print('unknown token found: ' + node.name)
                         continue
-                    elif (typeNode == 'int'):
+                    elif (typeNode == 'unsigned int'):
                         continue
                     else:
                         print('type conversion required for ' + str(node.name))
@@ -349,6 +362,287 @@ class TypeChecking:
                     else:
                         print('type conversion required for ' + str(node.name))
                         sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
+    def checkLong(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
+        type casting.
+        '''
+        flag = False
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for node in nodeList:
+            if ('+-/*%'.find(node.name) != -1):
+                continue
+            elif (self.numbersFloat.match(node.name) != None):
+                print('number is float. expected Int')
+                node.name = self.convertFloat2Int(node.name)
+                print('in checkint   ' + node.name)
+                continue
+            elif (self.numbersInt.match(node.name) != None):
+                node.name = str(int(node.name) & 0xFFFFFFFF)
+                continue
+            else:
+                typeNode = st.lookupTC(node.name, self.scope)
+                if (typeNode == 'Unknown'):
+                    print('unknown token found: ' + node.name)
+                    continue
+                elif (typeNode == 'int'):
+                    continue
+                else:
+                    print('type conversion required for ' + str(node.name))
+                    sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
+    def checkLongLong(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
+        type casting.
+        '''
+        flag = False
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for node in nodeList:
+            if ('+-/*%'.find(node.name) != -1):
+                continue
+            elif (self.numbersFloat.match(node.name) != None):
+                print('number is float. expected Int')
+                node.name = self.convertFloat2Int(node.name)
+                print('in checkint   ' + node.name)
+                continue
+            elif (self.numbersInt.match(node.name) != None):
+                node.name = str(int(node.name) & 0xFFFFFFFF)
+                continue
+            else:
+                typeNode = st.lookupTC(node.name, self.scope)
+                if (typeNode == 'Unknown'):
+                    print('unknown token found: ' + node.name)
+                    continue
+                elif (typeNode == 'int'):
+                    continue
+                else:
+                    print('type conversion required for ' + str(node.name))
+                    sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
+    def checkULong(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
+        type casting.
+        '''
+        flag = False
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for node in nodeList:
+            if ('+-/*%'.find(node.name) != -1):
+                continue
+            elif (self.numbersFloat.match(node.name) != None):
+                print('number is float. expected Int')
+                node.name = self.convertFloat2Int(node.name)
+                print('in checkint   ' + node.name)
+                continue
+            elif (self.numbersInt.match(node.name) != None):
+                node.name = str(int(node.name) & 0xFFFFFFFF)
+                continue
+            else:
+                typeNode = st.lookupTC(node.name, self.scope)
+                if (typeNode == 'Unknown'):
+                    print('unknown token found: ' + node.name)
+                    continue
+                elif (typeNode == 'int'):
+                    continue
+                else:
+                    print('type conversion required for ' + str(node.name))
+                    sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
+    def checkULongLong(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
+        type casting.
+        '''
+        flag = False
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for node in nodeList:
+            if ('+-/*%'.find(node.name) != -1):
+                continue
+            elif (self.numbersFloat.match(node.name) != None):
+                print('number is float. expected Int')
+                node.name = self.convertFloat2Int(node.name)
+                print('in checkint   ' + node.name)
+                continue
+            elif (self.numbersInt.match(node.name) != None):
+                node.name = str(int(node.name) & 0xFFFFFFFF)
+                continue
+            else:
+                typeNode = st.lookupTC(node.name, self.scope)
+                if (typeNode == 'Unknown'):
+                    print('unknown token found: ' + node.name)
+                    continue
+                elif (typeNode == 'int'):
+                    continue
+                else:
+                    print('type conversion required for ' + str(node.name))
+                    sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr    def checkChar(self, expr):
+        return 
+    def checkUChar(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
+        type casting.
+        '''
+        flag = False
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for node in nodeList:
+            if ('+-/*%'.find(node.name) != -1):
+                continue
+            elif (self.numbersFloat.match(node.name) != None):
+                print('number is float. expected Int')
+                node.name = self.convertFloat2Int(node.name)
+                print('in checkint   ' + node.name)
+                continue
+            elif (self.numbersInt.match(node.name) != None):
+                node.name = str(int(node.name) & 0xFFFFFFFF)
+                continue
+            else:
+                typeNode = st.lookupTC(node.name, self.scope)
+                if (typeNode == 'Unknown'):
+                    print('unknown token found: ' + node.name)
+                    continue
+                elif (typeNode == 'int'):
+                    continue
+                else:
+                    print('type conversion required for ' + str(node.name))
+                    sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
+    def checkShort(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
+        type casting.
+        '''
+        flag = False
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for node in nodeList:
+            if ('+-/*%'.find(node.name) != -1):
+                continue
+            elif (self.numbersFloat.match(node.name) != None):
+                print('number is float. expected Int')
+                node.name = self.convertFloat2Int(node.name)
+                print('in checkint   ' + node.name)
+                continue
+            elif (self.numbersInt.match(node.name) != None):
+                node.name = str(int(node.name) & 0xFFFFFFFF)
+                continue
+            else:
+                typeNode = st.lookupTC(node.name, self.scope)
+                if (typeNode == 'Unknown'):
+                    print('unknown token found: ' + node.name)
+                    continue
+                elif (typeNode == 'int'):
+                    continue
+                else:
+                    print('type conversion required for ' + str(node.name))
+                    sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
+    def checkUShort(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
+        type casting.
+        '''
+        flag = False
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for node in nodeList:
+            if ('+-/*%'.find(node.name) != -1):
+                continue
+            elif (self.numbersFloat.match(node.name) != None):
+                print('number is float. expected Int')
+                node.name = self.convertFloat2Int(node.name)
+                print('in checkint   ' + node.name)
+                continue
+            elif (self.numbersInt.match(node.name) != None):
+                node.name = str(int(node.name) & 0xFFFFFFFF)
+                continue
+            else:
+                typeNode = st.lookupTC(node.name, self.scope)
+                if (typeNode == 'Unknown'):
+                    print('unknown token found: ' + node.name)
+                    continue
+                elif (typeNode == 'int'):
+                    continue
+                else:
+                    print('type conversion required for ' + str(node.name))
+                    sys.exit(1)
         if (flag):
             expr = nodeList
         else:
