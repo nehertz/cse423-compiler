@@ -25,13 +25,26 @@ from ply_parser import st
 import re
 import sys
 import bitstring
+# from ctypes import *
+# import os
 
 
+# def blockPrint():
+#     sys.stdout = open(os.devnull, 'w')
+
+# def enablePrint():
+#     sys.stdout = sys.__stdout__
+
+# blockPrint()
+
+# cdll.LoadLibrary("libc.so.6")
+# libc=CDLL("libc.so.6")
+
+# enablePrint()
 class TypeChecking:
     st = st
     def __init__(self, ast):
         self.treeString = ast.replace('"', '')
-
         self.tree = TreeNode.read(StringIO(self.treeString))
         self.numbersFloat = re.compile(r'\d+\.{1}\d+')
         self.numbersInt = re.compile(r'^[-]{0,1}\d+')
@@ -165,6 +178,21 @@ class TypeChecking:
         else:
             print("Unknown type:   " + supposedType + '  ' + str(expr))
             sys.exit(1)
+    #int, char, short, float, double
+    # uint, long, long long, ulong, ushort, uchar
+
+# int -> float, char, short, double, uint, long, long long, ulong, ushort, uchar
+# float -> int, char, short, double, uint, long, long long, ulong, ushort, uchar 
+# char -> int, float, short, double, uint, long, long long, ulong, ushort, uchar 
+# short -> int, float, char, double, uint, long, long long, ulong, ushort, uchar 
+# double -> int, float, char, short, uint, long, long long, ulong, ushort, uchar
+# uint -> int, float, char, short, double, long, long long, ulong, ushort, uchar
+# long -> int, float, char, short, double, uint, long long, ulong, ushort, uchar
+# long long -> int, float, char, short, double, uint, long, ulong, ushort, uchar
+# ushort -> int, float, char, short, double, uint, long, long long, ulong, uchar
+# ulong -> int, float, char, short, double, uint, long, long long, ushort, uchar
+# uchar -> int, float, char, short, double, uint, long, long long, ulong, ushort
+
     def convertInt2Float(self, expr):
         # here expr is a string
         s = expr + '.00'
@@ -204,6 +232,7 @@ class TypeChecking:
         return self.convertLong2Float(self, expr)
     def convertUChar2Int(self, expr):
         return
+    def convert
     def checkInt(self, expr):
         '''
         if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
@@ -609,6 +638,46 @@ class TypeChecking:
             expr = nodeList[0]
         return expr
     def checkUShort(self, expr):
+        '''
+        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
+        Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
+        the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
+        type casting.
+        '''
+        flag = False
+        if (isinstance(expr, list)):
+            nodeList = expr
+            flag = True
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for node in nodeList:
+            if ('+-/*%'.find(node.name) != -1):
+                continue
+            elif (self.numbersFloat.match(node.name) != None):
+                print('number is float. expected Int')
+                node.name = self.convertFloat2Int(node.name)
+                print('in checkint   ' + node.name)
+                continue
+            elif (self.numbersInt.match(node.name) != None):
+                node.name = str(int(node.name) & 0xFFFFFFFF)
+                continue
+            else:
+                typeNode = st.lookupTC(node.name, self.scope)
+                if (typeNode == 'Unknown'):
+                    print('unknown token found: ' + node.name)
+                    continue
+                elif (typeNode == 'int'):
+                    continue
+                else:
+                    print('type conversion required for ' + str(node.name))
+                    sys.exit(1)
+        if (flag):
+            expr = nodeList
+        else:
+            expr = nodeList[0]
+        return expr
+    def checkChar(self, expr):
         '''
         if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
         Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
