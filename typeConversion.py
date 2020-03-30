@@ -288,23 +288,42 @@ class TypeConversion:
         num = int(expr)
         if (num & 0x8000):
             num = (num & 0x7FFF) - (2 ** 16)
-        return 
+            return str(num & 0xFFFFFFFF)
+        return str(num & 0xFFFFFFFF)
+    
     def convertUShort2Char(self, expr):
-        return 
+        expr = self.convertUShort2Int(expr)
+        return self.convertInt2Char(expr)
+    
     def convertUShort2Short(self, expr):
-        return 
+        num = int(expr)
+        if (num & 0x8000):
+            num = (num & 0x7FFF) - (2 ** 16)
+            return str(num & 0xFFFF)
+        return str(num & 0xFFFF)
+    
     def convertUShort2Double(self, expr):
-        return 
+        expr = self.convertUShort2Int(expr)
+        return self.convertInt2Double(expr)
+    
     def convertUShort2UInt(self, expr):
-        return 
+        return str(int(expr) &  0xFFFFFFFF)
+    
     def convertUShort2Long(self, expr):
-        return
+        expr = self.convertUShort2Int(expr)
+        return self.convertInt2Long(expr)
+    
     def convertUShort2LongLong(self, expr):
-        return 
+        expr = self.convertUShort2Int(expr)
+        return self.convertInt2LongLong(expr)
+    
     def convertUShort2ULong(self, expr):
+        
         return 
+    
     def convertUShort2Float(self, expr):
         return 
+    
     def convertUShort2UChar(self, expr):
         return 
 
