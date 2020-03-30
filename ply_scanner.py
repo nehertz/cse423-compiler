@@ -5,8 +5,8 @@ keywords = ['else', 'register','do','goto','continue','if','sizeof','switch', 'f
 type_specifier = ['auto', 'union', 'short', 'double','long', 'unsigned','int','char','static','volatile','struct','extern','signed','const','enum','void','float']
 assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
 arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
-logical = ['||', '&&']
-comparison = ['<=', '>=', '==', '!=', '!', '<', '>']
+logical = ['||', '&&', '!']
+comparison = ['<=', '>=', '==', '!=', '<', '>']
 alc = arithmetic + logical + comparison
 
 operators = {

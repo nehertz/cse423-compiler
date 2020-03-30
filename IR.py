@@ -96,6 +96,10 @@ class IR:
             elif ('func-' in str(node.name)):
                 self.funcCall(node, node.name, 0, 0)
 
+            elif(node.name == 'condStmt'):
+                # Handle conditional statments
+                self.condStmt(node)
+
             # convert simple expressions
             # those are expressions without assignment
             # examples : '1 + 2 + 3', 'a << 1'
@@ -138,7 +142,6 @@ class IR:
             # print(node.name)
             if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
                 self.enqueue(node.name)
-                
             elif(node.name not in assignment and node.name in alc):
                 operand2 = self.dequeue()
                 operand1 = self.dequeue()
@@ -154,7 +157,6 @@ class IR:
                 ir = [operand1, '=', operand1, operator, '1']
                 self.IRS.append(ir)
                 self.enqueue(operand1)
-
             elif('func' in node.name):
                 ir = " ".join(self.funcCall(node, node.name, 0, 1))
                 tempVar = 't_' + str(self.temporaryVarible)
@@ -162,13 +164,11 @@ class IR:
                 self.enqueue(tempVar)
                 self.IRS.append(ir)
                 self.temporaryVarible += 1
-            
             elif(node.name == 'cast'):
                 operand = self.dequeue() 
                 typeSpec = self.dequeue()
                 ir = '(' + str(typeSpec) + ')' +  str(operand)
                 self.enqueue(ir)
-                
             elif(node.name in assignment):
                 if(node.name == '='):
                     operand1 = self.dequeue()
@@ -192,20 +192,29 @@ class IR:
         return operand2
 
     # simpleExpr converts experssion which does not have assigment
+    # updated 3/30/20: now supports logical and comparison ops and unary ops
     # e,g a >> 1, 1 + 2 + 3
     def simpleExpr(self, nodes):
         subtree = self.getSubtree(nodes)
+        ops = arithmetic + logical + comparison
+        unary = ['~', '!']
         operand2 = ''
         self.queue = []
         for node in reversed(subtree):
-            if (node.name not in arithmetic):
+            if (node.name not in ops):
                 self.enqueue(node.name)
-            elif (node.name in arithmetic):
-                operand2 = self.dequeue()
-                operand1 = self.dequeue()
-                operator = node.name
-                tempVar = 't_' + str(self.temporaryVarible)
-                ir = [tempVar, '=', operand1, operator, operand2]
+            elif (node.name in ops):
+                if (node.name in unary):
+                    operand1 = self.dequeue()
+                    operator = node.name
+                    tempVar = 't_' + str(self.temporaryVarible)
+                    ir = [tempVar, '=', operator + operand1]
+                else:
+                    operand2 = self.dequeue()
+                    operand1 = self.dequeue()
+                    operator = node.name
+                    tempVar = 't_' + str(self.temporaryVarible)
+                    ir = [tempVar, '=', operand1, operator, operand2]
                 self.IRS.append(ir)
                 self.enqueue(tempVar)
                 self.temporaryVarible += 1
@@ -308,19 +317,56 @@ class IR:
         else:
             self.IRS.append(ir)
 
+    def condParse(self, stmt):
+        # Parse an complex expression and break it down to
+        # E1 && E2
+        # E1 || E2
+        # !E
+        # (E)
+        subtree = self.getSubtree(stmt)
+        ops = arithmetic + logical + comparison
+        unary = ['~', '!']
+        operand2 = ''
+        self.queue = []
+        for node in reversed(subtree):
+            if (node.name not in ops):
+                self.enqueue(node.name)
+            elif (node.name in ops):
+                if (node.name in unary):
+                    operand1 = self.dequeue()
+                    operator = node.name
+                    tempVar = 't_' + str(self.temporaryVarible)
+                    ir = [tempVar, '=', operator + operand1]
+                else:
+                    operand2 = self.dequeue()
+                    operand1 = self.dequeue()
+                    operator = node.name
+                    tempVar = 't_' + str(self.temporaryVarible)
+                    ir = [tempVar, '=', operand1, operator, operand2]
+                self.IRS.append(ir)
+                self.enqueue(tempVar)
+                self.temporaryVarible += 1
+        self.dequeue()
+        return tempVar
+
     # TODO: Add comments
     def condStmt(self, nodes):
-        for node in nodes.children:
-            if (node.name == 'if' or node.name == 'else-if'):
+        for stmt in nodes:
+            cond = self.simpleExpr(stmt[0])
+            block = stmt[1].children
+
+            print("{} ({}): {}".format(stmt.name, cond, [b.name for b in block]))
+
+            if (stmt.name == 'if' or stmt.name == 'else-if'):
                 # Handle if and else if
-                self.IRS.append([node.name + ':'])
-                # self.statement(node.children[0])
+                self.IRS.append([stmt.name + ':'])
+                # self.statement(stmt.children[0])
                 # FIXME: Need Andy's simpleExpr() function
-                self.statement(node.children[1])
+                self.statement(stmt.children[1])
             else:
                 # Handle else
-                self.IRS.append([node.name + ':'])
-                self.statement(node.children[0])
+                self.IRS.append([stmt.name + ':'])
+                self.statement(stmt.children[0])
 
     def whileloop(self, nodes):
         enterLoopLabel = self.createLabel(nodes, 'loop')
