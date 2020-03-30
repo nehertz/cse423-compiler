@@ -21,3 +21,18 @@ python3 main.py -options filename
 * -h : print the usage information
 * -t : print the sequence of tokens and labels 
 * -p : print parse tree 
+* -s : print symbol table
+* -i : print IR
+* -o : write IR into a file
+* -r : read IR from a file
+
+# How to use option -o
+```
+python3 main.py -o source_filename output_filename
+```
+# How to use option -r
+```
+python3 main.py -r filename
+```
+
+

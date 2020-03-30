@@ -1,40 +1,60 @@
-// int add3(int a, int b, int c)
-// {
-//   return a + b + c;
-// }
-enum week{Mon, Tue, Wed, Thur, Fri, Sat, Sun};
-
+int add3(int a, int b, int c)
+{
+  return a + b + c;
+}
+enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
 int main()
 {
-        int a;
-        int b;
-        int c; 
-        float d;
-        a = (int) b;
-        // int a, b, c;
+        //// Test enum 
+        // enum week day; 
+        // day = Mon; 
+        // day = Tue; 
+        // day = Wed; 
+        // day = Thur; 
+        // day = Fri; 
+        // day = Sat; 
+        // day = Sun;
+        // day = Mon + 10; 
 
-        // c = a > b;
-        // a > b;
-        // a = a || b;
-        // a || b;
-        // b+ c + a;
-        // a && b && c;
-        // a != b && c ;
-        
-        // goto even:
+        //// Test var decl  
+        // int a;
+        // int b;
+        // int c; 
+        // float d;
+        // int e, f, g;
+
+        //// Test assignment and Arithmetic
+        ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
+        ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
+        // a =  b << 3;
+        // a *=  b >> 3;
+        // a /=  b + 3;
+        // a %=  b - 3;
+        // a += b * 3;
+        // a -= b / 3;
+        // a <<= b % 3;
+        // a >>= b | 3;
+        // a &= b & 3;
+        // a |= b ^ 3;
+
+        //// Test complex arithmetic expression 
+        // a = (a + b) * 2 ;
+
+        //// Unary 
+        // a = !b; 
+        // b = (-a + b) * 2;
+        // b = sizeof(a);
+
+        //// Goto stmt 
+        // goto even;
         // even:
         //         a = 1;
-        // b <<= 1; 
-        // b >>= 1;
-        // a *= 12.32;
-        // b++;
-        // 1 + 2 + 3;
-        // a = ++b;
-        // a *= (a + b) * 2;
-        // b = b + 12 * c / -a; 
+         
+        //// while and do while loop
         // while (a < 3) {
-        //         int i = i + 1;
+                   ////continue;
+        //         break;
         //         float j = j + 2;
         // }
 
@@ -43,18 +63,17 @@ int main()
         //         float j = j + 2;
         // } while (a < 3);
 
-        // if (a > b){
-        //         int i = i + 1;
-        // }
-
+        
+        ////test for loop 
         // for (int i = 1; i < 5; i++){
         //         i = 10;
         // }
 
+        ////test return stmt
+        //return add(a, b);
         // return 1 + 2 + a +b;
         // return 1+2;
         // return a = 1 + 2;
-        // return add(a, b);
         // return 1 + 2 + 3;
 
         // //Samuel Example 1:
