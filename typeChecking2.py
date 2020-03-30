@@ -193,12 +193,6 @@ class TypeChecking:
 # ulong -> int, float, char, short, double, uint, long, long long, ushort, uchar
 # uchar -> int, float, char, short, double, uint, long, long long, ulong, ushort
 
-    def convertInt2Float(self, expr):
-        # here expr is a string
-        s = expr + '.00'
-        return s
-    def convertFloat2Int(self, expr):
-        return str(int(float(expr)))
     def convertFloat2UInt(self, expr):
         if ('-'.find(expr)):
             # if floating number is negative, 

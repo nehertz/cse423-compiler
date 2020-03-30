@@ -13,40 +13,66 @@ class TypeConversion:
     def convertInt2Double(self, expr):
         return self.convertInt2Float(expr)
     def convertInt2UInt(self, expr):
-        return 
+        if ('-'.find(expr)):
+            num = int(expr)
+            num += 2 ** 32
+            num &= 0xFFFFFFFF
+            return str(num)
+        return str(int(expr) & 0xFFFFFFFF)
     def convertInt2Long(self, expr):
-        return 
+        return expr
     def convertInt2LongLong(self, expr):
-        return 
+        return expr
     def convertInt2ULong(self, expr):
-        return 
+        if ('-'.find(expr)):
+            num = int(expr) 
+            num += 2 ** 64
+            num &= 0xFFFFFFFFFFFFFFFF
+            return str(num) 
+        return str(int(expr) & 0xFFFFFFFFFFFFFFFF)
     def convertInt2UShort(self, expr):
-        return 
+        if ('-'.find(expr)):
+            num = int(expr)
+            num += 2 ** 16
+            num &= 0xFFFF
+            return str(num)
+        return str(int(expr) & 0xFFFF)
     def convertInt2UChar(self, expr):
-        return 
+        if ('-'.find(expr)):
+            num = int(expr)
+            num += 2 ** 8
+            num &= 0xFF 
+            return str(num)
+        return str(int(expr) & 0xFF)
 
 
 
     def convertFloat2Int(self, expr):
-        return 
+        return str(int(float(expr)))
     def convertFloat2Char(self, expr):
-        return 
+        return str(int(float(expr)) & 0xFF)
     def convertFloat2Short(self, expr):
-        return 
+        return str(int(float(expr)) & 0xFFFF)
     def convertFloat2Double(self, expr):
-        return 
+        return expr
     def convertFloat2UInt(self, expr):
-        return 
+        expr = self.convertFloat2Int(expr) 
+        return self.convertInt2UInt(expr)
     def convertFloat2Long(self, expr):
-        return
+        expr = self.convertFloat2Int(expr)
+        return self.convertInt2Long(expr)
     def convertFloat2LongLong(self, expr):
-        return 
+        expr = self.convertFloat2Int(expr)
+        return self.convertInt2LongLong(expr)
     def convertFloat2ULong(self, expr):
-        return 
+        expr = self.convertFloat2Int(expr)
+        return self.convertInt2ULong(expr)
     def convertFloat2UShort(self, expr):
-        return 
+        expr = self.convertFloat2Int(expr)
+        return self.convertInt2UShort(expr)
     def convertFloat2UChar(self, expr):
-        return 
+        expr = self.convertFloat2Int(expr)
+        return self.convertInt2UChar(expr)
     
     
     
@@ -74,111 +100,194 @@ class TypeConversion:
 
     
     def convertShort2Int(self, expr):
-        return 
+        num = int(expr)
+        num &= 0xFFFFFFFF
+        return str(num)
     def convertShort2Char(self, expr):
-        return 
+        num = int(expr)
+        num &= 0xFF
+        return str(num)
     def convertShort2Float(self, expr):
-        return 
+        num = int(expr)
+        num &= 0xFFFFFFFF
+        return str(num)+ '.00'
     def convertShort2Double(self, expr):
-        return 
+        num = int(expr)
+        return str(num) + '.00'
     def convertShort2UInt(self, expr):
-        return 
-    def convertShort2Long(self, expr):
-        return
+        return self.convertInt2UInt(expr)
+    def convertShort2Long(self, expr):        
+        return self.convertInt2Long(expr)
     def convertShort2LongLong(self, expr):
-        return 
+        return self.convertInt2LongLong(expr)
     def convertShort2ULong(self, expr):
-        return 
+        return self.convertInt2ULong(expr)
     def convertShort2UShort(self, expr):
-        return 
+        if ('-'.find(expr)):
+            num = int(expr)
+            num += 2 ** 16 
+            num &= 0xFFFF
+            return str(num)
+        return expr
     def convertShort2UChar(self, expr):
-        return 
-
+        if ('-'.find(expr)):
+            num = int(expr)
+            num += 2 ** 8
+            num &= 0xFF
+            return str(num)
+        return str(int(expr) & 0xFF)
+    
+    
     def convertDouble2Int(self, expr):
-        return 
+        num = int(float(expr))
+        num &= 0xFFFFFFFF
+        return str(num)
     def convertDouble2Char(self, expr):
-        return 
+        expr = self.convertDouble2Int(expr)
+        return self.convertInt2Char(expr)
+    
     def convertDouble2Short(self, expr):
-        return 
+        expr = self.convertDouble2Int(expr)    
+        return self.convertInt2Short(expr)
+    
     def convertDouble2Float(self, expr):
-        return 
+        return expr
+    
     def convertDouble2UInt(self, expr):
-        return 
+        expr = self.convertDouble2Int(expr)
+        return self.convertInt2UInt(expr)
+    
     def convertDouble2Long(self, expr):
-        return
+        num = int(float(expr))
+        num &= 0xFFFFFFFFFFFFFFFF
+        return str(num)
+    
     def convertDouble2LongLong(self, expr):
-        return 
+        expr = self.convertDouble2Long(expr)
+        return self.convertLong2LongLong(expr)
+    
     def convertDouble2ULong(self, expr):
-        return 
+        expr = self.convertDouble2Long(expr)
+        return self.convertLong2ULong(expr)
+    
     def convertDouble2UShort(self, expr):
-        return 
+        expr = self.convertDouble2Short(expr)
+        return self.convertShort2UShort(expr)
+    
     def convertDouble2UChar(self, expr):
-        return 
+        expr = self.convertDouble2Int(expr)
+        return self.convertInt2Char(expr)
 
     def convertUInt2Int(self, expr):
-        return 
+        if (num & 0x80000000) :
+            num = (num & 0x7FFFFFFF) - (2 ** 32)
+            return str(num)
+        return str(num)
     def convertUInt2Char(self, expr):
-        return 
+        expr = self.convertUInt2Int(expr)
+        return self.convertInt2Char(expr)
     def convertUInt2Short(self, expr):
-        return 
+        expr = self.convertUInt2Int(expr)
+        return self.convertInt2Short(expr)
+
     def convertUInt2Double(self, expr):
-        return 
+        expr = self.convertUInt2Int(expr)
+        return self.convertInt2Double(expr)
     def convertUInt2Float(self, expr):
-        return 
+        expr = self.convertUInt2Int(expr)
+        return self.convertInt2Float(expr)
     def convertUInt2Long(self, expr):
-        return
+        expr = self.convertUInt2Int(expr)
+        return self.convertInt2Long(expr)
     def convertUInt2LongLong(self, expr):
-        return 
+        expr = self.convertUInt2LongLong(expr)
+        return self.convertInt2LongLong(expr)
     def convertUInt2ULong(self, expr):
-        return 
+        expr = self.convertUInt2Int(expr)
+        return self.convertInt2ULong(expr)
     def convertUInt2UShort(self, expr):
-        return 
+        expr = self.convertUInt2Int(expr)
+        return self.convertInt2UShort(expr)
     def convertUInt2UChar(self, expr):
-        return 
+        expr = self.convertUInt2Int(expr)
+        return self.convertInt2UChar(expr)
 
     def convertLong2Int(self, expr):
-        return 
+        return str(int(expr) & 0xFFFFFFFF)
+    
     def convertLong2Char(self, expr):
-        return 
+        return str(int(expr) & 0xFF)
+    
     def convertLong2Short(self, expr):
-        return 
+        return str(int(expr) & 0xFFFF)
+    
     def convertLong2Double(self, expr):
-        return 
+        expr = self.convertLong2Int(expr)
+        return self.convertInt2Double(expr)
+    
     def convertLong2UInt(self, expr):
-        return 
+        expr = self.convertLong2Int(expr)
+        return self.convertInt2UInt(expr)
+    
     def convertLong2Float(self, expr):
-        return
+        expr = self.convertLong2Int(expr)
+        return self.convertInt2Float(expr)
+    
     def convertLong2LongLong(self, expr):
-        return 
+        return str(int(expr) & 0xFFFFFFFFFFFFFFFF)
+    
     def convertLong2ULong(self, expr):
-        return 
+        if ('-'.find(expr)):
+            num = int(expr)
+            num += 2 ** 64
+            num &= 0xFFFFFFFFFFFFFFFF
+            return str(num)
+        return str(num)
+    
     def convertLong2UShort(self, expr):
-        return 
+        expr = self.convertLong2Int(expr)
+        return self.convertInt2UShort(expr)
+    
     def convertLong2UChar(self, expr):
-        return
+        expr = self.convertLong2Int(expr)
+        return self.convertInt2UChar(expr)
 
     def convertLongLong2Int(self, expr):
-        return 
+        return str(int(expr) & 0xFFFFFFFF)
+    
     def convertLongLong2Char(self, expr):
-        return 
+        return str(int(expr) & 0xFF)
+    
     def convertLongLong2Short(self, expr):
-        return 
+        return str(int(expr) & 0xFFFF)
+    
     def convertLongLong2Double(self, expr):
-        return 
+        expr = self.convertLongLong2Int(expr)
+        return self.convertInt2Double(expr)
+    
     def convertLongLong2UInt(self, expr):
-        return 
+        expr = self.convertLongLong2Int(expr)
+        return self.convertInt2UInt(expr)
+    
     def convertLongLong2Long(self, expr):
-        return
+        return expr
+    
     def convertLongLong2Float(self, expr):
-        return 
+        self.convertLongLong2Int(expr)
+        return self.convertInt2Float(expr)
+    
     def convertLongLong2ULong(self, expr):
-        return 
+        return self.convertLong2ULong(expr)
+    
     def convertLongLong2UShort(self, expr):
-        return 
+        return self.convertLong2UShort(expr)
     def convertLongLong2UChar(self, expr):
-        return  
+        return self.convertLong2UChar(expr)
     
     def convertUShort2Int(self, expr):
+        num = int(expr)
+        if (num & 0x8000):
+            num = (num & 0x7FFF) - (2 ** 16)
         return 
     def convertUShort2Char(self, expr):
         return 
