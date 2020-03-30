@@ -534,6 +534,7 @@ def p_unaryExpr(p):
     unaryExpr : postfixExpr
               | LNOT unaryExpr
               | NOT unaryExpr
+              | MINUS unaryExpr
               | SIZEOF LPAREN unaryExpr RPAREN
               | SIZEOF LPAREN typeSpec RPAREN
               | unaryExpr INCREMENT

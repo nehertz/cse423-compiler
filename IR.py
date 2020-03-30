@@ -19,13 +19,12 @@ class IR:
         if (ast != None):
             self.treeString = ast
             self.tree = TreeNode.read(StringIO(ast))
+
         self.temporaryVarible = 0
-
-        # LL stands for Loop Label
-        self.LL = 0
-
-        # CL Stands for condition label
-        self.CL = 0
+        self.label = 0
+        self.enterLoopLabel = ''
+        self.endLoopLable = ''
+        self.loopConditionLabel = ''
 
     # Run function scans the first level of the ast. 
     def run(self):
@@ -46,6 +45,8 @@ class IR:
             # handle global varible declration with assigment
             elif (node.name in assignment):
                 self.assign(node)
+            # else:
+            #     print("Node ", node.name, " can not be converted")
         return self.IRS
 
     # Translates function name and parameters into IR
@@ -87,6 +88,9 @@ class IR:
             self.IRS.append(ir)
             self.IRS.append(['{'])
 
+    # The statement function handles the statement body(scope) of function, 
+    # loop, and if-stmts.
+    # TODO: add IF-stmt and switch stmt. 
     def statement(self, nodes):
         for node in nodes.children:
             # convert var decl with assignment
@@ -134,9 +138,18 @@ class IR:
 
             elif (node.name == 'dowhile'):
                 self.dowhile(node)
-
+            
             elif (node.name == 'forLoop'):
                 self.forloop(node)
+
+            elif (node.name == 'break'):
+                self.breakStmt(node)
+
+            elif (node.name == 'continue'):
+                self.continueStmt(node)
+            # else:
+            #     print("Node ", node.name, " can not be converted")
+            
 
     # Construct a dict structure to store the enum declaration
     # key is the enum constant, value is the corresponding value of that constant      
@@ -278,25 +291,15 @@ class IR:
     # 'lable even:'
     # then creates the label 'even'
     def createLabel(self, nodes, type):
-        if (type == 'loop'):
-            loopL = 'LL' + str(self.LL) + ':'
-            # self.IRS.append(loopL)
-            self.LL += 1
-            return loopL
-        elif (type == 'condition'):
-            loopL = 'CL' + str(self.CL) + ':'
-            self.CL += 1
+        if (type != None):
+            loopL = 'L' + str(self.label) + ':'
+            self.label += 1
             return loopL
         else:
             for node in nodes.children:
                 self.IRS.append([node.name, ':'])
 
-    # Samll helper function to create 'goto label:'
-    # example: if label = 'loop1'
-    # the function will append 'goto loop1' to the IRS
-    def createGotoLabel(self, label):
-        self.IRS.append(['goto', label])
-
+        
     # return statement support var assign and func calls
     # return 1; return b;
     # return 1+2;
@@ -351,51 +354,48 @@ class IR:
             self.IRS.append(ir)
 
     def whileloop(self, nodes):
-        enterLoopLabel = self.createLabel(nodes, 'loop')
-        endLoopLable = self.createLabel(nodes, 'loop')
-        # loopConditionLabel = self.createLabel(nodes, 'condition')
-
-        # gotoLabel = self.createGotoLabel(loopConditionLabel)
-        self.IRS.append([enterLoopLabel])
+        self.enterLoopLabel = self.createLabel(nodes, 'loop')
+        self.loopConditionLabel = self.createLabel(nodes, 'condition')
+        self.endLoopLable = self.createLabel(nodes, 'loop')
+        
+        self.IRS.append([self.enterLoopLabel])
         self.IRS.append(['('])
-
         for node in nodes.children:
             if (node.name == 'stmt'):
                 self.statement(node)
-
         self.IRS.append([')'])
 
-        # self.IRS.append([loopConditionLabel])
+        self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
                 pass
-                # self.loopConditions(node, enterLoopLabel, endLoopLable)
-        self.IRS.append([endLoopLable])
+        self.IRS.append([self.endLoopLable])
 
     # Note: Dowhile loop IR does not have the goto condition label before the stmt body. 
     # That is the only difference between while and dowhile
     def dowhile(self, nodes):
-        enterLoopLabel = self.createLabel(nodes, 'loop')
-        endLoopLable = self.createLabel(nodes, 'loop')
-        self.IRS.append([enterLoopLabel])
+        self.enterLoopLabel = self.createLabel(nodes, 'loop')
+        self.loopConditionLabel = self.createLabel(nodes, 'condition')
+        self.endLoopLable = self.createLabel(nodes, 'loop')
+        
+        self.IRS.append([self.enterLoopLabel])
         self.IRS.append(['('])
-
         for node in nodes.children:
             if (node.name == 'stmt'):
                 self.statement(node)
-
         self.IRS.append([')'])
 
-        # self.IRS.append([loopConditionLabel])
+        self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
                 pass
-                # self.loopConditions(node, enterLoopLabel, endLoopLable)
-        self.IRS.append([endLoopLable])
+        self.IRS.append([self.endLoopLable])
 
     def forloop(self, nodes):
-        enterLoopLabel = self.createLabel(nodes, 'loop')
-        endLoopLable = self.createLabel(nodes, 'loop')
+        self.enterLoopLabel = self.createLabel(nodes, 'loop')
+        self.loopConditionLabel = self.createLabel(nodes, 'condition')
+        self.endLoopLable = self.createLabel(nodes, 'loop')
+        
         for node in nodes.children:
             if (node.name == 'init'):
                 for n in node.children:
@@ -403,7 +403,7 @@ class IR:
                         self.assign(n)
                     else:
                         self.varDecl(n)
-        self.IRS.append([enterLoopLabel])
+        self.IRS.append([self.enterLoopLabel])
         self.IRS.append(['('])
         for node in nodes.children:
             if (node.name == 'stmt'):
@@ -416,10 +416,18 @@ class IR:
                         self.assign(n)
         self.IRS.append([')'])
 
+        self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
                 pass
-        self.IRS.append([endLoopLable])
+        self.IRS.append([self.endLoopLable])
+
+
+    def breakStmt(self, nodes):
+        self.IRS.append(['goto', self.endLoopLable])
+
+    def continueStmt(self, nodes):
+         self.IRS.append(['goto', self.loopConditionLabel])
 
     # def loopConditions(self, nodes, enterLoopLabel, endLoopLable):
     #     for node in nodes.children:
@@ -475,18 +483,22 @@ class IR:
     #                 self.IRS.append(ir)
     #     return operand2
 
+    # The function returns the subtree of given node
     def getSubtree(self, nodes):
         subtree = []
         for node in nodes.levelorder():
             subtree.append(node)
         return subtree
 
+    # insert the item into the queue
     def enqueue(self, item):
         self.queue.append(item)
 
+    # pop the item from the queue
     def dequeue(self):
         return self.queue.pop(0)
 
+    # Perform simple calculation on the two given operands
     def simpleArithmetic(self, opnd1, oprt, opnd2):
         result = 0 
         if (oprt == '+'):
@@ -528,6 +540,7 @@ class IR:
             else:
                 print(str1.join(list))
 
+    # Read the IR from fileString into the IR structure
     def readIR(self, fileString):
         fileString = [x.strip() for x in fileString]  
         fileString = [x.replace('\t', ' ') for x in fileString]  

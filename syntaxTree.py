@@ -280,11 +280,14 @@ def astConstruct(p, type):
             p[0] = '(' + str(p[1]) + ')--'
 
         elif (p[1] == '!' or p[1] == '~'):
-            p[0] = '(' + p[2] + ')' + p[1]
+            # p[0] = '(' + p[2] + ')' + p[1]
+            p[0] = str(p[1]) + str(p[2])
         elif (len(p) == 3):
-            p[0] = '(' + str(p[1]) + ')' + str(p[2])
+            # p[0] = '(' + str(p[1]) + ')' + str(p[2])
+            p[0] = str(p[1]) + str(p[2])
         elif (len(p) == 5):
-            p[0] = '(' +  str(p[3]) + ')' + str(p[1])
+            # p[0] = '(' +  str(p[3]) + ')' + str(p[1])
+            p[0] = str(p[1]) + '-' + str(p[3])
         else:
             p[0] = str(p[3])
 
