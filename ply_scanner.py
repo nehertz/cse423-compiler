@@ -135,7 +135,7 @@ def t_string(t):
 
 # Single Character
 def t_character(t):
-    r'\'.\''
+    r'\'\.\''
     t.type = 'CHARACTER'
     return t
 
