@@ -25,6 +25,7 @@ from ply_parser import st
 import re
 import sys
 import bitstring
+from typeConversion import TypeConversion
 # from ctypes import *
 # import os
 
@@ -51,6 +52,7 @@ class TypeChecking:
         self.arithOps = re.compile(r'[\/\+\-\*\%]')
         self.logicalExpr = re.compile(r'(\|\|)|(&&)|(\!)')
         self.compOps = re.compile(r'(==)|(\!=)|(>=)|(<=)')
+        self.typeConversion = TypeConversion()
         # global scope = 0
         # scope is incremented as the functions are encountered.
         self.scope = 0
@@ -165,3 +167,54 @@ class TypeChecking:
 
 
     def checkType(self, expr, supposedType):
+        flag = False 
+        if (isinstance(expr, list)):
+            nodeList = expr 
+            flag = True 
+        else:
+            nodeList = []
+            nodeList.append(expr)
+        for node in nodeList:
+            if ('+-/*%'.find(node.name) != -1):
+                continue 
+            elif(self.numbersFloat.match(node.name) != None):
+                if (supposedType == 'float' or supposedType == 'double'):
+                    continue 
+                else:
+                    print("number is float expected " + supposedType)
+                    node = self.convertType(node, 'float', supposedType)
+                    continue 
+            elif(self.numbersInt.match(node.name) != None):
+                node = self.convertType(node, 'int', supposedType)
+            else:
+                typeNode = st.lookupTC(node.name, self.scope)
+                if (typeNode == 'Unknown'):
+                    print('unknown token found : ' + node.name)
+                    sys.exit(1)
+                else:
+                    node = self.convertType(node, typeNode, supposedType)
+        if (flag):
+            return nodeList 
+        else:
+            return nodeList[0]
+        
+    def convertType(self, expr, fromType, toType):
+        if (fromType == toType):
+            return expr
+        fromType = self.stringFormat(fromType)
+        toType = self.stringFormat(toType)
+        funcString = 'convert' + fromType + '2' + toType
+        getattr(self.typeConversion, funcString)(expr)
+    
+    
+    
+    def stringFormat(self, typeString):
+        typeString = typeString.replace('unsigned ', 'U')
+        typeString = typeStrung.replace('int', 'Int')
+        typeString = typeString.replace('float', 'Float')
+        typeString = typeString.replace('long', 'Long')
+        typeString = typeString.replace('char', 'Char') 
+        typeString = typeString.replace('short', 'Short')
+        return typeString
+
+        
