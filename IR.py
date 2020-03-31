@@ -196,7 +196,7 @@ class IR:
     # e,g a >> 1, 1 + 2 + 3
     def simpleExpr(self, nodes):
         subtree = self.getSubtree(nodes)
-        ops = arithmetic + logical + comparison
+        ops = alc
         unary = ['~', '!']
         operand2 = ''
         self.queue = []
@@ -324,12 +324,22 @@ class IR:
         # !E
         # (E)
         subtree = self.getSubtree(stmt)
-        ops = arithmetic + logical + comparison
+        ops = arithmetic + comparison
         unary = ['~', '!']
         operand2 = ''
+        tempVar = ''
+        expr = ''
         self.queue = []
         for node in reversed(subtree):
-            if (node.name not in ops):
+            if (node.name in logical):
+                # self.enqueue(node.name)
+                if (node.name == '!'):
+                    expr = node.name + self.dequeue()
+                    self.enqueue(expr)
+                else:
+                    expr = self.dequeue() + ' ' + node.name + ' ' + self.dequeue()
+                    self.enqueue(expr)
+            elif (node.name not in ops):
                 self.enqueue(node.name)
             elif (node.name in ops):
                 if (node.name in unary):
@@ -347,26 +357,30 @@ class IR:
                 self.enqueue(tempVar)
                 self.temporaryVarible += 1
         self.dequeue()
-        return tempVar
+        return expr
 
     # TODO: Add comments
     def condStmt(self, nodes):
         for stmt in nodes:
-            cond = self.simpleExpr(stmt[0])
-            block = stmt[1].children
-
-            print("{} ({}): {}".format(stmt.name, cond, [b.name for b in block]))
-
             if (stmt.name == 'if' or stmt.name == 'else-if'):
                 # Handle if and else if
-                self.IRS.append([stmt.name + ':'])
-                # self.statement(stmt.children[0])
-                # FIXME: Need Andy's simpleExpr() function
+                cond = self.condParse(stmt[0])
+                # block = self.statement(stmt.children[1])
+                # block_str = ''.join(b.name + ' ' for b in block)
+
+                self.IRS.append([stmt.name + ' (' + cond + ')'])
+                self.IRS.append(['{'])
                 self.statement(stmt.children[1])
+                self.IRS.append(['}'])
             else:
                 # Handle else
-                self.IRS.append([stmt.name + ':'])
+                # block = self.getSubtree(stmt[0].children[0])
+                # block_str = ''.join(b.name + ' ' for b in block)
+
+                self.IRS.append([stmt.name])
+                self.IRS.append(['{'])
                 self.statement(stmt.children[0])
+                self.IRS.append(['}'])
 
     def whileloop(self, nodes):
         enterLoopLabel = self.createLabel(nodes, 'loop')
