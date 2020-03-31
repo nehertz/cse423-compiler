@@ -192,41 +192,42 @@ class TypeChecking:
 # ushort -> int, float, char, short, double, uint, long, long long, ulong, uchar
 # ulong -> int, float, char, short, double, uint, long, long long, ushort, uchar
 # uchar -> int, float, char, short, double, uint, long, long long, ulong, ushort
+##
+    # def convertFloat2UInt(self, expr):
+    #     if ('-'.find(expr)):
+    #         # if floating number is negative, 
+    #         # then 
+    #         num = int(float(expr))
+    #         num = num + (2 ** 32)
+    #         num &= 0xFFFFFFFF
+    #         return str(num)
+    #     else:
+    #         return str(int(float(expr)))
+    # def convertInt2UInt(self, expr):
+    #     if ('-'.find(expr)):
+    #     # if number is negative then add (1U << 32) to it
+    #     # and then keep only least 32 bits
+    #         num = int(expr)
+    #         num += 2 ** 32 
+    #         num &= 0xFFFFFFFF
+    #         return str(num)
+    #     else: 
+    #         return str(int(expr) & 0xFFFFFFFF)
 
-    def convertFloat2UInt(self, expr):
-        if ('-'.find(expr)):
-            # if floating number is negative, 
-            # then 
-            num = int(float(expr))
-            num = num + (2 ** 32)
-            num &= 0xFFFFFFFF
-            return str(num)
-        else:
-            return str(int(float(expr)))
-    def convertInt2UInt(self, expr):
-        if ('-'.find(expr)):
-        # if number is negative then add (1U << 32) to it
-        # and then keep only least 32 bits
-            num = int(expr)
-            num += 2 ** 32 
-            num &= 0xFFFFFFFF
-            return str(num)
-        else: 
-            return str(int(expr) & 0xFFFFFFFF)
-
-    def convertInt2Long(self, expr):
-        return str(int(expr) & 0xFFFFFFFFFFFFFFFF)
-    def convertLong2Int(self, expr):
-        return str(int(expr) & 0xFFFFFFFF)
-    def convertLong2Float(self, expr):
-        num = int(expr)
-        num &= 0xFFFFFFFF
-        return str(num) + '.00'
-    def convertLongLong2Float(self, expr):
-        return self.convertLong2Float(self, expr)
-    def convertUChar2Int(self, expr):
-        return
-    def convert
+    # def convertInt2Long(self, expr):
+    #     return str(int(expr) & 0xFFFFFFFFFFFFFFFF)
+    # def convertLong2Int(self, expr):
+    #     return str(int(expr) & 0xFFFFFFFF)
+    # def convertLong2Float(self, expr):
+    #     num = int(expr)
+    #     num &= 0xFFFFFFFF
+    #     return str(num) + '.00'
+    # def convertLongLong2Float(self, expr):
+    #     return self.convertLong2Float(self, expr)
+    # def convertUChar2Int(self, expr):
+    #     return
+    # def convert
+##
     def checkInt(self, expr):
         '''
         if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
