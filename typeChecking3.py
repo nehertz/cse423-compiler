@@ -108,6 +108,7 @@ class TypeChecking:
         for node in nodes:
             if ('=' == node.name):
                 node.children = self.variablesTC(node.children)
+                # print(node.children)
                 continue
             elif ('return' == node.name):
                 node.children = self.returnTC(node.children)
@@ -116,7 +117,8 @@ class TypeChecking:
                 node.children = self.checkConditionals(nodes)
                 continue
             elif ('++' == node.name or '--' == node.name):
-                node.children = self.checkInt(node.children)
+                # node.children = self.checkInt(node.children)
+                node.children = self.checkType(node.children, 'int')
         return nodes
 
     def checkConditionals(self, nodes):
@@ -153,7 +155,8 @@ class TypeChecking:
         After obtaining type, it sends the rvalue to checkType()
         '''
         supposedType = st.lookupTC(self.funcName, 0)
-        return self.checkType(nodes, supposedType)
+        nodes[0] = self.checkType(nodes[0], supposedType)
+        return nodes
 
     def variablesTC(self, nodes):
         '''
@@ -161,8 +164,18 @@ class TypeChecking:
         incremented as the functions are encountered in self.run()
         Sends the variable to checkType()
         '''
+        # count = 0
+        # for node in nodes:
+        #     if (count == 0):
         supposedType = st.lookupTC(nodes[0].name, self.scope)
+        #         supposedType = st.lookupTC(node.name, self.scope)
+        #         continue
+        
         nodes[1] = self.checkType(nodes[1], supposedType)
+        print(nodes[1])
+        #     print(node.name)
+        #     node = self.checkType(node, supposedType)
+        #     count += 1
         return nodes
 
 
@@ -174,7 +187,7 @@ class TypeChecking:
         else:
             nodeList = []
             nodeList.append(expr)
-        for node in nodeList:
+        for node in expr.preorder():
             if ('+-/*%'.find(node.name) != -1):
                 continue 
             elif(self.numbersFloat.match(node.name) != None):
@@ -188,11 +201,12 @@ class TypeChecking:
                 node.name = self.convertType(node.name, 'int', supposedType)
             else:
                 typeNode = st.lookupTC(node.name, self.scope)
+                print('node.name = ' + node.name)
                 if (typeNode == 'Unknown'):
                     print('unknown token found : ' + node.name)
                     sys.exit(1)
                 else:
-                    node.name = self.convertType(node.name, typeNode, supposedType)
+                    node.name = self.convertTypeID(node.name, typeNode, supposedType)
         if (flag):
             return nodeList 
         else:
@@ -205,13 +219,17 @@ class TypeChecking:
         toType = self.stringFormat(toType)
         funcString = 'convert' + fromType + '2' + toType
         # https://stackoverflow.com/questions/4246000/how-to-call-python-functions-dynamically
-        getattr(self.typeConversion, funcString)(expr)
+        # the function name is generated dynamically and are being called dynamically with expr as 
+        # a parameter
+        expr = getattr(self.typeConversion, funcString)(expr)
+        return expr
         
     def convertTypeID(self, expr, fromType, toType):
         if (fromType == toType):
             return expr 
 
         expr = '(' + toType + ') ' + expr
+        print('expr = ' + expr)
         return expr
     
     def stringFormat(self, typeString):
