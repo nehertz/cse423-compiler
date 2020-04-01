@@ -1,11 +1,12 @@
-int add3(int a, int b, int c)
-{
-  return a + b + c;
-}
-enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
+// int add3(int a, int b, int c)
+// {
+//   return a + b + c;
+// }
+// enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
 int main()
 {
+
         //// Test enum 
         // enum week day; 
         // day = Mon; 
@@ -51,9 +52,9 @@ int main()
         // even:
         //         a = 1;
          
-        //// while and do while loop
+        // while and do while loop
         // while (a < 3) {
-                   ////continue;
+        //            //continue;
         //         break;
         //         float j = j + 2;
         // }
@@ -92,7 +93,6 @@ int main()
         // if(i%2 == 0){
         //         ++j;    
         // }
-        
         // }
         // return j;
 

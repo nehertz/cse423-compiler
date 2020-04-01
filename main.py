@@ -162,8 +162,9 @@ if __name__ == "__main__":
 
     # prints the optimized version of IR when optimization flag is on 
     elif (flag == 4 and optimizationFlag == 1):
-        printAST(ast)
+       
         IR = ir.run()
+        ir.printIR()
         optimizedIR = optimization(IR)
         optimizedIR.run()
         optimizedIR.printIR()

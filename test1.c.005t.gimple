@@ -1,29 +1,21 @@
 main ()
 {
-  int D.1933;
+  int D.1932;
 
   {
     int a;
     int b;
     int c;
 
-    goto <D.1928>;
-    <D.1930>:
-    {
-      int i;
-      float j;
-
-      i = i + 1;
-      // predicted unlikely by continue predictor.
-      goto <D.1928>;
-      j = j + 2.0e+0;
-    }
+    if (a > b) goto <D.1928>; else goto <D.1929>;
     <D.1928>:
-    if (a <= 2) goto <D.1930>; else goto <D.1931>;
+    if (a < c) goto <D.1930>; else goto <D.1931>;
+    <D.1930>:
     <D.1931>:
+    <D.1929>:
   }
-  D.1933 = 0;
-  return D.1933;
+  D.1932 = 0;
+  return D.1932;
 }
 
 

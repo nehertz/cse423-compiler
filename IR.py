@@ -297,7 +297,7 @@ class IR:
             return loopL
         else:
             for node in nodes.children:
-                self.IRS.append([node.name, ':'])
+                self.IRS.append([node.name + ':'])
 
         
     # return statement support var assign and func calls
