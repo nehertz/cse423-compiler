@@ -165,8 +165,9 @@ class TypeChecking:
         Sends the variable to checkType()
         '''
         supposedType = st.lookupTC(nodes[0].name, self.scope)        
+        print('node.name = ' + nodes[0].name + '  type: ' + supposedType)
         nodes[1] = self.checkType(nodes[1], supposedType)
-        # print(nodes[1])
+        print(nodes[1])
         return nodes
 
 
@@ -191,6 +192,16 @@ class TypeChecking:
             elif(self.numbersInt.match(node.name) != None):
                 node.name = self.convertType(node.name, 'int', supposedType)
             else:
+                if ('func-' in node.name):
+                    # print(node.children)
+                    # self.funcCall(node)
+                    funcName = node.name.replace('func-', '')
+                    # self.funcCall(node,funcName, st.get_fds(funcName))
+                    self.funcCall(funcName, node, st.get_fds(funcName))
+                    typeFunction = st.lookupTC(funcName, 0)
+                    # if (typeFunction != supposedType):
+                    node.name = self.convertTypeID(node.name, typeFunction, supposedType)
+                    break
                 typeNode = st.lookupTC(node.name, self.scope)
                 # print('node.name = ' + node.name)
                 if (typeNode == 'Unknown'):
@@ -202,6 +213,22 @@ class TypeChecking:
             return nodeList 
         else:
             return nodeList[0]
+        
+    # implementation if RHS is a function call
+    # To check: Number of parameters 
+    # Types of parameters
+    # return value of the function
+    def funcCall(self, funcName, node, fds):
+        # fds = st.get_fds(node.name)
+        args_count = fds.get_argc()
+        expected_args = fds.get_vars_type()
+        args = node.children[0].children
+        if (len(args) == args_count):
+            for item1, item2 in zip(args, expected_args):
+                item1 = self.checkType(item1, item2)
+        else:
+            print('error: Not enough arguments for function call ' + funcName)
+            sys.exit(1) 
         
     def convertType(self, expr, fromType, toType):
         if (fromType == toType):
