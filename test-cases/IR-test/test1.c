@@ -1,5 +1,9 @@
 int add3(int a, int b, int c)
 {
+  int a = 1;
+  int b = 2;
+  int c = 3;
+  int d = a + b + c;
   return a + b + c;
 }
 // enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
@@ -19,8 +23,8 @@ int main()
         // day = Mon + 10; 
 
         //// Test var decl  
-        int a;
-        int b;
+        // int a;
+        // int b;
         // int c; 
         // float d;
         // int e, f, g;
@@ -28,7 +32,7 @@ int main()
         //// Test assignment and Arithmetic
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
-        a =  b << 3;
+        // a =  b << 3;
         // a *=  b >> 3;
         // a /=  b + 3;
         // a %=  b - 3;
@@ -66,10 +70,10 @@ int main()
 
         
         ////test for loop 
-        for (int i = 1; i < 5; i++){
-                i = 10;
-        }
-
+        // for (int i = 1; i < 5; i++){
+        //         i += 10;
+        // }
+        // a = a + 1;
         ////test return stmt
         //return add(a, b);
         // return 1 + 2 + a +b;
