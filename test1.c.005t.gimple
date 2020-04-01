@@ -1,0 +1,21 @@
+main ()
+{
+  int D.1932;
+
+  {
+    int a;
+    int b;
+    int c;
+
+    if (a > b) goto <D.1928>; else goto <D.1929>;
+    <D.1928>:
+    if (a < c) goto <D.1930>; else goto <D.1931>;
+    <D.1930>:
+    <D.1931>:
+    <D.1929>:
+  }
+  D.1932 = 0;
+  return D.1932;
+}
+
+
