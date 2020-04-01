@@ -1,5 +1,5 @@
-#include<stdio.h>
-#include<stdlib.h>
+// #include<stdio.h>
+// #include<stdlib.h>
 
 int main()
 {
@@ -9,11 +9,8 @@ int main()
         float d = 32.1;
         long e = 123;
         double f = 1232;
-
-        printf("a+b: %f \n", a+f);
-
-        
-
+        f = a + f;
+        // printf("a+b: %f \n", a+f);
         
         
         return 0;

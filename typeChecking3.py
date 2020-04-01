@@ -60,13 +60,13 @@ class TypeChecking:
         self.funcName = ''
 
     def run(self):
-    '''
-    returns the modified AST which reflects the type-conversion
-    NOTE: ast.txt file is created and will have the newick form written in it. 
-    Currently skbio.tree doesn't have any other methods with which we can store 
-    the newick string to a variable. 
-    Quite inefficient, but works! 
-    '''
+        '''
+        returns the modified AST which reflects the type-conversion
+        NOTE: ast.txt file is created and will have the newick form written in it. 
+        Currently skbio.tree doesn't have any other methods with which we can store 
+        the newick string to a variable. 
+        Quite inefficient, but works! 
+        '''
         for node in self.tree.children:
             if (node.name == '='):
                 # Variable assignment / Declaration w assignment is handled 
@@ -182,17 +182,17 @@ class TypeChecking:
                     continue 
                 else:
                     print("number is float expected " + supposedType)
-                    node = self.convertType(node, 'float', supposedType)
+                    node.name = self.convertType(node.name, 'float', supposedType)
                     continue 
             elif(self.numbersInt.match(node.name) != None):
-                node = self.convertType(node, 'int', supposedType)
+                node.name = self.convertType(node.name, 'int', supposedType)
             else:
                 typeNode = st.lookupTC(node.name, self.scope)
                 if (typeNode == 'Unknown'):
                     print('unknown token found : ' + node.name)
                     sys.exit(1)
                 else:
-                    node = self.convertType(node, typeNode, supposedType)
+                    node.name = self.convertType(node.name, typeNode, supposedType)
         if (flag):
             return nodeList 
         else:
@@ -204,13 +204,20 @@ class TypeChecking:
         fromType = self.stringFormat(fromType)
         toType = self.stringFormat(toType)
         funcString = 'convert' + fromType + '2' + toType
+        # https://stackoverflow.com/questions/4246000/how-to-call-python-functions-dynamically
         getattr(self.typeConversion, funcString)(expr)
-    
-    
+        
+    def convertTypeID(self, expr, fromType, toType):
+        if (fromType == toType):
+            return expr 
+
+        expr = '(' + toType + ') ' + expr
+        return expr
     
     def stringFormat(self, typeString):
         typeString = typeString.replace('unsigned ', 'U')
-        typeString = typeStrung.replace('int', 'Int')
+        typeString = typeString.replace('int', 'Int')
+        typeString = typeString.replace('double', 'Double')
         typeString = typeString.replace('float', 'Float')
         typeString = typeString.replace('long', 'Long')
         typeString = typeString.replace('char', 'Char') 

@@ -9,7 +9,7 @@ from skbio.tree import TreeNode
 from ply_scanner import tokenizer
 from ply_parser import parser
 from ply_parser import st
-from typeChecking2 import TypeChecking
+from typeChecking3 import TypeChecking
 from IR import IR
 # Print the instruction of how to excute the program
 # parameters: None
