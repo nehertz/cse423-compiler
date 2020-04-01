@@ -1,1 +1,1 @@
-(((None)args,((a,3)=,(b,12)=,(c,34)=,(d,32.1)=,(e,123)=,(f,1232.00)=,(f,('(double) a',f)+)=,((1,2)+)return)stmt)func-main)Program;
+(((k,c,d)args,((a,3)=,(b,12)=,(c,(34.00,'(double) a')+)=,(d,32)=,(e,123)=,(f,1232.00)=,(f,('(double) a',f)+)=,((1,2)+)return)stmt)func-main)Program;

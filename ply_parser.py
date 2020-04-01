@@ -88,13 +88,30 @@ def p_enumIDList(p):
 # Grammar that defines function declaration
 # the function should have type specifer, identifer, arguments
 # scope represents everything that can exist in a function's scope
+# funcList : typeSpec ID LPAREN parametersBegin args parametersEnd RPAREN scope
+# funcList : typeSpec ID LPAREN args RPAREN scope
+
 def p_funcDeclaration(p):
     '''
-    funcList : typeSpec ID LPAREN args RPAREN scope
+    funcList : typeSpec ID LPAREN parametersBegin args parametersEnd RPAREN scope
+
     '''
     st.symbolTableConstruct(p, 'funcDecl')
     return astConstruct(p, 'funcList')
 
+def p_parametersBegin(p):
+    '''
+    parametersBegin :
+    '''
+    st.startFunctionParam()
+    return p
+    
+def p_parametersEnd(p):
+    '''
+    parametersEnd   :
+    '''
+    st.endFunctionParam()
+    return p
 
 def p_args(p):
     '''
