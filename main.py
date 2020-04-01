@@ -166,7 +166,6 @@ if __name__ == "__main__":
 
     # prints the optimized version of IR when optimization flag is on 
     elif (flag == 4 and optimizationFlag == 1):
-       
         IR = ir.run()
         ir.printIR()
         optimizedIR = optimization(IR)
@@ -197,7 +196,6 @@ if __name__ == "__main__":
         optimizedIR = optimization(IR)
         IR = optimizedIR.run()
         
-
     # print the assembly when optimization flag is off      
     elif (flag == 7 and optimizationFlag == 0):
         print("in progress")
