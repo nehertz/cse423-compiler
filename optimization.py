@@ -14,7 +14,7 @@ class optimization:
         self.findLeaders()
         self.removeDupLeader()
         self.invoke()
-       
+    
         return self.IRS
     
     def findFunctionBlocks(self):
@@ -58,9 +58,10 @@ class optimization:
     
     def invoke(self):
         funcCount = 0
-        flag1 = 1
-        flag2 = 1
+
         for func in self.functionBlock:
+            flag1 = 1
+            flag2 = 1
             funcEnd = func[1]
             leaderList = self.leaders[funcCount]
             i = 0
@@ -80,10 +81,10 @@ class optimization:
                     flag1 = self.fold(basicBlockStart, basicBlockEnd)
                     flag2 = self.propagation(basicBlockStart, basicBlockEnd)
                 i += 1
-            print(self.varValue)
-            self.varValue = []
+            # print(self.varValue)
+            self.varValue = {}
             funcCount += 1
-        print(self.IRS)
+       
 
 
     def fold(self, startline, endline):
@@ -92,6 +93,7 @@ class optimization:
         # use flag to identity if any changes happend 
         flag = 0
         for line in basicBlock:
+
             if (len(line) == 3 and line[1] == '=' and line[0] not in self.varValue.keys()):
                 floatPatten = re.compile(r"[0-9]+\.[0-9]+")
                 intPatten = re.compile(r"\d+")
@@ -112,7 +114,7 @@ class optimization:
             elif (len(line) == 1 and ':' not in str(line[0]) and line[0] not in self.varValue.keys()):
                 dict = {line[0] : None}
                 self.varValue.update(dict)
-                
+
             elif (len(line) > 3 and line[1] == '='):
                 result = self.compute(line)
                 if (result != 'N/A'):
@@ -156,10 +158,11 @@ class optimization:
         varCount = 0
         for oprnd in line:
             oprnd = str(oprnd)
-            if (intPatten.match(oprnd)):
-                expr.append(int(oprnd))
-            elif (floatPatten.match(oprnd)):
+            if (floatPatten.match(oprnd)):
+                print(oprnd)
                 expr.append(float(oprnd))
+            elif (intPatten.match(oprnd)):
+                expr.append(int(oprnd))
             elif (oprnd in arithmetic or oprnd == '='):
                 expr.append(oprnd)
             else:
@@ -170,7 +173,6 @@ class optimization:
                     return flag 
         result = self.simpleArithmetic(expr[2],expr[3],expr[4])
         return result
-
 
     def removeDupLeader(self):
         res = []
@@ -208,4 +210,18 @@ class optimization:
         return result
 
     def printIR(self):
-        pass
+        str1 = " "
+        indentFlag = 0
+        for list in self.IRS:
+            if (str1.join(list) == '{'):
+                indentFlag = 1
+                print(str1.join(list))
+                continue
+            elif (str1.join(list) == '}'):
+                indentFlag = 0
+                print(str1.join(list))
+                continue
+            elif (indentFlag):
+                print('\t', str1.join(list))
+            else:
+                print(str1.join(list))

@@ -1,10 +1,18 @@
 int add3(int a, int b, int c)
 {
+<<<<<<< master
   int a = 1;
   int b = 2;
   int c = 3;
   int d = a + b + c;
   return a + b + c;
+=======
+  // int a = 1;
+  // int b = 2;
+  // int c = 3;
+  // int d = a + b + c;
+  // return a + b + c;
+>>>>>>> updated
 }
 // enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
@@ -23,8 +31,8 @@ int main()
         // day = Mon + 10; 
 
         //// Test var decl  
-        // int a;
-        // int b;
+        int a = 100;
+        int b = 30;
         // int c; 
         // float d;
         // int e, f, g;
@@ -32,16 +40,16 @@ int main()
         //// Test assignment and Arithmetic
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
-        // a =  b << 3;
-        // a *=  b >> 3;
-        // a /=  b + 3;
-        // a %=  b - 3;
-        // a += b * 3;
-        // a -= b / 3;
-        // a <<= b % 3;
-        // a >>= b | 3;
-        // a &= b & 3;
-        // a |= b ^ 3;
+        a =  b << 3;
+        a *=  b >> 3;
+        a /=  b + 3;
+        a %=  b - 3;
+        a += b * 3;
+        a -= b / 3;
+        a <<= b % 3;
+        a >>= b | 3;
+        a &= b & 3;
+        a |= b ^ 3;
 
         //// Test complex arithmetic expression 
         // a = (a + b) * 2 ;
