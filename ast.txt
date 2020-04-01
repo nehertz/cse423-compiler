@@ -1,1 +1,1 @@
-(((None)args,((a,1.232)=,(b,1232.12332)=,(a,((a,b)+,2.0)*)=,((((a,b)>)!,((a,b)+=)stmt)if,((b,a)>,((b,a)+=)stmt)elseif,(((b,(b,a)-)=)stmt)else)ifstmt,(0)return)stmt)func-main)Program;
+(((fd)args,((0.00)return)stmt)func-kl,((l,j,k)args,((a,3)=,(b,12)=,(c,(34,'(int) a')+)=,(d,32.1)=,(e,123)=,(f,1232.00)=,(f,('(double) a',f)+)=,(c,((12.00)args)'(int) func-kl')=,((1,2)+)return)stmt)func-main)Program;

@@ -1,0 +1,26 @@
+
+;; Function main (main, funcdef_no=0, decl_uid=1792, cgraph_uid=0, symbol_order=0)
+
+main ()
+{
+  int D.1799;
+
+  {
+    unsigned int a;
+    int b;
+
+    a = 12;
+    _1 = a + 4294967282;
+    b = (int) _1;
+    if (a != 4294967294) goto <D.1797>; else goto <D.1798>;
+    <D.1797>:
+    a = 32;
+    <D.1798>:
+    D.1799 = (int) a;
+    return D.1799;
+  }
+  D.1799 = 0;
+  return D.1799;
+}
+
+

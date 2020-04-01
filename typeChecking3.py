@@ -25,17 +25,34 @@ from ply_parser import st
 import re
 import sys
 import bitstring
+from typeConversion import TypeConversion
+# from ctypes import *
+# import os
 
 
+# def blockPrint():
+#     sys.stdout = open(os.devnull, 'w')
+
+# def enablePrint():
+#     sys.stdout = sys.__stdout__
+
+# blockPrint()
+
+# cdll.LoadLibrary("libc.so.6")
+# libc=CDLL("libc.so.6")
+
+# enablePrint()
 class TypeChecking:
+    st = st
     def __init__(self, ast):
         self.treeString = ast.replace('"', '')
-
         self.tree = TreeNode.read(StringIO(self.treeString))
         self.numbersFloat = re.compile(r'\d+\.{1}\d+')
-        self.numbersInt = re.compile(r'\d+')
+        self.numbersInt = re.compile(r'^[-]{0,1}\d+')
+        self.arithOps = re.compile(r'[\/\+\-\*\%]')
         self.logicalExpr = re.compile(r'(\|\|)|(&&)|(\!)')
         self.compOps = re.compile(r'(==)|(\!=)|(>=)|(<=)')
+        self.typeConversion = TypeConversion()
         # global scope = 0
         # scope is incremented as the functions are encountered.
         self.scope = 0
@@ -91,6 +108,7 @@ class TypeChecking:
         for node in nodes:
             if ('=' == node.name):
                 node.children = self.variablesTC(node.children)
+                # print(node.children)
                 continue
             elif ('return' == node.name):
                 node.children = self.returnTC(node.children)
@@ -99,7 +117,8 @@ class TypeChecking:
                 node.children = self.checkConditionals(nodes)
                 continue
             elif ('++' == node.name or '--' == node.name):
-                node.children = self.checkInt(node.children)
+                # node.children = self.checkInt(node.children)
+                node.children = self.checkType(node.children, 'int')
         return nodes
 
     def checkConditionals(self, nodes):
@@ -136,7 +155,8 @@ class TypeChecking:
         After obtaining type, it sends the rvalue to checkType()
         '''
         supposedType = st.lookupTC(self.funcName, 0)
-        return self.checkType(nodes, supposedType)
+        nodes[0] = self.checkType(nodes[0], supposedType)
+        return nodes
 
     def variablesTC(self, nodes):
         '''
@@ -144,106 +164,102 @@ class TypeChecking:
         incremented as the functions are encountered in self.run()
         Sends the variable to checkType()
         '''
-        supposedType = st.lookupTC(nodes[0].name, self.scope)
+        supposedType = st.lookupTC(nodes[0].name, self.scope)        
+        print('node.name = ' + nodes[0].name + '  type: ' + supposedType)
         nodes[1] = self.checkType(nodes[1], supposedType)
+        print(nodes[1])
         return nodes
 
+
     def checkType(self, expr, supposedType):
-        '''
-        SupposedType is the type of lvalue variable
-        Sends the rvalue nodes to checkFloat() if supposedType is float
-        and to checkInt() if supposedType is int. 
-        '''
-        if (supposedType == 'float'):
-            return self.checkFloat(expr)
-        elif (supposedType == 'int'):
-            return self.checkInt(expr)
-        else:
-            print("Unknown type:   " + supposedType + '  ' + str(expr))
-            sys.exit(1)
-
-    def checkInt(self, expr):
-        '''
-        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
-        Loops through expr, converts type if the found numconst is float, double; looksup using symboltable if 
-        the variable is identifier. If the type of identifier is not int, then error occurs as we don't support 
-        type casting.
-        '''
-        flag = False
+        flag = False 
         if (isinstance(expr, list)):
-            nodeList = expr
-            flag = True
+            nodeList = expr 
+            flag = True 
         else:
             nodeList = []
             nodeList.append(expr)
-        for node in nodeList:
+        for node in expr.preorder():
             if ('+-/*%'.find(node.name) != -1):
-                continue
-            elif (self.numbersFloat.match(node.name) != None):
-                print('number is float. expected Int')
-                number = int(float(node.name))
-                node.name = str(number)
-                print('in checkint   ' + node.name)
-                continue
-            elif (self.numbersInt.match(node.name) != None):
-                continue
-
+                continue 
+            elif(self.numbersFloat.match(node.name) != None):
+                if (supposedType == 'float' or supposedType == 'double'):
+                    continue 
+                else:
+                    print("number is float expected " + supposedType)
+                    node.name = self.convertType(node.name, 'float', supposedType)
+                    continue 
+            elif(self.numbersInt.match(node.name) != None):
+                node.name = self.convertType(node.name, 'int', supposedType)
             else:
+                if ('func-' in node.name):
+                    # print(node.children)
+                    # self.funcCall(node)
+                    funcName = node.name.replace('func-', '')
+                    # self.funcCall(node,funcName, st.get_fds(funcName))
+                    self.funcCall(funcName, node, st.get_fds(funcName))
+                    typeFunction = st.lookupTC(funcName, 0)
+                    # if (typeFunction != supposedType):
+                    node.name = self.convertTypeID(node.name, typeFunction, supposedType)
+                    break
                 typeNode = st.lookupTC(node.name, self.scope)
+                # print('node.name = ' + node.name)
                 if (typeNode == 'Unknown'):
-                    print('unknown token found: ' + node.name)
-                    continue
-                elif (typeNode == 'int'):
-                    continue
-                else:
-                    print('type conversion required for ' + str(node.name))
+                    print('unknown token found : ' + node.name)
                     sys.exit(1)
-        if (flag):
-            expr = nodeList
-        else:
-            expr = nodeList[0]
-        return expr
-
-    def checkFloat(self, expr):
-        '''
-        if expr is a list, then nodeList is expr; if not then nodeList appends the expr.
-        Loops through expr, converts type if the found numconst is int, unsigned int, etc.; looksup using symboltable if 
-        the variable is identifier. If the type of identifier is not float, then error occurs as we don't support 
-        type casting.
-        '''
-
-        flag = False
-
-        if (isinstance(expr, list)):
-            nodeList = expr
-            flag = True
-        else:
-            nodeList = []
-            nodeList.append(expr)
-        for elem in expr:
-            for node in elem.preorder():
-                if ('+-/*%'.find(node.name) != -1):
-                    continue
-                elif (self.numbersFloat.match(node.name)):
-                    print('number is float. expected float ' + node.name)
-                    continue
-                elif (self.numbersInt.match(node.name)):
-                    print('number is int. expected float')
-                    number = float(int(node.name))
-                    node.name = str(number)
-                    continue
-
                 else:
-                    Nodetype = st.lookupTC(node.name, self.scope)
-                    if (Nodetype == 'Unknown'):
-                        print('unknown token found: ' + node.name)
-                    elif (Nodetype == 'float'):
-                        continue
-                    else:
-                        print('type conversion required for ' + str(node.name))
-                        sys.exit(1)
+                    node.name = self.convertTypeID(node.name, typeNode, supposedType)
         if (flag):
-            expr = nodeList
+            return nodeList 
         else:
-            expr = nodeList[0]
+            return nodeList[0]
+        
+    # implementation if RHS is a function call
+    # To check: Number of parameters 
+    # Types of parameters
+    # return value of the function
+    def funcCall(self, funcName, node, fds):
+        # fds = st.get_fds(node.name)
+        args_count = fds.get_argc()
+        expected_args = fds.get_vars_type()
+        args = node.children[0].children
+        if (len(args) == args_count):
+            for item1, item2 in zip(args, expected_args):
+                item1 = self.checkType(item1, item2)
+        else:
+            print('error: Not enough arguments for function call ' + funcName)
+            sys.exit(1) 
+        
+    def convertType(self, expr, fromType, toType):
+        if (fromType == toType):
+            return expr
+        fromType = self.stringFormat(fromType)
+        toType = self.stringFormat(toType)
+        funcString = 'convert' + fromType + '2' + toType
+        # https://stackoverflow.com/questions/4246000/how-to-call-python-functions-dynamically
+        # the function name is generated dynamically and are being called dynamically with expr as 
+        # a parameter
+        expr = getattr(self.typeConversion, funcString)(expr)
         return expr
+        
+    def convertTypeID(self, expr, fromType, toType):
+        if (fromType == toType):
+            return expr 
+
+        expr = '(' + toType + ') ' + expr
+        print('expr = ' + expr)
+        return expr
+    
+    def stringFormat(self, typeString):
+        typeString = typeString.replace('unsigned ', 'U')
+        typeString = typeString.replace('int', 'Int')
+        typeString = typeString.replace('double', 'Double')
+        typeString = typeString.replace('float', 'Float')
+        typeString = typeString.replace('long', 'Long')
+        typeString = typeString.replace('Long Long', 'LongLong')
+        typeString = typeString.replace('char', 'Char') 
+        typeString = typeString.replace('short', 'Short')
+        return typeString
+
+
+        
