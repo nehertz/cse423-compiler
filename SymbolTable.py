@@ -35,6 +35,9 @@ class SymbolTable:
         if scope = -1, then the declaration occurs inside of a scope i.e. function, loop, or conditionals.
         else the declaration occurs in a global scope.
         '''
+        if (self.lookup(token) != None):
+            print("error: token already declared")
+            sys.exit(1)
         if (scope == -1):
             if (self.nestedScope == 0b0):
                 self.symbolTable.append(
@@ -97,6 +100,7 @@ class SymbolTable:
                 # self.functions.append(self.fds)   
                 if (self.fds.get_name() == 'Unknown'):
                     self.fds.set_name(str(p[2]))
+                    self.fds.set_returnType(str(p[1]))
                 self.insert(str(p[2]), str(p[1]), self.globalScope - 1)
                 self.fds = None
             else:
@@ -127,7 +131,6 @@ class SymbolTable:
         self.functions.append(self.fds)
         if (len(self.args) != 0):
             for elem in self.args:
-                # self.symbolTable.append(elem[0], elem[1])
                 self.fds.add_vars_type(elem[1])
                 self.insert(elem[0], elem[1])
             self.args.clear()
@@ -170,9 +173,19 @@ class SymbolTable:
         return 'Unknown'
     
     def startFunctionParam(self):
-        print('function parameters begin')
+        # print('function parameters begin')
         self.functionParam = True
 
     def endFunctionParam(self):
-        print('function parameters end')
+        # print('function parameters end')
         self.functionParam = False
+
+    def get_fds(self, name):
+        # print(name) 
+        for fds in self.functions:
+            E_name = fds.get_name()
+            # print(E_name)
+            if (E_name == name):
+                return fds 
+        print('func name not found  ' + name)
+        sys.exit(1)

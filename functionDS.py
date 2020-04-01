@@ -2,6 +2,7 @@ class functionDS:
     def __init__(self, name):
         self.funcName = name 
         self.vars = []
+        self.returnType = None
     
     def add_vars_type(self, typeName):
         self.vars.append(typeName)
@@ -19,3 +20,9 @@ class functionDS:
     
     def set_name(self, name):
         self.funcName = name
+    
+    def get_argc(self):
+        return len(self.vars)
+
+    def set_returnType(self, name):
+        self.returnType = name

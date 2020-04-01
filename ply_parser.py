@@ -468,7 +468,7 @@ def p_labeledStmt(p):
 
 def p_funcCall(p):
     '''
-    funcCall : ID LPAREN args RPAREN
+    funcCall : ID LPAREN args RPAREN 
     '''
     return astConstruct(p, 'funcCall')
 

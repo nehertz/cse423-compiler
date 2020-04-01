@@ -1,1 +1,1 @@
-(((k,c,d)args,((a,3)=,(b,12)=,(c,(34.00,'(double) a')+)=,(d,32)=,(e,123)=,(f,1232.00)=,(f,('(double) a',f)+)=,((1,2)+)return)stmt)func-main)Program;
+(((fd)args,((0.00)return)stmt)func-kl,((l,j,k)args,((a,3)=,(b,12)=,(c,(34,'(int) a')+)=,(d,32.1)=,(e,123)=,(f,1232.00)=,(f,('(double) a',f)+)=,(c,((12.00)args)'(int) func-kl')=,((1,2)+)return)stmt)func-main)Program;
