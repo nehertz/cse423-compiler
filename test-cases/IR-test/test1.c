@@ -4,7 +4,7 @@ int add3(int a, int b, int c)
   int b = 2;
   int c = 3;
   int d = a + b + c;
-  return a + b + c;
+  // return a + b + c;
 }
 // enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
