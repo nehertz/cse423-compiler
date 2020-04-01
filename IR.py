@@ -358,12 +358,13 @@ class IR:
         self.loopConditionLabel = self.createLabel(nodes, 'condition')
         self.endLoopLable = self.createLabel(nodes, 'loop')
         
+        self.IRS.append(['goto', self.loopConditionLabel])
         self.IRS.append([self.enterLoopLabel])
-        self.IRS.append(['('])
+        # self.IRS.append(['('])
         for node in nodes.children:
             if (node.name == 'stmt'):
                 self.statement(node)
-        self.IRS.append([')'])
+        # self.IRS.append([')'])
 
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
@@ -378,12 +379,13 @@ class IR:
         self.loopConditionLabel = self.createLabel(nodes, 'condition')
         self.endLoopLable = self.createLabel(nodes, 'loop')
         
+        self.IRS.append(['goto', self.loopConditionLabel])
         self.IRS.append([self.enterLoopLabel])
-        self.IRS.append(['('])
+        # self.IRS.append(['('])
         for node in nodes.children:
             if (node.name == 'stmt'):
                 self.statement(node)
-        self.IRS.append([')'])
+        # self.IRS.append([')'])
 
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
@@ -403,8 +405,10 @@ class IR:
                         self.assign(n)
                     else:
                         self.varDecl(n)
+                        
+        self.IRS.append(['goto', self.loopConditionLabel])
         self.IRS.append([self.enterLoopLabel])
-        self.IRS.append(['('])
+        # self.IRS.append(['('])
         for node in nodes.children:
             if (node.name == 'stmt'):
                 self.statement(node)
@@ -414,7 +418,7 @@ class IR:
                         self.increment(n, n.name)
                     elif (n.name in assignment):
                         self.assign(n)
-        self.IRS.append([')'])
+        # self.IRS.append([')'])
 
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
