@@ -164,18 +164,9 @@ class TypeChecking:
         incremented as the functions are encountered in self.run()
         Sends the variable to checkType()
         '''
-        # count = 0
-        # for node in nodes:
-        #     if (count == 0):
-        supposedType = st.lookupTC(nodes[0].name, self.scope)
-        #         supposedType = st.lookupTC(node.name, self.scope)
-        #         continue
-        
+        supposedType = st.lookupTC(nodes[0].name, self.scope)        
         nodes[1] = self.checkType(nodes[1], supposedType)
-        print(nodes[1])
-        #     print(node.name)
-        #     node = self.checkType(node, supposedType)
-        #     count += 1
+        # print(nodes[1])
         return nodes
 
 
@@ -201,7 +192,7 @@ class TypeChecking:
                 node.name = self.convertType(node.name, 'int', supposedType)
             else:
                 typeNode = st.lookupTC(node.name, self.scope)
-                print('node.name = ' + node.name)
+                # print('node.name = ' + node.name)
                 if (typeNode == 'Unknown'):
                     print('unknown token found : ' + node.name)
                     sys.exit(1)
@@ -238,8 +229,10 @@ class TypeChecking:
         typeString = typeString.replace('double', 'Double')
         typeString = typeString.replace('float', 'Float')
         typeString = typeString.replace('long', 'Long')
+        typeString = typeString.replace('Long Long', 'LongLong')
         typeString = typeString.replace('char', 'Char') 
         typeString = typeString.replace('short', 'Short')
         return typeString
+
 
         

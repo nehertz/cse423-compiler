@@ -64,8 +64,8 @@ def astConstruct(p, type):
 
     elif(type == 'funcList'):
         typeSpecID = 'func-' + str(p[2])
-        arg = str(p[4])
-        scope = str(p[6])
+        arg = str(p[5])
+        scope = str(p[8])
         p[0] = '(' + arg + ',' + scope + ')' + typeSpecID
 
     elif(type == 'args'):

@@ -13,18 +13,22 @@ Scope is defined as the following:
 - EXTRA: loops, conditionals or any other type of scope can not be defined in global scope (weak implementation)
 '''
 import sys
+from functionDS import functionDS
 class SymbolTable:
     def __init__(self):
         '''
         Defined three scopes: global scope, currentScope, nested scope
         '''
         self.symbolTable = []
+        self.functions= []
         self.currentScope = 0
         self.globalScope = 0
         self.nestedScope = 0b0
         self.args = []
         self.afterVarAssign = True
         self.ID = ''
+        self.functionParam = False
+        self.fds = None
 
     def insert(self, token, type, scope=-1):
         '''
@@ -64,6 +68,9 @@ class SymbolTable:
 
     def print(self):
         print(self.symbolTable)
+        for fds in self.functions:
+            print('1 + ')
+            fds.print()
 
     def symbolTableConstruct(self, p, type):
         ''' 
@@ -78,13 +85,20 @@ class SymbolTable:
                 self.ID = ''
                 self.afterVarAssign = False
                 return
-
-            self.insert(str(p[2]), str(p[1]))
+            # elif (self.functionParam):
+            #     self.insert(str(p[2]), str(p[1]))
+            #     self.fds.add_vars_type(str(p[1]))
+            else:
+                self.insert(str(p[2]), str(p[1]))
 
         if (type == 'funcDecl'):
             if (self.globalScope == 1):
-
+                # self.fds = functionDS(str(p[2]))
+                # self.functions.append(self.fds)   
+                if (self.fds.get_name() == 'Unknown'):
+                    self.fds.set_name(str(p[2]))
                 self.insert(str(p[2]), str(p[1]), self.globalScope - 1)
+                self.fds = None
             else:
                 print("error: function definition not in a global scope")
                 sys.exit(1)
@@ -109,9 +123,12 @@ class SymbolTable:
     def inScope(self):
         self.currentScope += 1
         self.globalScope = 0
+        self.fds = functionDS('Unknown')
+        self.functions.append(self.fds)
         if (len(self.args) != 0):
             for elem in self.args:
                 # self.symbolTable.append(elem[0], elem[1])
+                self.fds.add_vars_type(elem[1])
                 self.insert(elem[0], elem[1])
             self.args.clear()
         return
@@ -148,6 +165,14 @@ class SymbolTable:
         token = token.replace(';', '')
         for elem in self.symbolTable:
             if ((elem[0] == token) and (elem[3] == str(scope))):
-                return elem[1]
+                return elem[1] 
 
         return 'Unknown'
+    
+    def startFunctionParam(self):
+        print('function parameters begin')
+        self.functionParam = True
+
+    def endFunctionParam(self):
+        print('function parameters end')
+        self.functionParam = False
