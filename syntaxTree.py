@@ -110,8 +110,8 @@ def astConstruct(p, type):
         elif (len(p) == 5):
             if (p[1] == 'CONST'):
                 p[0] = '(' + str(p[4]) + ')varDecl'
-            else :
-                p[0] = '(' + str(p[2]) + ')varDecl' + ',' + str(p[4])
+        elif (len(p) == 7):
+            p[0] = '(' + str(p[2]) + ')varDecl' + ',' + str(p[5])
 
     elif (type == 'varCommaList'):
         if (len(p) == 2):
@@ -222,7 +222,7 @@ def astConstruct(p, type):
 
     elif(type == 'gotoStmt'):
         p[0] =  '(' + str(p[2]) + ')' + 'goto'
-    
+
     elif(type == 'labeledStmt'):
         p[0] = '(' + str(p[1]) + ')' + 'label'
 
