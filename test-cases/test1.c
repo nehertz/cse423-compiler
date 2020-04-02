@@ -4,7 +4,7 @@ int main()
         int b;
         int c = a + b;
 
-        if ((a < b) || (a > b) && c) {
+        if ((a < b) || ((a > b) && c)) {
                 a++;
                 b++;
                 return 1;

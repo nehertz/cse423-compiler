@@ -172,7 +172,7 @@ class IR:
                 else:
                     statements.append(self.forloop(node, addToIR))
 
-        if addToIR:
+        if not addToIR:
             return statements
 
     def assign(self, nodes, addToIR=True):
@@ -464,6 +464,7 @@ class IR:
         ifCount = 0
 
         for stmt in nodes:
+            # Collect conditional statement info
             if (stmt.name == 'if' or stmt.name == 'else-if'):
                 # Handle if and else if
                 cond = self.condParse(stmt[0])
@@ -473,7 +474,8 @@ class IR:
                 # self.IRS.append(['{'])
                 # self.statement(stmt.children[1])
                 # self.IRS.append(['}'])
-                conds['if' + str(ifCount)] = cond
+                conds['if' + str(ifCount)] = [cond, self.statement(stmt.children[1], False), 'l_' + str(self.label)]
+                self.label += 1
                 ifCount += 1
             else:
                 # Handle else
@@ -481,8 +483,12 @@ class IR:
                 # self.IRS.append(['{'])
                 # self.statement(stmt.children[0])
                 # self.IRS.append(['}'])
-                conds['else'] = None
+                conds['else'] = [self.statement(stmt.children[0], False), 'l_' + str(self.label)]
+                self.label += 1
 
+        # for cond in conds:
+            # Generate conditional IR
+            
         print(conds)
 
     def whileloop(self, nodes, addToIR=True):
