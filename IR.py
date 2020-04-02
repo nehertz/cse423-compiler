@@ -441,6 +441,19 @@ class IR:
                 res = node.to_array()
                 booleanExpr = res['name']
                 self.complexBool(booleanExpr)
+                self.addBoolToIR()
+            if (node.name in comparison):
+                self.simpleBool(node)
+    
+    def simpleBool(self, nodes):
+        opand = []
+        for node in nodes.children:
+            if (node.name not in comparison):
+                opand.append(node.name)
+        expr = opand[0] + nodes.name + opand[1]
+        list = ['if', expr, 'goto', self.enterLoopLabel, 'else', 'goto', self.endLoopLable]
+        self.IRS.append(list)
+
     
     def complexBool(self, booleanExpr):
         queue = []
@@ -467,8 +480,8 @@ class IR:
                 expr = op1 + relop + op2
                 dict = {expr : label}
                 self.labelPlace.update(dict)
+        queue = []
         
-
         for item in booleanExpr:
             if (item not in alc):
                 queue.append(item)
@@ -483,7 +496,7 @@ class IR:
                 compareStack.append(expr)
                 dict = {expr : order}
                 EnOrder.update(dict)
-
+               
             elif (item in logical):
                 # expr && logicExpr
                 # logicalExpr && expr
@@ -499,7 +512,7 @@ class IR:
                     logic = item
                     if(order1 < order2): 
                         expr2_1 = self.getSubExpr(expr2, 'LHS')
-                        # print(expr2_1)
+                        
                         expr = str(expr1) + logic + str(expr2)
                         logicQueue.append([expr])
                         dict = {expr : order}
@@ -512,6 +525,7 @@ class IR:
                         logicQueue.append([expr])
                         dict = {expr : order}
                         EnOrder.update(dict)
+                        
                         self.placeLabel([expr2_1, expr2_2], expr1, logic, 4)
 
                 # logicalExpr && logicalExpr
@@ -544,15 +558,13 @@ class IR:
                     dict = {expr : order}
                     EnOrder.update(dict)
                     self.placeLabel(str(expr1), str(expr2), logic, 1)
-
-    
             order += 1
 
-        print('enter loop', self.enterLoopLabel)
-        print('end loop', self.endLoopLable)
-        print('loop condition label ', self.loopConditionLabel)
+        # print('enter loop', self.enterLoopLabel)
+        # print('end loop', self.endLoopLable)
+        # print('loop condition label ', self.loopConditionLabel)
 
-        print(self.labelPlace)
+        # print(self.labelPlace)
     
     def getSubExpr(self, expr, flag):
         expr = str(expr)
@@ -626,7 +638,11 @@ class IR:
         
         #self.placeLabel([expr1_1, expr1_2], expr2_1, logic, 3)
         elif (logic == '&&' and (flag == 3 or flag == 4)):
-            placeExpr2_1 = self.labelPlace[expr2][0]
+            if (flag == 4):
+                placeExpr2_1 = self.labelPlace[expr2]
+            else:
+                placeExpr2_1 = self.labelPlace[expr2][0]
+
             placeExpr1_1 = self.labelPlace[expr1[0]]
             placeExpr1_2 = self.labelPlace[expr1[1]]
             newLabel = []
@@ -648,8 +664,13 @@ class IR:
                 newLabel = [placeExpr2_1, self.enterLoopLabel, self.endLoopLable]
                 self.labelPlace[expr2] = newLabel
 
+            
         elif (logic == '||' and (flag == 3 or flag == 4)):
-            placeExpr2_1 = self.labelPlace[expr2][0]
+            if (flag == 4):
+                placeExpr2_1 = self.labelPlace[expr2]
+            else:
+                placeExpr2_1 = self.labelPlace[expr2][0]
+        
             placeExpr1_1 = self.labelPlace[expr1[0]]
             placeExpr1_2 = self.labelPlace[expr1[1]]
 
@@ -659,9 +680,7 @@ class IR:
                     newLabel.append(placeExpr2_1)
                 else :
                     newLabel.append(labels)
-
             self.labelPlace[expr1[0]] = newLabel
-
             newLabel = []
             for labels in placeExpr1_2: 
                 if (self.endLoopLable == labels):
@@ -669,10 +688,24 @@ class IR:
                 else :
                     newLabel.append(labels)
             self.labelPlace[expr1[1]] = newLabel
-
             if (flag == 4):
                 newLabel = [placeExpr2_1, self.enterLoopLabel, self.endLoopLable]
                 self.labelPlace[expr2] = newLabel
+
+    def addBoolToIR(self):
+        i = 0
+        print(self.labelPlace)
+        for expr in self.labelPlace:
+            if (i == 0):
+                labelPlace = self.loopConditionLabel
+                i += 1
+            else:
+                labelPlace = self.labelPlace[expr][0]
+                self.IRS.append([labelPlace])
+            labelIFtrue = self.labelPlace[expr][1]
+            labelIFfalse = self.labelPlace[expr][2]
+            list = ['if', expr, 'goto', labelIFtrue, 'else', 'goto', labelIFfalse]
+            self.IRS.append(list)
 
     # The function returns the subtree of given node
     def getSubtree(self, nodes):
