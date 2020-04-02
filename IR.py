@@ -369,7 +369,7 @@ class IR:
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
-                pass
+                self.loopConditions(node)
         self.IRS.append([self.endLoopLable])
 
     # Note: Dowhile loop IR does not have the goto condition label before the stmt body. 
@@ -431,7 +431,124 @@ class IR:
         self.IRS.append(['goto', self.endLoopLable])
 
     def continueStmt(self, nodes):
-         self.IRS.append(['goto', self.loopConditionLabel])
+        self.IRS.append(['goto', self.loopConditionLabel])
+
+    def loopConditions(self, nodes):
+        for node in nodes.children:
+            if (node.name == '&&' or node.name == '||'):
+                res = node.to_array()
+                booleanExpr = res['name']
+                self.complexBool(booleanExpr)
+    
+    def complexBool(self, booleanExpr):
+        queue = []
+        compareStack = []
+        logicQueue = []
+        # {expr : [place, placeIFtrue, placeIFfalse]}
+        labelPlace = {}
+        jumpTrue = {}
+        jumpFlase = {}
+        i = 0
+        for item in booleanExpr:
+            if (item not in alc):
+                queue.append(item)
+            elif (item in comparison):
+                op1 = queue.pop(0)
+                op2 = queue.pop(0)
+                relop = item
+                if (i == 0):
+                    label = self.loopConditionLabel
+                else:
+                    label = self.createLabel(nodes, 'condition')
+                dict = {[op1, relop, op2] : label}
+                labelPlace.update(dict)
+
+        for item in booleanExpr:
+            if (item not in alc):
+                queue.append(item)
+            elif (item in comparison):
+                op1 = queue.pop(0)
+                op2 = queue.pop(0)
+                relop = item
+                dict = {[op1, relop, op2] : None}
+                jumpFlase.update(dict)
+                jumpTrue.update(dict)
+                compareStack.append([op1, relop, op2])
+            elif (item in logical):
+                if(len(compareStack) == 1):
+                    expr1 = compareStack.pop()
+                    expr2 = logicQueue.pop(0)
+                    logic = item
+                    logicQueue.append([expr1, logic, expr2])
+                    self.placeLabel(expr1, expr2, logic,labelPlace, 2)
+
+                else :
+                    expr1 = compareStack.pop()
+                    expr2 = compareStack.pop()
+                    logic = item
+                    logicQueue.append([expr1, logic, expr2])
+                    # expr1 && expr2 
+                    if (len(logicQueue) == 1 and len(compareStack) == 0):
+                        self.placeLabel(expr1, expr2, logic, labelPlace, 1)
+
+        
+    
+    def placeLabel(self, expr1, expr2, logic, labelPlace, flag):
+        # expr1 && expr2,
+        # when expr1 is true, goto enterLoopLabel
+        # when expr1 is flase, goto endLoopLable
+        if (logic == '&&' and flag == 1):
+            place = labelPlace[expr1]
+            placeIFtrue = self.enterLoopLabel
+            placeIFfalse = self.endLoopLable
+            dic = [place, placeIFtrue, placeIFfalse]
+            labelPlace[expr1] = dic
+        
+        elif (logic == '||' and flag == 1):
+            place = labelPlace[expr1]
+            placeIFtrue = self.enterLoopLabel
+            placeIFfalse = str(labelPlace[expr2])
+            dic = [place, placeIFtrue, placeIFfalse]
+            labelPlace[expr1] = dic
+
+            place = labelPlace[expr2]
+            placeIFtrue = self.enterLoopLabel
+            placeIFfalse = self.endLoopLable
+            dic = [place, placeIFtrue, placeIFfalse]
+            labelPlace[expr2] = dic
+
+        #              expr1 = compareStack.pop()
+                    # expr2 = logicQueue.pop(0)
+
+        elif (logic == '||' and flag == 2 ):
+            expr2_1 = expr2[0]
+            place2_1 = labelPlace[expr2_1]
+            placeExpr1 = labelPlace[expr1]
+            placeIFtrue = self.enterLoopLabel
+            placeIFfalse = place2_1
+            dic = [place, placeIFtrue, placeIFfalse]
+            labelPlace[expr1] = dic
+
+        elif (logic == '&&' and flag == 2 ):
+            expr2_1 = expr2[0]
+            place2_1 = labelPlace[expr2_1]
+            placeExpr1 = labelPlace[expr1]
+            placeIFtrue = place2_1
+            placeIFfalse = self.endLoopLable
+            dic = [place, placeIFtrue, placeIFfalse]
+            labelPlace[expr1] = dic
+        
+
+        
+
+    # # insert the item into the queue
+    # def enqueue(self, item):
+    #     self.queue.append(item)
+
+    # # pop the item from the queue
+    # def dequeue(self):
+    #     return self.queue.pop(0)
+
 
     # def loopConditions(self, nodes, enterLoopLabel, endLoopLable):
     #     for node in nodes.children:

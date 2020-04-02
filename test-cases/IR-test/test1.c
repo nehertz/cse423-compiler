@@ -31,8 +31,8 @@ int main()
         // day = Mon + 10; 
 
         //// Test var decl  
-        int a = 100;
-        int b = 30;
+        // int a = 100;
+        // int b = 30;
         // int c; 
         // float d;
         // int e, f, g;
@@ -40,16 +40,16 @@ int main()
         //// Test assignment and Arithmetic
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
-        a =  b << 3;
-        a *=  b >> 3;
-        a /=  b + 3;
-        a %=  b - 3;
-        a += b * 3;
-        a -= b / 3;
-        a <<= b % 3;
-        a >>= b | 3;
-        a &= b & 3;
-        a |= b ^ 3;
+        // a =  b << 3;
+        // a *=  b >> 3;
+        // a /=  b + 3;
+        // a %=  b - 3;
+        // a += b * 3;
+        // a -= b / 3;
+        // a <<= b % 3;
+        // a >>= b | 3;
+        // a &= b & 3;
+        // a |= b ^ 3;
 
         //// Test complex arithmetic expression 
         // a = (a + b) * 2 ;
@@ -65,11 +65,12 @@ int main()
         //         a = 1;
          
         // while and do while loop
-        // while (a < 3) {
-        //            //continue;
-        //         break;
-        //         float j = j + 2;
-        // }
+        int a;
+        while (a < 3 && a > 0 ) {
+                //continue;
+                // break;
+                float j = j + 2;
+        }
 
         // do {
         //         int i = i + 1;
