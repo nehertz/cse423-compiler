@@ -17,6 +17,7 @@ class IR:
             self.treeString = ast
             self.tree = TreeNode.read(StringIO(ast))
         self.temporaryVarible = 0
+        self.label = 0
 
         # LL stands for Loop Label
         self.LL = 0
@@ -79,6 +80,7 @@ class IR:
             self.IRS.append(ir)
             self.IRS.append(['{'])
 
+    # TODO: Add option for printing to IR; add return values to return a list of statements
     def statement(self, nodes):
         for node in nodes.children:
 
@@ -345,42 +347,50 @@ class IR:
                 if (node.name in unary):
                     operand1 = self.dequeue()
                     operator = node.name
-                    tempVar = 't_' + str(self.temporaryVarible)
-                    ir = [tempVar, '=', operator + operand1]
+                    # tempVar = 't_' + str(self.temporaryVarible)
+                    # ir = [tempVar, '=', operator + operand1]
+                    self.enqueue(operator + operand1)
                 else:
                     operand2 = self.dequeue()
                     operand1 = self.dequeue()
                     operator = node.name
-                    tempVar = 't_' + str(self.temporaryVarible)
-                    ir = [tempVar, '=', operand1, operator, operand2]
-                self.IRS.append(ir)
-                self.enqueue(tempVar)
-                self.temporaryVarible += 1
+                    # tempVar = 't_' + str(self.temporaryVarible)
+                    # ir = [tempVar, '=', operand1, operator, operand2]
+                    self.enqueue(operand1 + operator + operand2)
+                # self.IRS.append(ir)
+                # self.enqueue(tempVar)
+                # self.temporaryVarible += 1
+            print(self.queue)
+            
         self.dequeue()
-        return expr
+        return expr.split(' ')
 
     # TODO: Add comments
     def condStmt(self, nodes):
+        conds = {}
+        ifCount = 0
+
         for stmt in nodes:
             if (stmt.name == 'if' or stmt.name == 'else-if'):
                 # Handle if and else if
                 cond = self.condParse(stmt[0])
-                # block = self.statement(stmt.children[1])
-                # block_str = ''.join(b.name + ' ' for b in block)
+                cond.reverse()
 
-                self.IRS.append([stmt.name + ' (' + cond + ')'])
-                self.IRS.append(['{'])
-                self.statement(stmt.children[1])
-                self.IRS.append(['}'])
+                # self.IRS.append([stmt.name + ' (' + str(cond) + ')'])
+                # self.IRS.append(['{'])
+                # self.statement(stmt.children[1])
+                # self.IRS.append(['}'])
+                conds['if' + str(ifCount)] = cond
+                ifCount += 1
             else:
                 # Handle else
-                # block = self.getSubtree(stmt[0].children[0])
-                # block_str = ''.join(b.name + ' ' for b in block)
+                # self.IRS.append([stmt.name])
+                # self.IRS.append(['{'])
+                # self.statement(stmt.children[0])
+                # self.IRS.append(['}'])
+                conds['else'] = None
 
-                self.IRS.append([stmt.name])
-                self.IRS.append(['{'])
-                self.statement(stmt.children[0])
-                self.IRS.append(['}'])
+        print(conds)
 
     def whileloop(self, nodes):
         enterLoopLabel = self.createLabel(nodes, 'loop')
