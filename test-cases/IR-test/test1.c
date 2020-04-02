@@ -66,7 +66,7 @@ int main()
          
         // while and do while loop
         int a;
-        while (a < 3 && a > 0 ) {
+        while ((b > 3 || a > 1) && (a > 0 || a > b) ) {
                 //continue;
                 // break;
                 float j = j + 2;
