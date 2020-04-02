@@ -228,7 +228,7 @@ def p_varDecl(p):
     '''
     varDecl : combineTypeSpec
             | typeSpec ID 
-            | typeSpec ID COMMA varCommaList
+            | typeSpec ID COMMA beforeCommaList varCommaList afterCommaList
             | typeSpec varAssign afterVarAssign
             | combineTypeSpec ID    
             | TYPEDEF typeSpec ID
@@ -244,8 +244,21 @@ def p_varCommaList(p):
     varCommaList : ID COMMA varCommaList
                 | ID 
     '''
+    st.symbolTableConstruct(p, 'addMultipleIDs')
     return astConstruct(p, 'varCommaList')
 
+def p_beforeCommaList(p):
+    '''
+    beforeCommaList : 
+    '''
+    st.symbolTableConstruct(p[-3], 'beforeCommaList')
+    return p 
+
+def p_afterCommaList(p):
+    '''
+    afterCommaList  :
+    '''
+    st.symbolTableConstruct(p, 'afterCommaList')
 
 def p_afterVarAssign(p):
     '''
