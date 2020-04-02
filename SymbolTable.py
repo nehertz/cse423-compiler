@@ -29,6 +29,10 @@ class SymbolTable:
         self.ID = ''
         self.functionParam = False
         self.fds = None
+        
+        # for multivariable declaration with same type
+        self.sameType = None
+        self.sameIDs = []
 
     def insert(self, token, type, scope=-1):
         '''
@@ -36,7 +40,7 @@ class SymbolTable:
         else the declaration occurs in a global scope.
         '''
         if (self.lookup(token) != None):
-            print("error: token already declared")
+            print("error: token: " + token + " already declared  ")
             sys.exit(1)
         if (scope == -1):
             if (self.nestedScope == 0b0):
@@ -66,7 +70,7 @@ class SymbolTable:
             if ((elem[0] == token) and (elem[2] in acceptableScopes)):
                 # print("found: {0} with type: {1} in scope {2}".format(elem[0], elem[1], elem[2]))
                 return elem[1]
-        print("{0} not found in the symbol table ".format(token))
+        # print("{0} not found in the symbol table ".format(token))
         return None
 
     def print(self):
@@ -116,6 +120,21 @@ class SymbolTable:
                 print("typespec list: unexpected")
                 sys.exit(1)
                 return
+        if (type == 'addMultipleIDs'):
+            self.sameIDs.append(str(p[1]))
+            return
+
+        if (type == 'beforeCommaList'):
+            self.sameType = str(p)
+            print('before comma List:   ' + str(p))
+            return
+        
+        if (type == 'afterCommaList'):
+            for id in self.sameIDs:
+                self.insert(id, type=self.sameType)
+            self.sameIDs.clear()
+            self.sameType = ''
+            return
 
     def symbolTable_afterVarAssign(self):
         self.afterVarAssign = True
