@@ -447,7 +447,8 @@ class IR:
         compareStack = []
         logicQueue = []
         # {expr : [place, placeIFtrue, placeIFfalse]}
-       
+        EnOrder = {}
+        order = 0
         jumpTrue = {}
         jumpFlase = {}
         i = 0
@@ -480,19 +481,39 @@ class IR:
                 # jumpFlase.update(dict)
                 # jumpTrue.update(dict)
                 compareStack.append(expr)
+                dict = {expr : order}
+                EnOrder.update(dict)
+
             elif (item in logical):
                 # expr && logicExpr
                 # logicalExpr && expr
                 if(len(compareStack) == 1):
                     expr1 = compareStack.pop()
                     expr2 = logicQueue.pop(0)
-                    logic = item
-                    expr2_1 = self.getSubExpr(expr2, 'LHS')
-                    # print(expr2_1)
-                    expr = str(expr1) + logic + str(expr2)
-                    logicQueue.append([expr1])
-                    self.placeLabel(str(expr1), expr2_1, logic, 2)
                     
+                    order1 = str(expr1).replace('[', '').replace(']', '').replace("'", '')
+                    order2 = str(expr2).replace('[', '').replace(']', '').replace("'", '')
+                    
+                    order1 = int(EnOrder[order1])
+                    order2 = int(EnOrder[order2])
+                    logic = item
+                    if(order1 < order2): 
+                        expr2_1 = self.getSubExpr(expr2, 'LHS')
+                        # print(expr2_1)
+                        expr = str(expr1) + logic + str(expr2)
+                        logicQueue.append([expr])
+                        dict = {expr : order}
+                        EnOrder.update(dict)
+                        self.placeLabel(str(expr1), expr2_1, logic, 2)
+                    else:
+                        expr2_1 = self.getSubExpr(expr2, 'LHS')
+                        expr2_2 = self.getSubExpr(expr2, 'RHS')
+                        expr = str(expr2) + logic + str(expr1)
+                        logicQueue.append([expr])
+                        dict = {expr : order}
+                        EnOrder.update(dict)
+                        self.placeLabel([expr2_1, expr2_2], expr1, logic, 4)
+
                 # logicalExpr && logicalExpr
                 elif (len(logicQueue) == 2):
                     expr2 = logicQueue.pop(0)
@@ -502,9 +523,14 @@ class IR:
                     expr1_2 = self.getSubExpr(expr1, 'RHS')
                     expr2_1 = self.getSubExpr(expr2, 'LHS')
                     logic = item
-                    self.placeLabel([expr1_1, expr1_2], expr2_1, logic, 3)
-                    # print(expr1_1, ' ', expr1_2, ' ', expr2_1)
+                    expr = str(expr1) + logic + str(expr2)
+                    logicQueue.append([expr])
 
+                    self.placeLabel([expr1_1, expr1_2], expr2_1, logic, 3)
+
+                    dict = {expr : order}
+                    EnOrder.update(dict)
+                    # print(expr1_1, ' ', expr1_2, ' ', expr2_1)
 
                 # expr1 && expr2 
                 else :
@@ -514,13 +540,19 @@ class IR:
                     logic = item
                     expr = str(expr1) + logic + str(expr2)
                     logicQueue.append([expr])
+                    
+                    dict = {expr : order}
+                    EnOrder.update(dict)
                     self.placeLabel(str(expr1), str(expr2), logic, 1)
 
-        # print('enter loop', self.enterLoopLabel)
-        # print('end loop', self.endLoopLable)
-        # print('loop condition label ', self.loopConditionLabel)
+    
+            order += 1
 
-        # print(self.labelPlace)
+        print('enter loop', self.enterLoopLabel)
+        print('end loop', self.endLoopLable)
+        print('loop condition label ', self.loopConditionLabel)
+
+        print(self.labelPlace)
     
     def getSubExpr(self, expr, flag):
         expr = str(expr)
@@ -593,18 +625,16 @@ class IR:
             self.labelPlace[expr1] = dic
         
         #self.placeLabel([expr1_1, expr1_2], expr2_1, logic, 3)
-        elif (logic == '&&' and flag == 3):
+        elif (logic == '&&' and (flag == 3 or flag == 4)):
             placeExpr2_1 = self.labelPlace[expr2][0]
             placeExpr1_1 = self.labelPlace[expr1[0]]
             placeExpr1_2 = self.labelPlace[expr1[1]]
-
             newLabel = []
             for labels in placeExpr1_1: 
                 if (self.enterLoopLabel == labels):
                     newLabel.append(placeExpr2_1)
                 else :
                     newLabel.append(labels)
-
             self.labelPlace[expr1[0]] = newLabel
 
             newLabel = []
@@ -614,9 +644,11 @@ class IR:
                 else :
                     newLabel.append(labels)
             self.labelPlace[expr1[1]] = newLabel
+            if (flag == 4):
+                newLabel = [placeExpr2_1, self.enterLoopLabel, self.endLoopLable]
+                self.labelPlace[expr2] = newLabel
 
-
-        elif (logic == '||' and flag == 3):
+        elif (logic == '||' and (flag == 3 or flag == 4)):
             placeExpr2_1 = self.labelPlace[expr2][0]
             placeExpr1_1 = self.labelPlace[expr1[0]]
             placeExpr1_2 = self.labelPlace[expr1[1]]
@@ -638,7 +670,9 @@ class IR:
                     newLabel.append(labels)
             self.labelPlace[expr1[1]] = newLabel
 
-        
+            if (flag == 4):
+                newLabel = [placeExpr2_1, self.enterLoopLabel, self.endLoopLable]
+                self.labelPlace[expr2] = newLabel
 
     # The function returns the subtree of given node
     def getSubtree(self, nodes):
