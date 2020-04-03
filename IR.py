@@ -14,6 +14,7 @@ class IR:
         self.IRS = []
         self.queue = []
         self.enumConst = []
+        self.labelPlace = {}
         self.enumList = {}
         self.enumInstance = {}
         if (ast != None):
@@ -25,6 +26,7 @@ class IR:
         self.enterLoopLabel = ''
         self.endLoopLable = ''
         self.loopConditionLabel = ''
+
 
     # Run function scans the first level of the ast. 
     def run(self):
@@ -297,7 +299,7 @@ class IR:
             return loopL
         else:
             for node in nodes.children:
-                self.IRS.append([node.name, ':'])
+                self.IRS.append([node.name + ':'])
 
         
     # return statement support var assign and func calls
@@ -358,17 +360,18 @@ class IR:
         self.loopConditionLabel = self.createLabel(nodes, 'condition')
         self.endLoopLable = self.createLabel(nodes, 'loop')
         
+        self.IRS.append(['goto', self.loopConditionLabel])
         self.IRS.append([self.enterLoopLabel])
-        self.IRS.append(['('])
+        # self.IRS.append(['('])
         for node in nodes.children:
             if (node.name == 'stmt'):
                 self.statement(node)
-        self.IRS.append([')'])
+        # self.IRS.append([')'])
 
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
-                pass
+                self.loopConditions(node)
         self.IRS.append([self.endLoopLable])
 
     # Note: Dowhile loop IR does not have the goto condition label before the stmt body. 
@@ -378,12 +381,13 @@ class IR:
         self.loopConditionLabel = self.createLabel(nodes, 'condition')
         self.endLoopLable = self.createLabel(nodes, 'loop')
         
+        self.IRS.append(['goto', self.loopConditionLabel])
         self.IRS.append([self.enterLoopLabel])
-        self.IRS.append(['('])
+        # self.IRS.append(['('])
         for node in nodes.children:
             if (node.name == 'stmt'):
                 self.statement(node)
-        self.IRS.append([')'])
+        # self.IRS.append([')'])
 
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
@@ -403,8 +407,10 @@ class IR:
                         self.assign(n)
                     else:
                         self.varDecl(n)
+                        
+        self.IRS.append(['goto', self.loopConditionLabel])
         self.IRS.append([self.enterLoopLabel])
-        self.IRS.append(['('])
+        # self.IRS.append(['('])
         for node in nodes.children:
             if (node.name == 'stmt'):
                 self.statement(node)
@@ -414,7 +420,7 @@ class IR:
                         self.increment(n, n.name)
                     elif (n.name in assignment):
                         self.assign(n)
-        self.IRS.append([')'])
+        # self.IRS.append([')'])
 
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
@@ -427,61 +433,279 @@ class IR:
         self.IRS.append(['goto', self.endLoopLable])
 
     def continueStmt(self, nodes):
-         self.IRS.append(['goto', self.loopConditionLabel])
+        self.IRS.append(['goto', self.loopConditionLabel])
 
-    # def loopConditions(self, nodes, enterLoopLabel, endLoopLable):
-    #     for node in nodes.children:
-    #         # && and ||, this means the conditions stmt is
-    #         # composed by multiple conditions expression
-    #         # for example, a > b && b > c
-    #         if(node.name in logical):
-    #             if (node.name == '&&'):
-    #                 pass
-    #             elif (node.name == '||'):
-    #                 pass
-    #         # >, < , != etc, this means the condition stmt only
-    #         # has one condition expression
-    #         # TODO: need discussion
-    #         elif (node.name in comparison):
-    #             subtree = self.getSubtree(node)
-    #             operand2 = ''
-    #             for n in reversed(subtree):
-    #                 if (n.name not in comparison):
-    #                     self.enqueue(n.name)
-    #                 elif (n.name in comparison):
-    #                     pass
+    def loopConditions(self, nodes):
+        for node in nodes.children:
+            if (node.name == '&&' or node.name == '||'):
+                res = node.to_array()
+                booleanExpr = res['name']
+                self.complexBool(booleanExpr)
+                self.addBoolToIR()
+            if (node.name in comparison):
+                self.simpleBool(node)
+    
+    def simpleBool(self, nodes):
+        opand = []
+        for node in nodes.children:
+            if (node.name not in comparison):
+                opand.append(node.name)
+        expr = opand[0] + nodes.name + opand[1]
+        list = ['if', expr, 'goto', self.enterLoopLabel, 'else', 'goto', self.endLoopLable]
+        self.IRS.append(list)
 
-    #         # the condition is arithmetric express
-    #         # example: while(1 + 2)
-    #         elif (node.name in arithmetic):
-    #             tempVar = self.simpleExpr(node)
-    #             ir = ['if', '(', str(tempVar), '!=', '0', ')',
-    #                   'goto', enterLoopLabel]
-    #             self.IRS.append(ir)
-    #             ir = ['else', 'goto', endLoopLable]
-    #             self.IRS.append(ir)
-    #             self.enqueue(operand1)
+    
+    def complexBool(self, booleanExpr):
+        queue = []
+        compareStack = []
+        logicQueue = []
+        # {expr : [place, placeIFtrue, placeIFfalse]}
+        EnOrder = {}
+        order = 0
+        jumpTrue = {}
+        jumpFlase = {}
+        i = 0
+        for item in booleanExpr:
+            if (item not in alc):
+                queue.append(item)
+            elif (item in comparison):
+                op1 = queue.pop(0)
+                op2 = queue.pop(0)
+                relop = item
+                if (i == 0):
+                    label = self.loopConditionLabel
+                    i += 1
+                else:
+                    label = self.createLabel(None, 'condition')
+                expr = op1 + relop + op2
+                dict = {expr : label}
+                self.labelPlace.update(dict)
+        queue = []
+        
+        for item in booleanExpr:
+            if (item not in alc):
+                queue.append(item)
+            elif (item in comparison):
+                op1 = queue.pop(0)
+                op2 = queue.pop(0)
+                relop = item
+                expr =  str(op1) + relop + str(op2)
+                dict = {expr : None}
+                # jumpFlase.update(dict)
+                # jumpTrue.update(dict)
+                compareStack.append(expr)
+                dict = {expr : order}
+                EnOrder.update(dict)
+               
+            elif (item in logical):
+                # expr && logicExpr
+                # logicalExpr && expr
+                if(len(compareStack) == 1):
+                    expr1 = compareStack.pop()
+                    expr2 = logicQueue.pop(0)
+                    
+                    order1 = str(expr1).replace('[', '').replace(']', '').replace("'", '')
+                    order2 = str(expr2).replace('[', '').replace(']', '').replace("'", '')
+                    
+                    order1 = int(EnOrder[order1])
+                    order2 = int(EnOrder[order2])
+                    logic = item
+                    if(order1 < order2): 
+                        expr2_1 = self.getSubExpr(expr2, 'LHS')
+                        
+                        expr = str(expr1) + logic + str(expr2)
+                        logicQueue.append([expr])
+                        dict = {expr : order}
+                        EnOrder.update(dict)
+                        self.placeLabel(str(expr1), expr2_1, logic, 2)
+                    else:
+                        expr2_1 = self.getSubExpr(expr2, 'LHS')
+                        expr2_2 = self.getSubExpr(expr2, 'RHS')
+                        expr = str(expr2) + logic + str(expr1)
+                        logicQueue.append([expr])
+                        dict = {expr : order}
+                        EnOrder.update(dict)
+                        
+                        self.placeLabel([expr2_1, expr2_2], expr1, logic, 4)
 
-    #         elif(node.name in assignment):
-    #             if(node.name == '='):
-    #                 operand1 = self.dequeue()
-    #                 operand2 = self.dequeue()
-    #                 ir = [operand2, '=', operand1]
-    #                 self.IRS.append(ir)
-    #             else:
-    #                 # e,g : if we have +=, operator1 is '+', operator2 is '='
-    #                 if (len(node.name) == 2):
-    #                     operator1 = node.name[0]
-    #                     operator2 = node.name[1]
-    #                 # >>= and <<=
-    #                 elif(len(node.name) == 3):
-    #                     operator1 = node.name[0] + node.name[1]
-    #                     operator2 = node.name[2]
-    #                 operand1 = self.dequeue()
-    #                 operand2 = self.dequeue()
-    #                 ir = [operand2, operator2, operand2, operator1, operand1]
-    #                 self.IRS.append(ir)
-    #     return operand2
+                # logicalExpr && logicalExpr
+                elif (len(logicQueue) == 2):
+                    expr2 = logicQueue.pop(0)
+                    expr1 = logicQueue.pop(0)
+                    # print(expr1, ' ', expr2)
+                    expr1_1 = self.getSubExpr(expr1, 'LHS')
+                    expr1_2 = self.getSubExpr(expr1, 'RHS')
+                    expr2_1 = self.getSubExpr(expr2, 'LHS')
+                    logic = item
+                    expr = str(expr1) + logic + str(expr2)
+                    logicQueue.append([expr])
+
+                    self.placeLabel([expr1_1, expr1_2], expr2_1, logic, 3)
+
+                    dict = {expr : order}
+                    EnOrder.update(dict)
+                    # print(expr1_1, ' ', expr1_2, ' ', expr2_1)
+
+                # expr1 && expr2 
+                else :
+                    expr2 = compareStack.pop()
+                    expr1 = compareStack.pop()
+                    
+                    logic = item
+                    expr = str(expr1) + logic + str(expr2)
+                    logicQueue.append([expr])
+                    
+                    dict = {expr : order}
+                    EnOrder.update(dict)
+                    self.placeLabel(str(expr1), str(expr2), logic, 1)
+            order += 1
+
+        # print('enter loop', self.enterLoopLabel)
+        # print('end loop', self.endLoopLable)
+        # print('loop condition label ', self.loopConditionLabel)
+
+        # print(self.labelPlace)
+    
+    def getSubExpr(self, expr, flag):
+        expr = str(expr)
+        result = ''
+        if ('||' in expr):
+            temp = expr.split('||')
+        elif ('&&' in expr):
+            temp = expr.split('&&')
+        
+        if (flag == 'LHS'):
+            temp[0] = temp[0].replace('[', '')
+            temp[0] = temp[0].replace("'", '')
+            temp[0] = temp[0].strip()
+            result = temp[0]
+        
+        elif (flag == 'RHS'):
+            temp[1] = temp[1].replace(']', '')
+            temp[1] = temp[1].replace("'", '')
+            temp[1] = temp[1].strip()
+            result = temp[1]
+        return result
+    
+    def placeLabel(self, expr1, expr2, logic, flag):
+        # expr1 && expr2,
+        # when expr1 is true, goto enterLoopLabel
+        # when expr1 is flase, goto endLoopLable
+
+        if (logic == '&&' and flag == 1):
+            place = self.labelPlace[expr1]
+            place2 = self.labelPlace[expr2]
+            placeIFtrue = self.enterLoopLabel
+            placeIFfalse = self.endLoopLable
+            dic = [place, placeIFtrue, placeIFfalse]
+            self.labelPlace[expr1] = dic
+            dic = [place2, placeIFtrue, placeIFfalse]
+            self.labelPlace[expr2] = dic
+
+        elif (logic == '||' and flag == 1):
+            place = self.labelPlace[expr1]
+            placeIFtrue = self.enterLoopLabel
+            placeIFfalse = str(self.labelPlace[expr2])
+            dic = [place, placeIFtrue, placeIFfalse]
+            self.labelPlace[expr1] = dic
+
+            place = self.labelPlace[expr2]
+            placeIFtrue = self.enterLoopLabel
+            placeIFfalse = self.endLoopLable
+            dic = [place, placeIFtrue, placeIFfalse]
+            self.labelPlace[expr2] = dic
+
+
+        #              expr1 = compareStack.pop()
+                    # expr2 = logicQueue.pop(0)
+
+        elif (logic == '||' and flag == 2 ):
+
+            placeExpr1 = self.labelPlace[expr1]
+            placeIFtrue = self.enterLoopLabel
+            placeIFfalse = self.labelPlace[expr2][0]
+            dic = [placeExpr1, placeIFtrue, placeIFfalse]
+            self.labelPlace[expr1] = dic
+
+
+        elif (logic == '&&' and flag == 2 ):
+
+            placeExpr1 = self.labelPlace[expr1]
+            placeIFtrue = self.labelPlace[expr2][0]
+            placeIFfalse = self.endLoopLable
+            dic = [placeExpr1, placeIFtrue, placeIFfalse]
+            self.labelPlace[expr1] = dic
+        
+        #self.placeLabel([expr1_1, expr1_2], expr2_1, logic, 3)
+        elif (logic == '&&' and (flag == 3 or flag == 4)):
+            if (flag == 4):
+                placeExpr2_1 = self.labelPlace[expr2]
+            else:
+                placeExpr2_1 = self.labelPlace[expr2][0]
+
+            placeExpr1_1 = self.labelPlace[expr1[0]]
+            placeExpr1_2 = self.labelPlace[expr1[1]]
+            newLabel = []
+            for labels in placeExpr1_1: 
+                if (self.enterLoopLabel == labels):
+                    newLabel.append(placeExpr2_1)
+                else :
+                    newLabel.append(labels)
+            self.labelPlace[expr1[0]] = newLabel
+
+            newLabel = []
+            for labels in placeExpr1_2: 
+                if (self.enterLoopLabel == labels):
+                    newLabel.append(placeExpr2_1)
+                else :
+                    newLabel.append(labels)
+            self.labelPlace[expr1[1]] = newLabel
+            if (flag == 4):
+                newLabel = [placeExpr2_1, self.enterLoopLabel, self.endLoopLable]
+                self.labelPlace[expr2] = newLabel
+
+            
+        elif (logic == '||' and (flag == 3 or flag == 4)):
+            if (flag == 4):
+                placeExpr2_1 = self.labelPlace[expr2]
+            else:
+                placeExpr2_1 = self.labelPlace[expr2][0]
+        
+            placeExpr1_1 = self.labelPlace[expr1[0]]
+            placeExpr1_2 = self.labelPlace[expr1[1]]
+
+            newLabel = []
+            for labels in placeExpr1_1: 
+                if (self.endLoopLable == labels):
+                    newLabel.append(placeExpr2_1)
+                else :
+                    newLabel.append(labels)
+            self.labelPlace[expr1[0]] = newLabel
+            newLabel = []
+            for labels in placeExpr1_2: 
+                if (self.endLoopLable == labels):
+                    newLabel.append(placeExpr2_1)
+                else :
+                    newLabel.append(labels)
+            self.labelPlace[expr1[1]] = newLabel
+            if (flag == 4):
+                newLabel = [placeExpr2_1, self.enterLoopLabel, self.endLoopLable]
+                self.labelPlace[expr2] = newLabel
+
+    def addBoolToIR(self):
+        i = 0
+        print(self.labelPlace)
+        for expr in self.labelPlace:
+            if (i == 0):
+                labelPlace = self.loopConditionLabel
+                i += 1
+            else:
+                labelPlace = self.labelPlace[expr][0]
+                self.IRS.append([labelPlace])
+            labelIFtrue = self.labelPlace[expr][1]
+            labelIFfalse = self.labelPlace[expr][2]
+            list = ['if', expr, 'goto', labelIFtrue, 'else', 'goto', labelIFfalse]
+            self.IRS.append(list)
 
     # The function returns the subtree of given node
     def getSubtree(self, nodes):

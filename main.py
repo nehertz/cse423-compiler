@@ -11,6 +11,8 @@ from ply_parser import parser
 from ply_parser import st
 from typeChecking3 import TypeChecking
 from IR import IR
+from optimization import optimization
+
 # Print the instruction of how to excute the program
 # parameters: None
 def printHelp():
@@ -21,6 +23,7 @@ def printHelp():
     print("-i   :print IR ")
     print("-o   :write IR into a file")
     print("-r   :read IR from a file")
+    print("-m   :turn on optimization pass")
     print("-h   :print the usage information")
     print("Default   :print option -t")
 
@@ -39,11 +42,35 @@ def printAST(ast):
     f.close
     print(tree.ascii_art())
 
+def writeIRtoFile(IR, outputFile):
+    try:
+        f = open(outputFile, 'w')
+    except OSError:
+        print("ERROR: Could not write to " + outputFile + ".")
+    with f:
+        str1 = " "
+        indentFlag = 0
+        for list in IR:
+            if (str1.join(list) == '{'):
+                indentFlag = 1
+                f.write(str1.join(list) + '\n')
+                continue
+            elif (str1.join(list) == '}'):
+                indentFlag = 0
+                f.write(str1.join(list) + '\n')
+                continue
+            elif (indentFlag):
+                f.write('\t' + str1.join(list) + '\n')
+            else:
+                f.write(str1.join(list) + '\n' )
+        f.close()
+
 if __name__ == "__main__":
 
     cmdArgument = sys.argv
     listArgs = cmdArgument[1:]
     flag = 0  # flag that tells us which options are enabled
+    optimizationFlag = 0
     inputFile = ' '
     outputFile = ' '
     ir = ' '
@@ -56,8 +83,8 @@ if __name__ == "__main__":
 
     # Currently we have options h for help, t to print tokens and labels,
     # and p to print parse tree
-    unixOptions = "htpsior"
-    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR", "write-to-file", "read-from-file"]
+    unixOptions = "htpsiorma"
+    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR", "write-to-file", "read-from-file", "optimization-pass", "assembly"]
 
     try:
         arguments, values = getopt.getopt(listArgs, unixOptions, gnuOptions)
@@ -79,10 +106,14 @@ if __name__ == "__main__":
             flag = 5
         if (currentArgument in ("-r", '--read-from-file')):
             flag = 6
+        if (currentArgument in ("-m", '--optimization-pass')):
+            optimizationFlag = 1
+        if (currentArgument in ("-a", '--assembly')):
+            flag = 7
         if (currentArgument in ("-h", "--help")):
             printHelp()
             sys.exit()
-    
+
     # Check that the user has supplied a valid input file (as last arg)
     if (flag == 5):
         inputFile = listArgs[1]
@@ -130,46 +161,50 @@ if __name__ == "__main__":
         printAST(ast)
 
     # print the symbolTable 
-
     elif (flag == 3):
         st.print()
 
-    # print the IR
-    elif (flag == 4):
+    # prints the optimized version of IR when optimization flag is on 
+    elif (flag == 4 and optimizationFlag == 1):
+        IR = ir.run()
+        ir.printIR()
+        optimizedIR = optimization(IR)
+        optimizedIR.run()
+        optimizedIR.printIR()
+
+    # prints the original version of IR when optimization flag is off
+    elif (flag == 4 and optimizationFlag == 0):
         printAST(ast)
-        ir.run()
+        IR = ir.run()
         ir.printIR()
     
     # write the IR into output file
     elif (flag == 5):
         IR = ir.run()
-        try:
-            f = open(outputFile, 'w')
-        except OSError:
-            print("ERROR: Could not write to " + inputFile + ".")
-        with f:
-            str1 = " "
-            indentFlag = 0
-            for list in IR:
-                if (str1.join(list) == '{'):
-                    indentFlag = 1
-                    f.write(str1.join(list) + '\n')
-                    continue
-                elif (str1.join(list) == '}'):
-                    indentFlag = 0
-                    f.write(str1.join(list) + '\n')
-                    continue
-                elif (indentFlag):
-                    f.write('\t' + str1.join(list) + '\n')
-                else:
-                    f.write(str1.join(list) + '\n' )
-            f.close()
+        writeIRtoFile(IR, outputFile)
 
     # Read the IR from file
     elif (flag == 6):
         ir.readIR(fileString)
         ir.printIR()
     
+    # print the assembly when optimization flag is on
+    elif (flag == 7 and optimizationFlag == 1):
+        print("in progress")
+        exit()
+        IR = ir.run()
+        optimizedIR = optimization(IR)
+        IR = optimizedIR.run()
+        
+    # print the assembly when optimization flag is off      
+    elif (flag == 7 and optimizationFlag == 0):
+        print("in progress")
+        exit()
+        IR = ir.run()
+        
+
+
+
 
 
     

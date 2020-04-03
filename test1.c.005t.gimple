@@ -1,0 +1,37 @@
+add3 (int a, int b, int c)
+{
+  int D.1936;
+
+  _1 = a + b;
+  D.1936 = c + _1;
+  return D.1936;
+}
+
+
+main ()
+{
+  int D.1938;
+
+  {
+    int a;
+    int b;
+
+    a = b << 3;
+    {
+      int i;
+
+      i = 1;
+      goto <D.1933>;
+      <D.1932>:
+      i = 10;
+      i = i + 1;
+      <D.1933>:
+      if (i <= 4) goto <D.1932>; else goto <D.1934>;
+      <D.1934>:
+    }
+  }
+  D.1938 = 0;
+  return D.1938;
+}
+
+

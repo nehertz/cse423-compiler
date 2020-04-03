@@ -1,11 +1,30 @@
 int add3(int a, int b, int c)
 {
+<<<<<<< HEAD
+<<<<<<< master
+  int a = 1;
+  int b = 2;
+  int c = 3;
+  int d = a + b + c;
   return a + b + c;
+=======
+=======
+>>>>>>> Andy-IRtest
+  // int a = 1;
+  // int b = 2;
+  // int c = 3;
+  // int d = a + b + c;
+  // return a + b + c;
+<<<<<<< HEAD
+>>>>>>> updated
+=======
+>>>>>>> Andy-IRtest
 }
-enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
+// enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
 int main()
-{
+{     
+        
         //// Test enum 
         // enum week day; 
         // day = Mon; 
@@ -18,8 +37,8 @@ int main()
         // day = Mon + 10; 
 
         //// Test var decl  
-        // int a;
-        // int b;
+        // int a = 100;
+        // int b = 30;
         // int c; 
         // float d;
         // int e, f, g;
@@ -51,12 +70,13 @@ int main()
         // even:
         //         a = 1;
          
-        //// while and do while loop
-        // while (a < 3) {
-                   ////continue;
-        //         break;
-        //         float j = j + 2;
-        // }
+        // while and do while loop
+        int a;
+        while ( !a > 3 ) {
+                //continue;
+                // break;
+                float j = j + 2;
+        }
 
         // do {
         //         int i = i + 1;
@@ -66,9 +86,9 @@ int main()
         
         ////test for loop 
         // for (int i = 1; i < 5; i++){
-        //         i = 10;
+        //         i += 10;
         // }
-
+        // a = a + 1;
         ////test return stmt
         //return add(a, b);
         // return 1 + 2 + a +b;
@@ -92,7 +112,6 @@ int main()
         // if(i%2 == 0){
         //         ++j;    
         // }
-        
         // }
         // return j;
 
