@@ -1,5 +1,6 @@
 int add3(int a, int b, int c)
 {
+<<<<<<< HEAD
 <<<<<<< master
   int a = 1;
   int b = 2;
@@ -7,12 +8,17 @@ int add3(int a, int b, int c)
   int d = a + b + c;
   return a + b + c;
 =======
+=======
+>>>>>>> Andy-IRtest
   // int a = 1;
   // int b = 2;
   // int c = 3;
   // int d = a + b + c;
   // return a + b + c;
+<<<<<<< HEAD
 >>>>>>> updated
+=======
+>>>>>>> Andy-IRtest
 }
 // enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
