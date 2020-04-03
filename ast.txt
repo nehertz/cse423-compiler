@@ -1,1 +1,1 @@
-(((fd)args,((0.00)return)stmt)func-kl,((l,j,k)args,((a,3)=,(b,12)=,(c,(34,'(int) a')+)=,(d,32.1)=,(e,123)=,(f,1232.00)=,(f,('(double) a',f)+)=,(c,((12.00)args)'(int) func-kl')=,((1,2)+)return)stmt)func-main)Program;
+(((fd)args,((0.00)return)stmt)func-kl,((None)args,((b)varDecl,(c)varDecl,(a)varDecl,(c,((12.00)args)'(int) func-kl')=,(((a,3)!=)condition,(((((a,3)==)!,((a,3)=,(b,32)=,(c,12)=)stmt)if,((a,2)==,((a,2)=,(b,32)=,(c,12)=)stmt)elseif,(((a,5)=,(b,32)=,(c,12)=)stmt)else)ifstmt)stmt)while,((1,2)+)return)stmt)func-main)Program;

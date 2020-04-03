@@ -4,6 +4,7 @@ from skbio import read
 from skbio.tree import TreeNode
 from SymbolTable import SymbolTable
 from syntaxTree import astConstruct
+import sys
 # from typeChecking import typeChecking
 # Each grammar rule is defined by a Python function
 # where the docstring to that function contains the
@@ -623,6 +624,7 @@ def p_conditionals(p):
 
 def p_error(t):
     print("Syntax error at {0}: Line Number: {1}".format(t.value, t.lineno))
+    sys.exit(1)
 
 
 # Build the parser and pass lex into the parser

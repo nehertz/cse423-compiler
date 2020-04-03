@@ -108,6 +108,8 @@ if __name__ == "__main__":
             fileString = f.read()
             lexer = tokenizer(fileString)
             ast = parser(lexer.clone())
+            tc = TypeChecking(ast)
+            ast = tc.run()
             ir = IR(ast)
         f.close()        
 
