@@ -144,8 +144,6 @@ if __name__ == "__main__":
             ir = IR(ast)
         f.close()        
 
-
-    
     # st.print()
     # tc = TypeChecking(ast)
     # ast = tc.run()

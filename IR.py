@@ -392,7 +392,7 @@ class IR:
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
-                pass
+                self.loopConditions(node)
         self.IRS.append([self.endLoopLable])
 
     def forloop(self, nodes):
@@ -425,7 +425,7 @@ class IR:
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
-                pass
+                self.loopConditions(node)
         self.IRS.append([self.endLoopLable])
 
 
@@ -491,8 +491,6 @@ class IR:
                 relop = item
                 expr =  str(op1) + relop + str(op2)
                 dict = {expr : None}
-                # jumpFlase.update(dict)
-                # jumpTrue.update(dict)
                 compareStack.append(expr)
                 dict = {expr : order}
                 EnOrder.update(dict)
@@ -694,7 +692,6 @@ class IR:
 
     def addBoolToIR(self):
         i = 0
-        print(self.labelPlace)
         for expr in self.labelPlace:
             if (i == 0):
                 labelPlace = self.loopConditionLabel

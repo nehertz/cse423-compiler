@@ -140,6 +140,7 @@ def p_operand(p):
             | funcCall
             | LPAREN expr RPAREN
             | MINUS NUMCONST
+            | MINUS ID
 
     '''
     return astConstruct(p, 'operand')
@@ -565,7 +566,6 @@ def p_unaryExpr(p):
     unaryExpr : postfixExpr
               | LNOT unaryExpr
               | NOT unaryExpr
-              | MINUS unaryExpr
               | SIZEOF LPAREN unaryExpr RPAREN
               | SIZEOF LPAREN typeSpec RPAREN
               | unaryExpr INCREMENT
