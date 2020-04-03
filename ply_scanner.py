@@ -1,5 +1,6 @@
 import re
 import ply.lex as lex
+import sys
 
 keywords = ['else', 'register','do','goto','continue','if','sizeof','switch', 'for', 'case','while','break','default','return', 'typedef', 'define', 'include']
 type_specifier = ['auto', 'union', 'short', 'double','long', 'unsigned','int','char','static','volatile','struct','extern','signed','const','enum','void','float']
@@ -212,7 +213,8 @@ def t_delimiters(t):
 # Error Handling 
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
-    t.lexer.skip(1)
+    sys.exit(1)
+    # t.lexer.skip(1)
 
 # Build the lexer and input the file string into lexer
 # parameters: fileString, string of C source file 

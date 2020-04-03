@@ -126,7 +126,7 @@ class SymbolTable:
 
         if (type == 'beforeCommaList'):
             self.sameType = str(p)
-            print('before comma List:   ' + str(p))
+            # print('before comma List:   ' + str(p))
             return
         
         if (type == 'afterCommaList'):
