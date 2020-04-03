@@ -422,16 +422,16 @@ class IR:
         unary = ['~', '!']
         operand2 = ''
         # tempVar = ''
-        expr = ''
+        # expr = []
         self.queue = []
         for node in reversed(subtree):
             if (node.name in logical):
                 # self.enqueue(node.name)
                 if (node.name == '!'):
-                    expr = node.name + self.dequeue()
+                    expr = [node.name, self.dequeue()]
                     self.enqueue(expr)
                 else:
-                    expr = self.dequeue() + ' ' + node.name + ' ' + self.dequeue()
+                    expr = [node.name, [self.dequeue(), self.dequeue()]]
                     self.enqueue(expr)
             elif (node.name not in ops):
                 self.enqueue(node.name)
@@ -448,34 +448,44 @@ class IR:
                     operator = node.name
                     # tempVar = 't_' + str(self.temporaryVarible)
                     # ir = [tempVar, '=', operand1, operator, operand2]
-                    self.enqueue(operand1 + operator + operand2)
+                    self.enqueue(operand1 + ' ' + operator + ' ' + operand2)
                 # self.IRS.append(ir)
                 # self.enqueue(tempVar)
                 # self.temporaryVarible += 1
-            print(self.queue)
+            # print(self.queue)
             
         self.dequeue()
-        return expr.split(' ')
+        return expr
 
     # TODO: Add comments
     # TODO: Add toggling for adding to IR after implementing adding to IR
     def condStmt(self, nodes, addToIR=True):
         conds = {}
+        # conds format: conds[<if+if#/else>] = [<if-condition>, <if-block>, <if-label>]
         ifCount = 0
+        bCount = 0
 
-        for stmt in nodes:
+        for i, stmt in enumerate(nodes):
             # Collect conditional statement info
             if (stmt.name == 'if' or stmt.name == 'else-if'):
                 # Handle if and else if
                 cond = self.condParse(stmt[0])
-                cond.reverse()
+                # cond.reverse()
 
                 # self.IRS.append([stmt.name + ' (' + str(cond) + ')'])
                 # self.IRS.append(['{'])
                 # self.statement(stmt.children[1])
                 # self.IRS.append(['}'])
-                conds['if' + str(ifCount)] = [cond, self.statement(stmt.children[1], False), 'l_' + str(self.label)]
-                self.label += 1
+
+                if (i == 0):
+                    # First if statement does not have a label
+                    conds['block' + str(bCount)] = [self.statement(stmt.children[1], False), 'l_' + str(self.label)]
+                    bCount += 1
+                    self.label += 1
+                    conds['if' + str(ifCount)] = [cond, None]
+                else:
+                    conds['if' + str(ifCount)] = [cond, self.statement(stmt.children[1], False), 'l_' + str(self.label)]
+                    self.label += 1
                 ifCount += 1
             else:
                 # Handle else
@@ -483,13 +493,14 @@ class IR:
                 # self.IRS.append(['{'])
                 # self.statement(stmt.children[0])
                 # self.IRS.append(['}'])
-                conds['else'] = [self.statement(stmt.children[0], False), 'l_' + str(self.label)]
+                conds['else'] = [None, self.statement(stmt.children[0], False), 'l_' + str(self.label)]
                 self.label += 1
 
         # for cond in conds:
             # Generate conditional IR
+
             
-        print(conds)
+        [print(k, v) for k, v in conds.items()]
 
     def whileloop(self, nodes, addToIR=True):
         enterLoopLabel = self.createLabel(nodes, 'loop')
