@@ -13,7 +13,7 @@ Approach used: Reads the AST, then 2 types are handled:
     matches the Function return type, then the function is OK, otherwise type-conversion of the expression is required. 
 -Type Conversion: We have only implemented type conversion for Numconst from int to float and vice versa. This change will also
   be reflected in the AST and that's why the run() method returns the AST in newick form.
-NOTE: Since type-casting is not supported yet, we don't convert the type of an identifier.
+NOTE: Since type-casting is not supported yet, we don't convert the type of an identifier
 """
 
 # from ply_parser import st
@@ -90,6 +90,7 @@ class TypeChecking:
             ast = f.readlines()
 
         return ast[0]
+        
 
     def functionsTC(self, nodes):
         for node in nodes:
@@ -113,22 +114,67 @@ class TypeChecking:
             elif ('return' == node.name):
                 node.children = self.returnTC(node.children)
                 continue
-            elif ('ifStmt' == node.name):
-                node.children = self.checkConditionals(nodes)
+            elif ('ifstmt' == node.name):
+                node.children = self.checkConditionals(node.children)
                 continue
+            elif ('while' == node.name):
+                print('while: ' + str(node.children[0]))
+                node.children[0] = self.checkLogicalExpr(node.children[0])
+                if (node.children[1] == 'stmt'):
+                    child1 = node.children[1]
+                    child1.children = self.checkStatement(child1.children)
+            elif ('forLoop' == node.name):
+                # body = node.children[0]
+                # init = node.children[1]
+                # increment = node.children[2]
+                # conditional = node.children[3]
+                node = self.checkForLoop(node)
+                # body.children = self.checkStatement(body.children)              
+                # init.children = self.checkStatement(init.children)
+                # increment.children = self.checkStatement(increment.children)
+                # conditional.children[0] = self.checkLogicalExpr(conditional.children[0])
+
+
+
             elif ('++' == node.name or '--' == node.name):
                 # node.children = self.checkInt(node.children)
-                node.children = self.checkType(node.children, 'int')
+                node.children[0] = self.checkType(node.children[0], 'int')
         return nodes
+
+    def checkForLoop(self, node):
+        body = node.children[0]
+        # init = node.children[1]
+        increment = node.children[2]
+        conditional = node.children[3]
+
+        body.children = self.checkStatement(body.children)
+        # id = init.children[0].children[0].children[0]
+        increment.children = self.checkStatement(increment.children)
+        conditional = self.checkLogicalExpr(conditional.children[0])
+        
+        node.children[0] = body
+        node.children[2] = increment
+        node.children[3] = conditional
+        return node
+
 
     def checkConditionals(self, nodes):
         '''
         For if statements or any loops, it checks for condition of the control statements
         '''
+        print('checkConditionals:   ' + str(nodes))
         for node in nodes:
-
-            if (node.name == 'if' or node.name == 'elseif' or node.name == 'else'):
+            if (node.name == 'if' or node.name == 'elseif'):
                 node.children[0] = self.checkLogicalExpr(node.children[0])
+                child1 = node.children[1]
+                if ('stmt' == child1.name):
+                    print('child1.name is   ' + child1.name)
+                    child1.children = self.checkStatement(child1.children)
+            elif (node.name == 'else'):
+                child1 = node.children[0]
+                if ('stmt' == child1.name):
+                    print('child1.name is   ' + child1.name)
+                    child1.children[0] = self.checkStatement(child1.children[0])
             else:
                 continue
         return nodes
@@ -137,13 +183,14 @@ class TypeChecking:
         '''
         Checks logical expression types. Not really needed, but there to support for later updates
         '''
+        # print('in checkLogicalExpr:   ' + str(node))
         for elem in node.traverse():
             if (self.logicalExpr.match(elem.name)):
                 continue
             elif (self.compOps.match(elem.name)):
                 continue
             else:
-                print('id encountered')
+                # print('id encountered')
                 continue
         return node
 
@@ -165,9 +212,9 @@ class TypeChecking:
         Sends the variable to checkType()
         '''
         supposedType = st.lookupTC(nodes[0].name, self.scope)        
-        print('node.name = ' + nodes[0].name + '  type: ' + supposedType)
+        # print('node.name = ' + nodes[0].name + '  type: ' + supposedType)
         nodes[1] = self.checkType(nodes[1], supposedType)
-        print(nodes[1])
+        # print(nodes[1])
         return nodes
 
 
@@ -186,7 +233,7 @@ class TypeChecking:
                 if (supposedType == 'float' or supposedType == 'double'):
                     continue 
                 else:
-                    print("number is float expected " + supposedType)
+                    # print("number is float expected " + supposedType)
                     node.name = self.convertType(node.name, 'float', supposedType)
                     continue 
             elif(self.numbersInt.match(node.name) != None):
@@ -239,6 +286,7 @@ class TypeChecking:
         # https://stackoverflow.com/questions/4246000/how-to-call-python-functions-dynamically
         # the function name is generated dynamically and are being called dynamically with expr as 
         # a parameter
+        # i.e. expr = self.typeConversion.funcString(expr)
         expr = getattr(self.typeConversion, funcString)(expr)
         return expr
         
@@ -247,7 +295,7 @@ class TypeChecking:
             return expr 
 
         expr = '(' + toType + ') ' + expr
-        print('expr = ' + expr)
+        # print('expr = ' + expr)
         return expr
     
     def stringFormat(self, typeString):
