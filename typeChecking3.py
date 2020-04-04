@@ -260,7 +260,7 @@ class TypeChecking:
                 # print('node.name = ' + node.name)
                 if (typeNode == 'Unknown'):
                     print('unknown token found : ' + node.name)
-                    sys.exit(1)
+                    # sys.exit(1)
                 else:
                     node.name = self.convertTypeID(node.name, typeNode, supposedType)
         if (flag):
