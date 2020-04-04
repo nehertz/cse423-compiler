@@ -19,8 +19,8 @@ int main()
         // day = Mon + 10; 
 
         //// Test var decl  
-        // int a = 100;
-        // int b = 30;
+        int a = 100;
+        int b = 30;
         // int c; 
         // float d;
         // int e, f, g;
@@ -29,8 +29,6 @@ int main()
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
         // a =  b << 3;
-<<<<<<< HEAD
-=======
         // a =  b >> 3;
         // a =  b + 3;
         // a =  b - 3;
@@ -40,7 +38,6 @@ int main()
         // a = b | 3;
         // a = b & 3;
         // a = b ^ 3;
->>>>>>> master
         // a *=  b >> 3;
         // a /=  b + 3;
         // a %=  b - 3;
@@ -58,6 +55,11 @@ int main()
         // int a,b;
         // b = (-a + b) * 2;
         // b = sizeof(a);
+
+        //// Type casting
+        // float f = 10.5;
+        // a = f;
+        // a = f + b;
 
         //// Goto stmt 
         // goto even;
@@ -99,14 +101,14 @@ int main()
         // return i;
 
         // Samuel Example 2:
-        int i, j;
-        j = 0;
-        for(i = 0; i < 10; ++i)
-        {
-        if(i%2 == 0){
-                ++j;    
-        }
-        }
-        return j;
+        // int i, j;
+        // j = 0;
+        // for(i = 0; i < 10; ++i)
+        // {
+        // if(i%2 == 0){
+        //         ++j;    
+        // }
+        // }
+        // return j;
 
 }

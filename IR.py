@@ -294,7 +294,8 @@ class IR:
     def varDecl(self, nodes):
         for node in nodes:
             if(node.name != None):
-                self.IRS.append([node.name])
+                # self.IRS.append([node.name])
+                pass
 
     # TODO: need to have our own goto rules.
     def gotoStmt(self, nodes):
@@ -397,14 +398,13 @@ class IR:
         self.loopConditionLabel = self.createLabel(nodes, 'condition')
         self.endLoopLable = self.createLabel(nodes, 'loop')
         
-        self.IRS.append(['goto', self.loopConditionLabel])
         self.IRS.append([self.enterLoopLabel])
         # self.IRS.append(['('])
         for node in nodes.children:
             if (node.name == 'stmt'):
                 self.statement(node)
         # self.IRS.append([')'])
-
+        self.IRS.append(['goto', self.loopConditionLabel])
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
