@@ -1,1 +1,1 @@
-(((a,b,c)args,((((a,b)+,c)+)return)stmt)func-add3,((None)args,((a)varDecl,(((a,3)>)condition,((j,(j,2)+)=)stmt)while)stmt)func-main)Program;
+(((fd)args,((0.00)return)stmt)func-kl,((None)args,((b)varDecl,(c)varDecl,(a)varDecl,(c,((12.00)args)'(int) func-kl')=,(((a,3)!=)condition,(((((a,3)==)!,((a,3)=,(b,32)=,(c,12)=)stmt)if,((a,2)==,((a,2)=,(b,32)=,(c,12)=)stmt)elseif,(((a,5)=,(b,32)=,(c,12)=)stmt)else)ifstmt)stmt)while,((1,2)+)return)stmt)func-main)Program;
