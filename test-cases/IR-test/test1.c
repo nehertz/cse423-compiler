@@ -19,8 +19,8 @@ int main()
         // day = Mon + 10; 
 
         //// Test var decl  
-        int a = 100;
-        int b = 30;
+        // int a = 100;
+        // int b = 30;
         // int c; 
         // float d;
         // int e, f, g;
@@ -28,16 +28,16 @@ int main()
         //// Test assignment and Arithmetic
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
-        a =  b << 3;
-        a *=  b >> 3;
-        a /=  b + 3;
-        a %=  b - 3;
-        a += b * 3;
-        a -= b / 3;
-        a <<= b % 3;
-        a >>= b | 3;
-        a &= b & 3;
-        a |= b ^ 3;
+        // a =  b << 3;
+        // a *=  b >> 3;
+        // a /=  b + 3;
+        // a %=  b - 3;
+        // a += b * 3;
+        // a -= b / 3;
+        // a <<= b % 3;
+        // a >>= b | 3;
+        // a &= b & 3;
+        // a |= b ^ 3;
 
         //// Test complex arithmetic expression 
         // a = (a + b) * 2 ;
@@ -87,15 +87,15 @@ int main()
         // i = i * add3(i,j,k);
         // return i;
 
-        // // Samuel Example 2:
-        // int i, j;
-        // j = 0;
-        // for(i = 0; i < 10; ++i)
-        // {
-        // if(i%2 == 0){
-        //         ++j;    
-        // }
-        // }
-        // return j;
+        // Samuel Example 2:
+        int i, j;
+        j = 0;
+        for(i = 0; i < 10; ++i)
+        {
+        if(i%2 == 0){
+                ++j;    
+        }
+        }
+        return j;
 
 }

@@ -151,7 +151,7 @@ class TypeChecking:
         body.children = self.checkStatement(body.children)
         # id = init.children[0].children[0].children[0]
         increment.children = self.checkStatement(increment.children)
-        conditional = self.checkLogicalExpr(conditional.children[0])
+        conditional.children[0] = self.checkLogicalExpr(conditional.children[0])
         
         node.children[0] = body
         node.children[2] = increment
