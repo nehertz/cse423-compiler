@@ -189,7 +189,7 @@ class IR:
             # print(node.name)
             if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
                 self.enqueue(node.name)
-            elif(node.name not in assignment and node.name in alc):
+            elif(node.name not in assignment and node.name in alc and node.name != '!'):
                 operand2 = self.dequeue()
                 operand1 = self.dequeue()
                 operator = node.name
@@ -211,6 +211,10 @@ class IR:
                 ir = [operand1, '=', operand1, operator, '1']
                 self.IRS.append(ir)
                 self.enqueue(operand1)
+            elif(node.name == '!'):
+                operand1 = self.dequeue()
+                operator = node.name
+                self.enqueue(operator+operand1)
             elif('func' in node.name):
                 ir = " ".join(self.funcCall(node, node.name, 0, 1))
                 tempVar = 't_' + str(self.temporaryVarible)
@@ -448,8 +452,10 @@ class IR:
     def simpleBool(self, nodes):
         opand = []
         for node in nodes.children:
-            if (node.name not in comparison):
+            if (node.name not in comparison and node.name != '!'):
                 opand.append(node.name)
+            elif (node.name == '!'):
+                opand.append(node.name + str(node.children[0]).replace(';', '').strip())
         expr = opand[0] + nodes.name + opand[1]
         list = ['if', expr, 'goto', self.enterLoopLabel, 'else', 'goto', self.endLoopLable]
         self.IRS.append(list)
@@ -465,9 +471,13 @@ class IR:
         jumpTrue = {}
         jumpFlase = {}
         i = 0
+
         for item in booleanExpr:
-            if (item not in alc):
+            if (item not in alc and item != '!'):
                 queue.append(item)
+            elif (item == '!'):
+                op1 = queue.pop(0)
+                queue.append(item + op1)
             elif (item in comparison):
                 op1 = queue.pop(0)
                 op2 = queue.pop(0)
@@ -483,8 +493,12 @@ class IR:
         queue = []
         
         for item in booleanExpr:
-            if (item not in alc):
+            
+            if (item not in alc and item != '!'):
                 queue.append(item)
+            elif (item == '!'):
+                op1 = queue.pop(0)
+                queue.append(item + op1)
             elif (item in comparison):
                 op1 = queue.pop(0)
                 op2 = queue.pop(0)

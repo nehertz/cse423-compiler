@@ -43,9 +43,10 @@ int main()
         // a = (a + b) * 2 ;
 
         //// Unary 
-        // a = !b; 
-        b = (-a + b) * 2;
-        b = sizeof(a);
+        int a,b;
+        a = !b;
+        // b = (-a + b) * 2;
+        // b = sizeof(a);
 
         //// Goto stmt 
         // goto even;
@@ -54,7 +55,7 @@ int main()
          
         // while and do while loop
         // int a;
-        // while ( a > 3 ) {
+        // while ( !a > 3 || a < 1 ) {
         //         //continue;
         //         // break;
         //         float j = j + 2;
