@@ -51,6 +51,7 @@ class TypeChecking:
         self.numbersInt = re.compile(r'^[-]{0,1}\d+')
         self.arithOps = re.compile(r'[\/\+\-\*\%]')
         self.logicalExpr = re.compile(r'(\|\|)|(&&)|(\!)')
+        self.bitOps = re.compile(r"(<<)|(>>)|(&)|(\|)|(\^)|(~)")
         self.compOps = re.compile(r'(==)|(\!=)|(>=)|(<=)')
         self.typeConversion = TypeConversion()
         # global scope = 0
@@ -229,6 +230,12 @@ class TypeChecking:
         for node in expr.preorder():
             if ('+-/*%'.find(node.name) != -1):
                 continue 
+            elif (self.logicalExpr.match(node.name) != None):
+                continue 
+            elif (self.compOps.match(node.name) != None):
+                continue 
+            elif(self.bitOps.match(node.name) != None):
+                continue
             elif(self.numbersFloat.match(node.name) != None):
                 if (supposedType == 'float' or supposedType == 'double'):
                     continue 

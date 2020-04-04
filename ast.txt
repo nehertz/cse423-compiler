@@ -1,1 +1,1 @@
-(((a,b,c)args,((((a,b)+,c)+)return)stmt)func-add3,((None)args,((a)varDecl,(b)varDecl,(a,-2)=)stmt)func-main)Program;
+(((a,b,c)args,((((a,b)+,c)+)return)stmt)func-add3,((None)args,((a,100)=,(b,30)=,(a,(b,3)<<)=,(a,(b,3)>>)*=,(a,(b,3)+)/=,(a,(b,3)-)%=,(a,(b,3)*)+=,(a,(b,3)/)-=,(a,(b,3)%)<<=,(a,(b,3)|)>>=,(a,(b,3)&)&=,(a,(b,3)^)|=)stmt)func-main)Program;
