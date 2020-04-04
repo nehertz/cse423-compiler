@@ -7,7 +7,7 @@ int add3(int a, int b, int c)
 int main()
 {     
         
-        //// Test enum 
+        // Test enum 
         // enum week day; 
         // day = Mon; 
         // day = Tue; 
@@ -28,23 +28,31 @@ int main()
         //// Test assignment and Arithmetic
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
-        a =  b << 3;
-        a *=  b >> 3;
-        a /=  b + 3;
-        a %=  b - 3;
-        a += b * 3;
-        a -= b / 3;
-        a <<= b % 3;
-        a >>= b | 3;
-        a &= b & 3;
-        a |= b ^ 3;
+        // a =  b << 3;
+        // a =  b >> 3;
+        // a =  b + 3;
+        // a =  b - 3;
+        // a = b * 3;
+        // a = b / 3;
+        // a = b % 3;
+        // a = b | 3;
+        // a = b & 3;
+        // a = b ^ 3;
+        // a *=  b >> 3;
+        // a /=  b + 3;
+        // a %=  b - 3;
+        // a += b * 3;
+        // a -= b / 3;
+        // a <<= b % 3;
+        // a >>= b | 3;
+        // a &= b & 3;
+        // a |= b ^ 3;
 
-        //// Test complex arithmetic expression 
-        // a = (a + b) * 2 ;
+        // Test complex arithmetic expression 
+        // a = (a + b) * 2;
 
         //// Unary 
         // int a,b;
-        // a = -b;
         // b = (-a + b) * 2;
         // b = sizeof(a);
 
