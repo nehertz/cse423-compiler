@@ -7,7 +7,7 @@ int add3(int a, int b, int c)
 int main()
 {     
         
-        //// Test enum 
+        // Test enum 
         // enum week day; 
         // day = Mon; 
         // day = Tue; 
@@ -29,6 +29,18 @@ int main()
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
         // a =  b << 3;
+<<<<<<< HEAD
+=======
+        // a =  b >> 3;
+        // a =  b + 3;
+        // a =  b - 3;
+        // a = b * 3;
+        // a = b / 3;
+        // a = b % 3;
+        // a = b | 3;
+        // a = b & 3;
+        // a = b ^ 3;
+>>>>>>> master
         // a *=  b >> 3;
         // a /=  b + 3;
         // a %=  b - 3;
@@ -39,12 +51,11 @@ int main()
         // a &= b & 3;
         // a |= b ^ 3;
 
-        //// Test complex arithmetic expression 
-        // a = (a + b) * 2 ;
+        // Test complex arithmetic expression 
+        // a = (a + b) * 2;
 
         //// Unary 
         // int a,b;
-        // a = -b;
         // b = (-a + b) * 2;
         // b = sizeof(a);
 

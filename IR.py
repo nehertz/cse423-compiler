@@ -189,7 +189,7 @@ class IR:
             # print(node.name)
             if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
                 self.enqueue(node.name)
-            elif(node.name not in assignment and node.name in alc and node.name != '!'):
+            elif(node.name not in assignment and node.name in alc and node.name != '!' and len(node.children) != 1):
                 operand2 = self.dequeue()
                 operand1 = self.dequeue()
                 operator = node.name
@@ -205,6 +205,10 @@ class IR:
                     self.IRS.append(ir)
                     self.enqueue(tempVar)
                     self.temporaryVarible += 1
+            elif(node.name == '-' and len(node.children) == 1):
+                operand1 = self.dequeue()
+                operator = node.name
+                self.enqueue(operator+operand1)
             elif(node.name == '++' or node.name == '--'):
                 operand1 = self.dequeue()
                 operator = node.name[0]
@@ -267,7 +271,7 @@ class IR:
         for node in reversed(subtree):
             if (node.name not in arithmetic):
                 self.enqueue(node.name)
-            elif (node.name in arithmetic):
+            elif (node.name in arithmetic and node.name != '!' and len(node.children) != 1):
                 operand2 = self.dequeue()
                 operand1 = self.dequeue()
                 operator = node.name
@@ -276,6 +280,14 @@ class IR:
                 self.IRS.append(ir)
                 self.enqueue(tempVar)
                 self.temporaryVarible += 1
+            elif (node.name == '!'):
+                operand1 = self.dequeue()
+                operator = node.name
+                self.enqueue(operator+operand1)
+            elif(node.name == '-' and len(node.children) == 1):
+                operand1 = self.dequeue()
+                operator = node.name
+                self.enqueue(operator+operand1)
         self.dequeue()
         return tempVar
 

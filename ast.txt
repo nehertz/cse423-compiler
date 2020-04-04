@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 (((a,b,c)args,((((a,b)+,c)+)return)stmt)func-add3,((None)args,((i)varDecl,(j)varDecl,(j,0)=,((((((i,2)%,0)==,((j)++)stmt)if)ifstmt)stmt,((i,0)=)init,((i)++)increment,((i,10)<)condition)forLoop,(j)return)stmt)func-main)Program;
+=======
+(((a,b,c)args,((((a,b)+,c)+)return)stmt)func-add3,((None)args,((a,100)=,(b,30)=,(even)goto,(even)label,(a,1)=)stmt)func-main)Program;
+>>>>>>> master
