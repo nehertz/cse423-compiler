@@ -77,10 +77,6 @@ class SymbolTable:
 
     def print(self):
         print(self.symbolTable)
-        for fds in self.functions:
-            print('1 + ')
-            fds.print()
-
     def symbolTableConstruct(self, p, type):
         ''' 
         SymbolTable is constructed with ply_parser.py 

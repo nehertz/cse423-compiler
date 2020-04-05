@@ -9,7 +9,7 @@ from skbio.tree import TreeNode
 from ply_scanner import tokenizer
 from ply_parser import parser
 from ply_parser import st
-from typeChecking3 import TypeChecking
+from typeChecking import TypeChecking
 from IR import IR
 from optimization import optimization
 

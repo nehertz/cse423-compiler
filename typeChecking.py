@@ -139,18 +139,15 @@ class TypeChecking:
         '''
         For if statements or any loops, it checks for condition of the control statements
         '''
-        print('checkConditionals:   ' + str(nodes))
         for node in nodes:
             if (node.name == 'if' or node.name == 'elseif'):
                 node.children[0] = self.checkLogicalExpr(node.children[0])
                 child1 = node.children[1]
                 if ('stmt' == child1.name):
-                    print('child1.name is   ' + child1.name)
                     child1.children = self.checkStatement(child1.children)
             elif (node.name == 'else'):
                 child1 = node.children[0]
                 if ('stmt' == child1.name):
-                    print('child1.name is   ' + child1.name)
                     child1.children[0] = self.checkStatement(child1.children[0])
             else:
                 continue
