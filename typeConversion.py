@@ -1,5 +1,10 @@
 import re
 import sys
+'''
+Class containing all the conversion from one-type to another type conversion. Commenting is not performed on all the functions as they're obvious from their names. 
+'''
+
+
 class TypeConversion:
     
     def __init__(self):

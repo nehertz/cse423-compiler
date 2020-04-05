@@ -6,7 +6,6 @@ int add3(int a, int b, int c)
 
 int main()
 {     
-        
         // Test enum 
         // enum week day; 
         // day = Mon; 
@@ -68,11 +67,11 @@ int main()
          
         // while and do while loop
         // int a;
-        while ( a + 1 > 3 || a < 1 ) {
-                //continue;
-                // break;
-                float j = j + 2;
-        }
+        // while ( a + 1 > 3 || a < 1 ) {
+        //         //continue;
+        //         // break;
+        //         float j = j + 2;
+        // }
 
         // do {
         //         int i = i + 1;
@@ -110,5 +109,15 @@ int main()
         // }
         // }
         // return j;
+
+        if(a%2 == 0){
+          ++b;    
+        } else if (a > b){
+          a = b;
+        } else if (a > b){
+          a = b;
+        } else {
+          a = 1;
+        }
 
 }

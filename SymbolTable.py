@@ -1,6 +1,6 @@
 '''
-SymbolTable.py contains a list of the tuples. Each typle contain identifier name, type of the identifier, and 
-scope of the identifier. 
+SymbolTable.py contains a list of the tuples. 
+Each typle contain identifier name, type of the identifier, and scope of the identifier. 
 Scope is defined as the following:
  -Default global Scope = 0
  -function scope is incremented as the function is encountered. i.e. If there are two functions defined before main,
@@ -11,6 +11,8 @@ Scope is defined as the following:
     - Getting out of scope is defined as RSHIFT. nestedScope >>= 1 is done when RBRACE is encountered. If no corresponding LBRACE is found,
     then error occurs.
 - EXTRA: loops, conditionals or any other type of scope can not be defined in global scope (weak implementation)
+- Checks if the variable is in the scope or not
+- Makes use of functionDS to store the number of parameters, types of each parameter and the return type of function.
 '''
 import sys
 from functionDS import functionDS
@@ -86,22 +88,20 @@ class SymbolTable:
         For variable declaration w definition, variable is added to the symbol table with scope details.
         '''
         if (type == 'varDecl'):
-            # if (len(p) == 3):
             if (self.ID != '' and self.afterVarAssign):
                 self.insert(self.ID, p[1])
                 self.ID = ''
                 self.afterVarAssign = False
                 return
-            # elif (self.functionParam):
-            #     self.insert(str(p[2]), str(p[1]))
-            #     self.fds.add_vars_type(str(p[1]))
             else:
                 self.insert(str(p[2]), str(p[1]))
 
         if (type == 'funcDecl'):
+            ''' 
+            If function declaration is encountered then already initiated functionDS is used
+            and deleted after it's use to recycle it for the next function declaration.
+            '''
             if (self.globalScope == 1):
-                # self.fds = functionDS(str(p[2]))
-                # self.functions.append(self.fds)   
                 if (self.fds.get_name() == 'Unknown'):
                     self.fds.set_name(str(p[2]))
                     self.fds.set_returnType(str(p[1]))
@@ -112,6 +112,10 @@ class SymbolTable:
                 sys.exit(1)
 
         if (type == 'typeSpecList'):
+            '''
+            If the typeSpecList is encoutnered from the parser, this type is called. 
+            It appends all the arguments of the function. 
+            '''
             if (len(p) == 5):
                 self.args.append((p[4], p[3]))
             elif (len(p) == 3):
@@ -121,15 +125,27 @@ class SymbolTable:
                 sys.exit(1)
                 return
         if (type == 'addMultipleIDs'):
+            '''
+            If the variables are declared i.e. int a, b, c; then this is called to keep 
+            the types of them in check.
+            '''
             self.sameIDs.append(str(p[1]))
             return
 
         if (type == 'beforeCommaList'):
+            '''
+            This function is called to store the type of multiple identifiers declaration.
+            Making use of PLY embedded action.
+            '''
             self.sameType = str(p)
             # print('before comma List:   ' + str(p))
             return
         
         if (type == 'afterCommaList'):
+            '''
+            this function is called after all the IDs are encountered. to insert them into 
+            the symbol table with their types and scopes.
+            '''
             for id in self.sameIDs:
                 self.insert(id, type=self.sameType)
             self.sameIDs.clear()
@@ -137,6 +153,10 @@ class SymbolTable:
             return
 
     def symbolTable_afterVarAssign(self):
+        '''
+        This is used when variable is declared with definition. 
+        Making use of embedded action
+        '''
         self.afterVarAssign = True
 
     def symbolTable_varAssign(self, ID):
@@ -144,6 +164,9 @@ class SymbolTable:
         return
 
     def inScope(self):
+        '''
+        Called when the function definition is encountered
+        '''
         self.currentScope += 1
         self.globalScope = 0
         self.fds = functionDS('Unknown')
@@ -156,6 +179,9 @@ class SymbolTable:
         return
 
     def outScope(self):
+        '''
+        called when the function RBRACE is encountered
+        '''
         if (self.nestedScope != 0b0):
             print("error: missing rbrace")
             sys.exit(1)
@@ -163,6 +189,11 @@ class SymbolTable:
         return
 
     def loopInScope(self):
+        '''
+        called when the loop is encountered. Entering the scope.
+        Making use of embedded action
+        it performed LSHIFT 1 OR 0b1 on the nestedScope
+        '''
         if (self.currentScope == 0):
             # print("error: unexpected loop {0}.{1}".format(p.lineno, p.lexpos))
             print("error: unexpected loop ")
@@ -172,6 +203,11 @@ class SymbolTable:
         return
 
     def loopOutScope(self):
+        '''
+        called when you're getting out of the scope. Exiting the scope.
+        Making use of embedded action. 
+        As mentioned, it performs RSHIFT on nestedScope
+        '''
         if (self.nestedScope == 0b0):
             print("error: No matching left brace found")
         else:
@@ -192,15 +228,21 @@ class SymbolTable:
         return 'Unknown'
     
     def startFunctionParam(self):
-        # print('function parameters begin')
+        '''
+        setting the flag so that every  var-declaration later is a parameter to the function
+        '''
         self.functionParam = True
 
     def endFunctionParam(self):
-        # print('function parameters end')
+        '''
+        unsetting the flag to know that we're not expecting parameters to the function
+        '''
         self.functionParam = False
 
     def get_fds(self, name):
-        # print(name) 
+        '''
+        gets function Data-Structure that is maintained for each function.
+        '''
         for fds in self.functions:
             E_name = fds.get_name()
             # print(E_name)

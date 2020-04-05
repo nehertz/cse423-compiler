@@ -13,7 +13,6 @@ Approach used: Reads the AST, then 2 types are handled:
     matches the Function return type, then the function is OK, otherwise type-conversion of the expression is required. 
 -Type Conversion: We have only implemented type conversion for Numconst from int to float and vice versa. This change will also
   be reflected in the AST and that's why the run() method returns the AST in newick form.
-NOTE: Since type-casting is not supported yet, we don't convert the type of an identifier
 """
 
 # from ply_parser import st
@@ -26,22 +25,7 @@ import re
 import sys
 import bitstring
 from typeConversion import TypeConversion
-# from ctypes import *
-# import os
 
-
-# def blockPrint():
-#     sys.stdout = open(os.devnull, 'w')
-
-# def enablePrint():
-#     sys.stdout = sys.__stdout__
-
-# blockPrint()
-
-# cdll.LoadLibrary("libc.so.6")
-# libc=CDLL("libc.so.6")
-
-# enablePrint()
 class TypeChecking:
     st = st
     def __init__(self, ast):
@@ -94,10 +78,11 @@ class TypeChecking:
         
 
     def functionsTC(self, nodes):
+        '''
+        Checks for the scope of function
+        '''
         for node in nodes:
-            # print(node.name)
             if ('stmt' in node.name):
-                # print(node.name)
                 node.children = self.checkStatement(node.children)
                 continue
         return nodes
@@ -105,7 +90,7 @@ class TypeChecking:
     def checkStatement(self, nodes):
         '''
         Handles the statements for now. 
-        TODO: While loop, for loop, switch statements
+        TODO: switch statements
         '''
         for node in nodes:
             if ('=' == node.name):
@@ -125,24 +110,15 @@ class TypeChecking:
                     child1 = node.children[1]
                     child1.children = self.checkStatement(child1.children)
             elif ('forLoop' == node.name):
-                # body = node.children[0]
-                # init = node.children[1]
-                # increment = node.children[2]
-                # conditional = node.children[3]
                 node = self.checkForLoop(node)
-                # body.children = self.checkStatement(body.children)              
-                # init.children = self.checkStatement(init.children)
-                # increment.children = self.checkStatement(increment.children)
-                # conditional.children[0] = self.checkLogicalExpr(conditional.children[0])
-
-
-
             elif ('++' == node.name or '--' == node.name):
-                # node.children = self.checkInt(node.children)
                 node.children[0] = self.checkType(node.children[0], 'int')
         return nodes
 
     def checkForLoop(self, node):
+        '''
+        checks init, conditional, increment and scope of the loop. 
+        '''
         body = node.children[0]
         # init = node.children[1]
         increment = node.children[2]
@@ -220,6 +196,10 @@ class TypeChecking:
 
 
     def checkType(self, expr, supposedType):
+        '''
+        Traverses till the leaves nodes and checks each node's type and compare it with the l-value's type.
+        If not the same conversion happens 
+        '''
         flag = False 
         if (isinstance(expr, list)):
             nodeList = expr 
@@ -268,12 +248,13 @@ class TypeChecking:
         else:
             return nodeList[0]
         
-    # implementation if RHS is a function call
-    # To check: Number of parameters 
-    # Types of parameters
-    # return value of the function
     def funcCall(self, funcName, node, fds):
-        # fds = st.get_fds(node.name)
+        '''
+        implementation if RHS is a function call
+        To check: Number of parameters 
+        Types of parameters
+        return value of the function
+        '''
         args_count = fds.get_argc()
         expected_args = fds.get_vars_type()
         args = node.children[0].children
@@ -285,6 +266,9 @@ class TypeChecking:
             sys.exit(1) 
         
     def convertType(self, expr, fromType, toType):
+        '''
+        converts type from fromType to toType using typeconversion class. 
+        '''
         if (fromType == toType):
             return expr
         fromType = self.stringFormat(fromType)
@@ -298,16 +282,23 @@ class TypeChecking:
         return expr
         
     def convertTypeID(self, expr, fromType, toType):
+        '''
+        converts type from fromType to toType
+        Just performs type-casting
+        '''
+        
         if (fromType == toType):
             return expr 
-
         expr = '(' + toType + ') ' + expr
-        # print('expr = ' + expr)
         return expr
     
     def stringFormat(self, typeString):
+        '''
+        makes the string into an appropriate form
+        '''
         typeString = typeString.replace('unsigned ', 'U')
         typeString = typeString.replace('int', 'Int')
+        typeString = typeString.replace('signed', '')
         typeString = typeString.replace('double', 'Double')
         typeString = typeString.replace('float', 'Float')
         typeString = typeString.replace('long', 'Long')

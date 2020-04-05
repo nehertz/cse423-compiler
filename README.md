@@ -8,7 +8,7 @@
 # How to install Python dependencies
 
 * Run this in your terminal: Tested on Ubuntu bionic
-
+* Note: no more dependencies added after project 1
 ```
 pip3 install -r documentation/requirements.txt
 ```
@@ -25,7 +25,7 @@ python3 main.py -options filename
 * -i : print IR
 * -o : write IR into a file
 * -r : read IR from a file
-* -m : turn on the optimization pass 
+* -m : turn on the optimization pass(in progress)
 * -a : output assembly(in progress)
 
 # How to use option -o

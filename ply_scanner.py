@@ -1,3 +1,15 @@
+'''
+Scanner portion of the compiler.
+
+Lists of operators are specified, and using those operators and a series of regular
+expressions, we identify the tokens of the program, label them, and add them to a
+list in the order they are encountered in the input program.
+
+Each Python function corresponds to a token type, with the first line of the
+function being the regular expression that will identify the token, and any code
+after that serving to label the token.
+'''
+
 import re
 import ply.lex as lex
 import sys
@@ -9,29 +21,21 @@ arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^']
 logical = ['||', '&&']
 comparison = ['<=', '>=', '==', '!=', '!', '<', '>']
 alc = arithmetic + logical + comparison
-
 operators = {
     # Logical operators
     '||' : 'LOR',
     '&&' : 'LAND',
-
     # Bitwise operators
     '<<=' : 'LSHIFTEQUAL',
     '>>=' : 'RSHIFTEQUAL',
-
     '<<' : 'LSHIFT',
     '>>' : 'RSHIFT',
-    
     # Comparison operators
-    # '<' : 'LT',
-    # '>' : 'GT',
     '<=' : 'LE',
     '>=' : 'GE',
     '==' : 'EQ',
     '!=' : 'NE',
     '!' : 'LNOT',
-
-
     # Assignment operators
     '=' : 'EQUALS',
     '*=' : 'TIMESEQUAL',
@@ -39,18 +43,14 @@ operators = {
     '%=' : 'MODEQUAL',
     '+=' : 'PLUSEQUAL',
     '-=' : 'MINUSEQUAL',
-   
     '&=' : 'ANDEQUAL',
     '|=' : 'OREQUAL',
     '^=' : 'XOREQUAL',
-
     # Increment/decrement
     '++' : 'INCREMENT',
     '--' : 'DECREMENT',
-
     # ->
     '->' : 'ARROW',
-
     # Delimiters
     '(' : 'LPAREN',
     ')' : 'RPAREN',
@@ -67,24 +67,20 @@ operators = {
     '<' : 'LANGLE',
     '>' : 'RANGLE',
     '...' : 'ELLIPSIS',
-
     # Arithmetic operators 
     '+' : 'PLUS',
     '-' : 'MINUS',
     '*' : 'TIMES',
     '/' : 'DIVIDE',
     '%' : 'MODULO',
-
     # Boolean
     'TRUE' : 'TRUE',
     'FALSE' : 'FALSE',
-
     '|' : 'OR',
     '&' : 'AND',
     '~' : 'NOT',
     '^' : 'XOR',
 }
-
 tokens = ['STRING','CHARACTER','ID', 'NUMCONST', 'PREPROC'] + [keyword.upper() for keyword in keywords] + [t.upper() for t in type_specifier] + list(operators.values())
 
 # Ignore whitespace and tabs
@@ -128,77 +124,79 @@ def t_ID(t):
         t.type = 'ID'
     return t
 
-# String, got the regex from ply documentation 
+# String
+# Got the regex from ply documentation 
 def t_string(t):
     r'\"([^\\\n]|(\\.))*?\"'
     t.type = 'STRING'
     return t
 
-# Single Character
+# Single character
 def t_character(t):
     r'\'\.\''
     t.type = 'CHARACTER'
     return t
 
-# binary number 
+# Binary number 
 def t_binary(t):
     r'0b[01]+'
     t.value = int(t.value,2)
     t.type = 'NUMCONST'
     return t
 
-# Hex number Stolen from Stackoverflow but modified to accpect both 0X and 0x 
+# Hex number
+# Stolen from StackOverflow but modified to accept both 0X and 0x 
 def t_hex(t):
     r'0[xX]([abcdef]|\d)+'
     t.value = int(t.value, 16)
     t.type = 'NUMCONST'
     return t
 
-# Floating Point Number
+# Floating point number
 def t_float(t):
     r'(-){0,1}[0-9]+\.[0-9]+'
     t.value = float(t.value)
     t.type = 'NUMCONST'
     return t
 
-# Integer Number
+# Integer number
 def t_number(t):
     r'(-){0,1}\d+'
     t.value = int(t.value)
     t.type = 'NUMCONST'
     return t
 
-# ComparisonOperator
+# Comparison operator
 def t_compOps(t):
     r"(==)|(\!=)|(>=)|(<=)"
     t.type = operators.get(t.value)
     return t
 
-# AssignmentOperator
+# Assignment operator
 def t_assignOps(t):
     r"(=)|(\+=)|(-=)|(\*=)|(/=)|(%=)|(<<=)|(>>=)|(&=)|(\^=)|(\|=)"   
     t.type = operators.get(t.value)
     return t
     
-# Logic Operator
+# Logical operator
 def t_logicOps(t):
     r"(\|\|)|(&&)|(\!)"
     t.type = operators.get(t.value)
     return t
 
-# BitwiseOperator
+# Bitwise operator
 def t_bitOps(t):
     r"(<<)|(>>)|(&)|(\|)|(\^)|(~)"
     t.type = operators.get(t.value)
     return t
 
-# Increment and Decrement 
+# Increment/decrement 
 def t_increment(t):
     r'\-\-|\+\+'
     t.type = operators.get(t.value)
     return t
 
-# ArithmeticOperator
+# Arithmetic operator
 def t_arithOps(t):
     r'[\/\+\-\*\%]'
     t.type = operators.get(t.value)
@@ -210,14 +208,14 @@ def t_delimiters(t):
     t.type = operators.get(t.value)
     return t
 
-# Error Handling 
+# Error handling 
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     sys.exit(1)
     # t.lexer.skip(1)
 
 # Build the lexer and input the file string into lexer
-# parameters: fileString, string of C source file 
+# parameters: fileString, string representation of C source code file
 def tokenizer(fileString):
     lexer = lex.lex()
     lexer.input(fileString)
