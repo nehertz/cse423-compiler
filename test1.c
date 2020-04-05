@@ -99,7 +99,7 @@ int main()
         // i = i * add3(i,j,k);
         // return i;
 
-        //// Samuel Example 2:
+        // Samuel Example 2:
         // int i, j;
         // j = 0;
         // for(i = 0; i < 10; ++i)

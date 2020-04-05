@@ -28,6 +28,8 @@ python3 main.py -options filename
 * -m : turn on the optimization pass(in progress)
 * -a : output assembly(in progress)
 
+# test1.c in the main directory contains all the test cases we used. 
+
 # How to use option -o
 ```
 python3 main.py -o source_filename output_filename

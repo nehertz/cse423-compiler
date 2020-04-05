@@ -485,7 +485,7 @@ class IR:
                         self.increment(n, n.name)
                     elif (n.name in assignment):
                         self.assign(n)
-        
+                            
         self.IRS.append([self.loopConditionLabel])
         for node in nodes.children:
             if (node.name == 'condition'):
