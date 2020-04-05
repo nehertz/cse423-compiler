@@ -464,8 +464,11 @@ class IR:
     def simpleBool(self, nodes):
         opand = []
         for node in nodes.children:
-            if (node.name not in comparison and node.name != '!'):
+            if (node.name not in comparison and node.name != '!' and node.name not in arithmetic):
                 opand.append(node.name)
+            elif (node.name in arithmetic):
+                temp = self.simpleExpr(node)
+                opand.append(temp)
             elif (node.name == '!'):
                 opand.append(node.name + str(node.children[0]).replace(';', '').strip())
         expr = opand[0] + nodes.name + opand[1]
@@ -485,11 +488,20 @@ class IR:
         i = 0
 
         for item in booleanExpr:
+            print(item)
+        for item in booleanExpr:
             if (item not in alc and item != '!'):
                 queue.append(item)
             elif (item == '!'):
                 op1 = queue.pop(0)
                 queue.append(item + op1)
+            elif (item in arithmetic):
+                operand2 = queue.pop(0)
+                operand1 = queue.pop(0)
+                operator = item
+                tempVar = 't_' + str(self.temporaryVarible)
+                queue.append(tempVar)
+                
             elif (item in comparison):
                 op1 = queue.pop(0)
                 op2 = queue.pop(0)
@@ -503,14 +515,22 @@ class IR:
                 dict = {expr : label}
                 self.labelPlace.update(dict)
         queue = []
-        
+        print(self.labelPlace)
         for item in booleanExpr:
-            
             if (item not in alc and item != '!'):
                 queue.append(item)
             elif (item == '!'):
                 op1 = queue.pop(0)
                 queue.append(item + op1)
+            elif (item in arithmetic):
+                operand2 = queue.pop(0)
+                operand1 = queue.pop(0)
+                operator = item
+                tempVar = 't_' + str(self.temporaryVarible)
+                ir = [tempVar, '=', operand1, operator, operand2]
+                self.IRS.append(ir)
+                queue.append(tempVar)
+                self.temporaryVarible += 1
             elif (item in comparison):
                 op1 = queue.pop(0)
                 op2 = queue.pop(0)

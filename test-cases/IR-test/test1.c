@@ -68,11 +68,11 @@ int main()
          
         // while and do while loop
         // int a;
-        // while ( !a > 3 || a < 1 ) {
-        //         //continue;
-        //         // break;
-        //         float j = j + 2;
-        // }
+        while ( a + 1 > 3 || a < 1 ) {
+                //continue;
+                // break;
+                float j = j + 2;
+        }
 
         // do {
         //         int i = i + 1;

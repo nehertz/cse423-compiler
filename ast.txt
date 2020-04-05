@@ -1,1 +1,1 @@
-(((a,b,c)args,((((a,b)+,c)+)return)stmt)func-add3,((None)args,((a,100)=,(b,30)=,(f,10.5)=,(a,'(int) f')=,(a,('(int) f',b)+)=)stmt)func-main)Program;
+(((a,b,c)args,((((a,b)+,c)+)return)stmt)func-add3,((None)args,((a,100)=,(b,30)=,(((((a,1)+,3)>,(a,1)<)||)condition,((j,(j,2)+)=)stmt)while)stmt)func-main)Program;
