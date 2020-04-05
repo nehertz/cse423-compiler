@@ -132,6 +132,7 @@ def p_operandList(p):
 
 #TODO: String
 
+            # | MINUS NUMCONST
 
 def p_operand(p):
     ''' 
@@ -139,7 +140,6 @@ def p_operand(p):
             | NUMCONST
             | funcCall
             | LPAREN expr RPAREN
-            | MINUS NUMCONST
 
     '''
     return astConstruct(p, 'operand')
@@ -435,23 +435,31 @@ def p_switch(p):
     return astConstruct(p, 'switch')
 
 
-def p_switchScope(p):
+def p_Scope(p):
     '''
     switchscope : LBRACE caseList RBRACE
     '''
     return astConstruct(p, 'switchscope')
 
 
+            #  | CASE CHARACTER COLON statementList caseList
+            #  | CASE CHARACTER COLON statementList 
+
+
 def p_caseList(p):
     '''
-    caseList : CASE operand COLON statementList caseList
-             | CASE CHARACTER COLON statementList caseList
-             | CASE operand COLON statementList 
-             | CASE CHARACTER COLON statementList 
-             | DEFAULT COLON statementList
+    caseList : CASE operand COLON switchStatementList caseList
+             | CASE operand COLON switchStatementList 
+             | DEFAULT COLON switchStatementList
     '''
     return astConstruct(p, 'caseList')
 
+def p_switchStatement(p):
+    '''
+    switchStatementList : statementList breakStmt SEMI
+                    | statementList
+    '''
+    return astConstruct(p, 'switchStatementList')
 
 def p_returnStmt(p):
     '''

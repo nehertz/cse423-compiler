@@ -163,7 +163,7 @@ def t_float(t):
 
 # Integer Number
 def t_number(t):
-    r'\d+'
+    r'(-){0,1}\d+'
     t.value = int(t.value)
     t.type = 'NUMCONST'
     return t

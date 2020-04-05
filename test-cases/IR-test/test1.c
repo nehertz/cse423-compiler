@@ -69,6 +69,22 @@ int main()
         //         i = 10;
         // }
 
+      // test switch Statement
+      int a = 3;
+      switch(a) {
+        case 4:
+          a = 4;
+          break;
+        case 12:
+          a = 23;
+          break;
+        default:
+          a = 12;
+      }
+
+
+
+
         ////test return stmt
         //return add(a, b);
         // return 1 + 2 + a +b;
