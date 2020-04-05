@@ -214,7 +214,7 @@ def astConstruct(p, type):
         if (len(p) == 2):
             p[0] = p[1]
         else:
-            p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
+            p[0] = '(' + str(p[1]) + ',' + 'M' + ',' + str(p[4]) + ')' + str(p[2])
 
     elif(type == 'compOps'):
         if (len(p) == 2):

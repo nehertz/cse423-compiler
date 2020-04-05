@@ -18,6 +18,7 @@ class IR:
             self.tree = TreeNode.read(StringIO(ast))
         self.temporaryVarible = 0
         self.label = 0
+        self.instr = 100
 
         # LL stands for Loop Label
         self.LL = 0
@@ -91,7 +92,7 @@ class IR:
                 if addToIR:
                     self.assign(node, addToIR)
                 else:
-                    statements.append(self.assign(node, addToIR))
+                    [statements.append(stmt) for stmt in self.assign(node, addToIR)]
 
             # convert the var-decl without assignment
             # Example: int a 
@@ -113,6 +114,7 @@ class IR:
                 if addToIR:
                     self.condStmt(node, addToIR)
                 else:
+                    # TODO: This might need to be changed to match others
                     statements.append(self.condStmt(node, addToIR))
 
             # convert simple expressions
@@ -123,7 +125,7 @@ class IR:
                 if addToIR:
                     self.simpleExpr(node, addToIR)
                 else:
-                    statements.append(self.simpleExpr(node, addToIR))
+                    [statements.append(stmt) for stmt in self.simpleExpr(node, addToIR)]
 
             # convert the goto stmt, and its label
             elif (node.name == 'goto'):
@@ -271,12 +273,15 @@ class IR:
                     operator = node.name
                     tempVar = 't_' + str(self.temporaryVarible)
                     ir = [tempVar, '=', operator + operand1]
+                    print(ir)
+
                 else:
                     operand2 = self.dequeue()
                     operand1 = self.dequeue()
                     operator = node.name
                     tempVar = 't_' + str(self.temporaryVarible)
                     ir = [tempVar, '=', operand1, operator, operand2]
+                    print(ir)
 
                 if addToIR:
                     self.IRS.append(ir)
@@ -411,96 +416,114 @@ class IR:
         else:
             self.IRS.append(ir)
 
-    def condParse(self, stmt):
-        # Parse an complex expression and break it down to
-        # E1 && E2
-        # E1 || E2
-        # !E
-        # (E)
-        subtree = self.getSubtree(stmt)
-        ops = arithmetic + comparison
-        unary = ['~', '!']
-        operand2 = ''
-        # tempVar = ''
-        # expr = []
+    def makeList(self, i):
+        return {i:None}
+
+    def merge(self, p1, p2):
+        return p1.append(p2)
+
+    def backpatch(self, p, i):
+        for k in p:
+            p[k] = i
+
+    def condParse2(self, cond, block):
+        # Clear the queue
         self.queue = []
-        for node in reversed(subtree):
-            if (node.name in logical):
-                # self.enqueue(node.name)
-                if (node.name == '!'):
-                    expr = [node.name, self.dequeue()]
-                    self.enqueue(expr)
+        exprs = []
+        first = True
+        # negateExpr = {
+        #     '>':'<=',
+        #     '<':'>=',
+        #     '>=':'<',
+        #     '<=':'>'
+        # }
+        
+        if cond:
+            for node in reversed(self.getSubtree(cond)):
+                # print(node.name)
+                # print(self.queue)
+
+                if node.name == 'M':
+                    # Node is conditional marker
+                    continue
+                elif node.name not in alc:
+                    # Node is a variable
+                    self.enqueue(node.name)
+                elif node.name in arithmetic + comparison:
+                    # Node is a non-logical operator
+                    if (node.name == '~'):
+                        self.enqueue(node.name + self.dequeue())
+                    else:
+                        oper2 = self.dequeue()
+                        oper1 = self.dequeue()
+                        self.enqueue(oper1 + ' ' + node.name + ' ' + oper2)
                 else:
-                    expr = [node.name, [self.dequeue(), self.dequeue()]]
-                    self.enqueue(expr)
-            elif (node.name not in ops):
-                self.enqueue(node.name)
-            elif (node.name in ops):
-                if (node.name in unary):
-                    operand1 = self.dequeue()
-                    operator = node.name
-                    # tempVar = 't_' + str(self.temporaryVarible)
-                    # ir = [tempVar, '=', operator + operand1]
-                    self.enqueue(operator + operand1)
-                else:
-                    operand2 = self.dequeue()
-                    operand1 = self.dequeue()
-                    operator = node.name
-                    # tempVar = 't_' + str(self.temporaryVarible)
-                    # ir = [tempVar, '=', operand1, operator, operand2]
-                    self.enqueue(operand1 + ' ' + operator + ' ' + operand2)
-                # self.IRS.append(ir)
-                # self.enqueue(tempVar)
-                # self.temporaryVarible += 1
-            # print(self.queue)
-            
-        self.dequeue()
-        return expr
+                    # Node is a logical operator
+                    if (node.name == '!'):
+                        # Node is unary ! operator
+                        expr = node.name + self.dequeue()
+                        # exprs.append({self.instr:['if', expr, 'goto', None]})
+                        # self.instr += 1
+                        # exprs.append({self.instr:['goto', None]})
+                        # self.instr += 1
+                        self.enqueue(expr)
+                    else:
+                        # Node is binary && or || operator
+                        oper2 = self.dequeue()
+                        oper1 = self.dequeue()
+                        if first:
+                            exprs.append({self.instr:[['if', oper1, 'goto', None]]})
+                            self.instr += 1
+                            exprs.append({self.instr:[['goto', None]]})
+                            self.instr += 1
+                            first = False
+                        exprs.append({self.instr:[['if', oper2, 'goto', None]]})
+                        self.instr += 1
+                        exprs.append({self.instr:[['goto', None]]})
+                        self.instr += 1
+                        self.enqueue(oper1 + ' ' + node.name + ' ' + oper2)
+
+        exprs.append({self.instr:block})
+        self.instr += 1
+
+        return exprs
 
     # TODO: Add comments
     # TODO: Add toggling for adding to IR after implementing adding to IR
     def condStmt(self, nodes, addToIR=True):
-        conds = {}
-        # conds format: conds[<if+if#/else>] = [<if-condition>, <if-block>, <if-label>]
-        ifCount = 0
-        bCount = 0
+        condStmts = []
+        endIfLabel = self.instr
+        self.instr += 1
 
-        for i, stmt in enumerate(nodes):
-            # Collect conditional statement info
+        for stmt in nodes:
+            # Loop through if/else statements
             if (stmt.name == 'if' or stmt.name == 'else-if'):
-                # Handle if and else if
-                cond = self.condParse(stmt[0])
-                # cond.reverse()
+                # Handle ifs and else ifs
+                cond = stmt.children[0]
+                block = self.statement(stmt.children[1], False)
+                block.append(['goto', endIfLabel])
+                # print(block)
 
-                # self.IRS.append([stmt.name + ' (' + str(cond) + ')'])
-                # self.IRS.append(['{'])
-                # self.statement(stmt.children[1])
-                # self.IRS.append(['}'])
-
-                if (i == 0):
-                    # First if statement does not have a label
-                    conds['block' + str(bCount)] = [self.statement(stmt.children[1], False), 'l_' + str(self.label)]
-                    bCount += 1
-                    self.label += 1
-                    conds['if' + str(ifCount)] = [cond, None]
-                else:
-                    conds['if' + str(ifCount)] = [cond, self.statement(stmt.children[1], False), 'l_' + str(self.label)]
-                    self.label += 1
-                ifCount += 1
+                stmts = self.condParse2(cond, block)
             else:
                 # Handle else
-                # self.IRS.append([stmt.name])
-                # self.IRS.append(['{'])
-                # self.statement(stmt.children[0])
-                # self.IRS.append(['}'])
-                conds['else'] = [None, self.statement(stmt.children[0], False), 'l_' + str(self.label)]
-                self.label += 1
-
-        # for cond in conds:
-            # Generate conditional IR
-
+                block = self.statement(stmt.children[0], False)
+                # print(block)
+                
+                stmts = self.condParse2(None, block)
             
-        [print(k, v) for k, v in conds.items()]
+            # Add statements generated from condParse to list of statements
+            [condStmts.append(s) for s in stmts]
+
+        condStmts.append({endIfLabel:[None]})
+
+        for val in condStmts:
+            # print(val)
+            for k, v in val.items():
+                # print(v)
+                print('<l_{}>:'.format(k))
+                [print(l) for l in v]
+                # [" ".join(l) for l in v]
 
     def whileloop(self, nodes, addToIR=True):
         enterLoopLabel = self.createLabel(nodes, 'loop')

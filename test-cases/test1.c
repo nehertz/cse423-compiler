@@ -4,14 +4,14 @@ int main()
         int b;
         int c = a + b;
 
-        if ((a < b) && (a > b)) {
+        if ((a < b) && (a > b) || c) {
                 a++;
                 b++;
-                return 1;
-        } else if (!c && !a) {
-                return -1;
+        } else if (!(c && a)) {
+                a = 2;
         } else {
                 a = a - b;
-                return 0;
         }
+
+        return 0;
 }
