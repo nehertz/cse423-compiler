@@ -164,7 +164,7 @@ def astConstruct(p, type):
 
     elif(type == 'ifStmt'):
         if (len(p) == 6):
-            p[0] = '(' + '(' + str(p[3]) + ')condition' + ',' + \
+            p[0] = '(' + '(' + '(' + str(p[3]) + ')condition' + ',' + \
                 str(p[5]) + ')' + 'if' + ')ifstmt'
         else:
             p[0] = '(' + '(' + '(' + str(p[3]) +  ')condition' + ',' + str(p[5]) + ')' + \
