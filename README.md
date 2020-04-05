@@ -8,7 +8,7 @@
 # How to install Python dependencies
 
 * Run this in your terminal: Tested on Ubuntu bionic
-* Note: no more dependencies added after project 1
+
 ```
 pip3 install -r documentation/requirements.txt
 ```
