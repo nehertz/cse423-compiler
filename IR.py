@@ -47,11 +47,12 @@ class IR:
                 self.funcNode(node, node.name)
             # Handle enums
             elif ('enum-' in str(node.name)):
-                enumPair = self.enumDeclaration(node)
-                enumName = str(node.name).replace('enum-', '')
-                dict = {enumName : enumPair}
-                self.enumList.update(dict)
-                self.enumConst.append(enumPair)
+                pass
+                # enumPair = self.enumDeclaration(node)
+                # enumName = str(node.name).replace('enum-', '')
+                # dict = {enumName : enumPair}
+                # self.enumList.update(dict)
+                # self.enumConst.append(enumPair)
                 # print(enumConst)
             # Handle global variable declaration without assignment
             elif (node.name == 'varDecl'):
