@@ -3,7 +3,6 @@ from ply_scanner import assignment
 class assembly:
     def __init__(self, ir):
         self.IR = ir
-        
         self.ass = []
 
     

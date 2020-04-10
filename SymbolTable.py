@@ -247,13 +247,12 @@ class SymbolTable:
         print('func name not found  ' + name)
         sys.exit(1)
 
-    def getTotalSpace(self, token, scope):
+    def getTotalSpace(self, scope):
         '''
         This method returns the sum of the memory space required by counting how many 
         variables are in the scope and counting memory of each variable according to their 
         type specifier.
         '''
-        token = token.replace(';', '')
         fourByte = ['int', 'unsigned int', 'signed int', 'long', 'float']
         twoByte = ['short', 'unsigned short', 'signed short']
         oneByte = ['bool', 'char', 'signed char', 'unsigned char']
