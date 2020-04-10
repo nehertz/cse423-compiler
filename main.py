@@ -12,6 +12,7 @@ from ply_parser import st
 from typeChecking import TypeChecking
 from IR import IR
 from optimization import optimization
+from assembly import assembly
 
 # Print usage instructions for the compiler
 # parameters: None
@@ -182,14 +183,15 @@ if __name__ == "__main__":
     
     # Print the assembly when the optimization flag is on
     elif (flag == 7 and optimizationFlag == 1):
-        print("in progress")
-        exit()
         IR = ir.run()
         optimizedIR = optimization(IR)
         IR = optimizedIR.run()
+        assembly = assembly(IR)
+        assembly.run()
+
         
     # Print the assembly when the optimization flag is off      
     elif (flag == 7 and optimizationFlag == 0):
-        print("in progress")
-        exit()
         IR = ir.run()
+        assembly = assembly(IR)
+        assembly.run()
