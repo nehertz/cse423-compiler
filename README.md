@@ -10,7 +10,7 @@
 * Run this in your terminal: Tested on Ubuntu bionic
 
 ```
-pip3 install -r documentation/requirements.txt
+pip3 install -r documentation/requirements2.txt
 ```
 
 # How to Use
