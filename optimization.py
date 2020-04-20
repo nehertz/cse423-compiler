@@ -14,7 +14,7 @@ class optimization:
         self.findLeaders()
         self.removeDupLeader()
         self.invoke()
-    
+        self.removeLines()
         return self.IRS
     
     def findFunctionBlocks(self):
@@ -93,12 +93,12 @@ class optimization:
         # use flag to identity if any changes happend 
         flag = 0
         for line in basicBlock:
-
             if (len(line) == 3 and line[1] == '=' and line[0] not in self.varValue.keys()):
                 floatPatten = re.compile(r"[0-9]+\.[0-9]+")
-                intPatten = re.compile(r"\d+")
+                intPatten = re.compile(r"^[-+]?\d+$")
                 if (intPatten.match(str(line[2]))):
                     dict = {line[0] : int(line[2])}
+                    
                 elif (floatPatten.match(str(line[2]))):
                     dict = {line[0] : float(line[2])}
                 else:
@@ -141,6 +141,19 @@ class optimization:
                     flag = 1
                     if (line[0] in self.varValue.keys()):
                         del self.varValue[line[0]]
+                elif ('(' in opand and ('int' in opand or 'float' in opand)):
+                    if ('int' in opand):
+                        opand = str(opand).replace('(int)', '').strip()
+                        if (opand in self.varValue.keys()):
+                            value = int(self.varValue[opand])
+                            self.IRS[lineNum][index] = str(value)
+                            flag = 1
+                    elif ('float' in opand):
+                        opand = str(opand).replace('(float)', '').strip()
+                        if (opand in self.varValue.keys()):
+                            value = float(self.varValue[opand])
+                            self.IRS[lineNum][index] = str(value)
+                            flag = 1
                 index += 1
             lineNum += 1
         return flag
@@ -159,7 +172,6 @@ class optimization:
         for oprnd in line:
             oprnd = str(oprnd)
             if (floatPatten.match(oprnd)):
-                print(oprnd)
                 expr.append(float(oprnd))
             elif (intPatten.match(oprnd)):
                 expr.append(int(oprnd))
@@ -172,7 +184,47 @@ class optimization:
                 else:
                     return flag 
         result = self.simpleArithmetic(expr[2],expr[3],expr[4])
-        return result
+        return str(result)
+
+    # remove var decls and assignments which the variable is not used 
+    # in anywhere else inside the function
+    def removeLines(self):
+        for funcBlcoks in self.functionBlock:
+            # keep track how many times the variable is referenced 
+            varRefCount = {}
+            varLocation = []
+            funcStart = funcBlcoks[0] - 1
+            funcEnd = funcBlcoks[1]
+            lineNum = funcStart
+            while(lineNum < funcEnd):
+                line = self.IRS[lineNum]
+                # Var decl without assigment 
+                if(len(line) == 1 and ':' not in line[0]):
+                    dict = {line[0] : 0}
+                    varRefCount.update(dict)
+                    varLocation.append(lineNum)
+                elif(len(line) >= 3 and line[1] == '='):
+                    if(line[0] in varRefCount.keys()):
+                        varRefCount[line[0]] = 1
+                    else:
+                        dict = {line[0] : 0}
+                        varRefCount.update(dict)
+                        varLocation.append(lineNum)
+                else:
+                    for key in varRefCount.keys():
+                        for opand in line:
+                            if(key == opand):
+                                varRefCount[key] = 1
+                lineNum += 1
+
+            locationIndex = 0
+            for key in varRefCount.keys():
+                if(varRefCount[key] == 0):
+                    self.IRS[varLocation[locationIndex]] = ''        
+                locationIndex += 1
+
+            while('' in self.IRS): 
+                self.IRS.remove('') 
 
     def removeDupLeader(self):
         res = []

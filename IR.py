@@ -330,8 +330,7 @@ class IR:
     def varDecl(self, nodes):
         for node in nodes:
             if(node.name != None):
-                # self.IRS.append([node.name])
-                pass
+                self.IRS.append([node.name])
     
     # Translate goto statement into IR.
     # parameters: nodes, AST subtree with relevant parsed data

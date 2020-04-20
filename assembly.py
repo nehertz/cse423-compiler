@@ -42,7 +42,7 @@ class assembly:
         # scanning through the body, 
         for statement in body:
             # translate assignment statement 
-            if (len(statement) >= 3 and statement[1] in assignment)
+            if (len(statement) >= 3 and statement[1] in assignment):
                 self.assignment(statement)
             
             # simply creates the goto and label code

@@ -17,9 +17,14 @@ int main()
         // day = Sun;
         // day = Mon + 10; 
 
-        //// Test var decl  
+        //// Test var decl 
+        int aa;
+        int bb; 
         int a = 100;
         int b = 30;
+        float e = 20.2;
+        int c = 10 / e;
+        return aa;
         // int c; 
         // float d;
         // int e, f, g;
