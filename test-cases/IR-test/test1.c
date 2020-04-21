@@ -65,7 +65,7 @@ int main()
         // even:
         //         a = 1;
          
-        // while and do while loop
+        // // while and do while loop
         // int a;
         // while ( a + 1 > 3 || a < 1 ) {
         //         //continue;
