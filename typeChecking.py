@@ -293,6 +293,7 @@ class TypeChecking:
         '''
         makes the string into an appropriate form
         '''
+        
         typeString = typeString.replace('unsigned ', 'U')
         typeString = typeString.replace('int', 'Int')
         typeString = typeString.replace('signed', '')
