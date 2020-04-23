@@ -417,26 +417,23 @@ class IR:
             self.IRS.append(ir)
 
     def makeList(self, i):
-        return {i:None}
+        return [i]
 
     def merge(self, p1, p2):
-        return p1.append(p2)
+        return sorted(p1.append(p2))
 
-    def backpatch(self, p, i):
+    def backpatch(self, exprs, p, i):
         for k in p:
-            p[k] = i
+            exprs[k][0].replace('_', i)
 
+    # TODO: Change queue so that enqueued expressions carry with them their addr values
+    # TODO: Implement backpatching for each case based on the grammar from the PDF
     def condParse2(self, cond, block):
         # Clear the queue
         self.queue = []
-        exprs = []
+        exprs = {}
         first = True
-        # negateExpr = {
-        #     '>':'<=',
-        #     '<':'>=',
-        #     '>=':'<',
-        #     '<=':'>'
-        # }
+        nextaddr = 100
         
         if cond:
             for node in reversed(self.getSubtree(cond)):
@@ -448,26 +445,58 @@ class IR:
                     continue
                 elif node.name not in alc:
                     # Node is a variable
-                    self.enqueue(node.name)
+                    if (node.parent.name in logical):
+                        # Node is an expression where var == 1 is true
+                        expr = '{} == 1'.format(node.name)
+                        exprs[nextaddr] = ['if {} goto _'.format(expr), self.makeList(nextaddr), self.makeList(nextaddr + 1)]
+                        self.enqueue([nextaddr, node.name])
+                        exprs[nextaddr + 1] = ['goto _']
+                        nextaddr += 2
+                    else:
+                        # Node is a variable in an arithmetic or comparison expression
+                        self.enqueue([nextaddr, node.name])
                 elif node.name in arithmetic + comparison:
                     # Node is a non-logical operator
+                    # E -> id1 relop id2
+                    # 1. E.truelist = makelist(nextaddr)
+                    # 2. nextaddr += 1
+                    # 3. E.falselist = makelist(nextaddr)
+                    # 4. nextaddr += 1
+                    # 5. print('if {} {} {} goto _'.format(oper1, node.name, oper2))
+                    # 6. print('goto _')
+
                     if (node.name == '~'):
-                        self.enqueue(node.name + self.dequeue())
+                        oper = self.dequeue()
+                        expr = '{} {}'.format(node.name, oper)
+                        exprs[nextaddr] = ['if {} goto _'.format(expr), self.makeList(nextaddr), self.makeList(nextaddr + 1)]
+                        self.enqueue((nextaddr, expr))
+                        exprs[nextaddr + 1] = ['goto _']
+                        nextaddr += 2
                     else:
                         oper2 = self.dequeue()
                         oper1 = self.dequeue()
-                        self.enqueue(oper1 + ' ' + node.name + ' ' + oper2)
+                        expr = '{} {} {}'.format(oper1, node.name, oper2)
+                        exprs[nextaddr] = ['if {} goto _'.format(expr), self.makeList(nextaddr), self.makeList(nextaddr + 1)]
+                        self.enqueue((nextaddr, expr))
+                        exprs[nextaddr + 1] = ['goto _']
+                        nextaddr += 2
                 else:
                     # Node is a logical operator
                     if (node.name == '!'):
                         # Node is unary ! operator
+                        # E -> not E1
+                        # 1. E.truelist = E1.falselist
+                        # 2. E.falselist = E1.truelist
+
                         expr = node.name + self.dequeue()
+                        exprs[nextaddr] = []
                         # exprs.append({self.instr:['if', expr, 'goto', None]})
                         # self.instr += 1
                         # exprs.append({self.instr:['goto', None]})
                         # self.instr += 1
                         self.enqueue(expr)
                     else:
+                        # TODO: Check for && and || individually; implement backpatching for those cases
                         # Node is binary && or || operator
                         oper2 = self.dequeue()
                         oper1 = self.dequeue()
