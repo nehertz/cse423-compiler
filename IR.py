@@ -420,20 +420,18 @@ class IR:
         return [i]
 
     def merge(self, p1, p2):
-        return sorted(p1.append(p2))
+        return sorted(p1 + p2)
 
     def backpatch(self, exprs, p, i):
         for k in p:
-            exprs[k][0].replace('_', i)
+            exprs[k] = exprs[k].replace('_', i)
 
-    # TODO: Change queue so that enqueued expressions carry with them their addr values
-    # TODO: Implement backpatching for each case based on the grammar from the PDF
+        return exprs
+
     def condParse2(self, cond, block):
         # Clear the queue
         self.queue = []
-        exprs = {}
-        first = True
-        nextaddr = 100
+        stmts = {}
         
         if cond:
             for node in reversed(self.getSubtree(cond)):
@@ -448,79 +446,99 @@ class IR:
                     if (node.parent.name in logical):
                         # Node is an expression where var == 1 is true
                         expr = '{} == 1'.format(node.name)
-                        exprs[nextaddr] = ['if {} goto _'.format(expr), self.makeList(nextaddr), self.makeList(nextaddr + 1)]
-                        self.enqueue([nextaddr, node.name])
-                        exprs[nextaddr + 1] = ['goto _']
-                        nextaddr += 2
+                        stmts[self.instr] = 'if {} goto _'.format(expr)
+                        self.enqueue([self.instr, expr, self.makeList(self.instr), self.makeList(self.instr + 1)])
+                        stmts[self.instr + 1] = 'goto _'
+                        self.instr += 2
                     else:
                         # Node is a variable in an arithmetic or comparison expression
-                        self.enqueue([nextaddr, node.name])
+                        self.enqueue((self.instr, node.name, [], []))
                 elif node.name in arithmetic + comparison:
                     # Node is a non-logical operator
                     # E -> id1 relop id2
-                    # 1. E.truelist = makelist(nextaddr)
-                    # 2. nextaddr += 1
-                    # 3. E.falselist = makelist(nextaddr)
-                    # 4. nextaddr += 1
+                    # 1. E.truelist = makelist(self.instr)
+                    # 2. self.instr += 1
+                    # 3. E.falselist = makelist(self.instr)
+                    # 4. self.instr += 1
                     # 5. print('if {} {} {} goto _'.format(oper1, node.name, oper2))
                     # 6. print('goto _')
 
                     if (node.name == '~'):
                         oper = self.dequeue()
-                        expr = '{} {}'.format(node.name, oper)
-                        exprs[nextaddr] = ['if {} goto _'.format(expr), self.makeList(nextaddr), self.makeList(nextaddr + 1)]
-                        self.enqueue((nextaddr, expr))
-                        exprs[nextaddr + 1] = ['goto _']
-                        nextaddr += 2
+                        expr = '{} {}'.format(node.name, oper[1])
+                        stmts[self.instr] = 'if {} goto _'.format(expr)
+                        self.enqueue((self.instr, expr, self.makeList(self.instr), self.makeList(self.instr + 1)))
+                        stmts[self.instr + 1] = 'goto _'
+                        self.instr += 2
                     else:
                         oper2 = self.dequeue()
                         oper1 = self.dequeue()
-                        expr = '{} {} {}'.format(oper1, node.name, oper2)
-                        exprs[nextaddr] = ['if {} goto _'.format(expr), self.makeList(nextaddr), self.makeList(nextaddr + 1)]
-                        self.enqueue((nextaddr, expr))
-                        exprs[nextaddr + 1] = ['goto _']
-                        nextaddr += 2
+                        expr = '{} {} {}'.format(oper1[1], node.name, oper2[1])
+                        stmts[self.instr] = 'if {} goto _'.format(expr)
+                        self.enqueue((self.instr, expr, self.makeList(self.instr), self.makeList(self.instr + 1)))
+                        stmts[self.instr + 1] = 'goto _'
+                        self.instr += 2
                 else:
                     # Node is a logical operator
                     if (node.name == '!'):
+                        # TODO: This will probably need some work?
                         # Node is unary ! operator
                         # E -> not E1
+
+                        oper = self.dequeue()
+                        expr = node.name + oper[1]
+                        stmts[self.instr] = 'if {} goto _'.format(expr)
                         # 1. E.truelist = E1.falselist
                         # 2. E.falselist = E1.truelist
+                        self.enqueue((self.instr, expr, oper[3], oper[2]))
+                        stmts[self.instr + 1] = 'goto _'
+                        self.instr += 2
+                    elif(node.name == '&&'):
+                        # E -> E1 && E2
 
-                        expr = node.name + self.dequeue()
-                        exprs[nextaddr] = []
-                        # exprs.append({self.instr:['if', expr, 'goto', None]})
-                        # self.instr += 1
-                        # exprs.append({self.instr:['goto', None]})
-                        # self.instr += 1
-                        self.enqueue(expr)
+                        e1 = self.dequeue()
+                        e1Truelist, e1Falselist = e1[2], e1[3]
+                        e2 = self.dequeue()
+                        e2addr, e2Truelist, e2Falselist = e2[0], e2[2], e2[3]
+                        eTruelist, eFalselist = [], []
+
+                        # 1. backpatch(E1.truelist, e2.addr)
+                        stmts = self.backpatch(stmts, e1Truelist, str(e2addr))
+                        # 2. E.truelist = E2.truelist
+                        eTruelist = e2Truelist
+                        # 3. E.falselist = merge(E1.falselist, E2.falselist)
+                        eFalselist = self.merge(e1Falselist, e2Falselist)
+
+                        self.enqueue((self.instr, '&&', eTruelist, eFalselist))
                     else:
-                        # TODO: Check for && and || individually; implement backpatching for those cases
-                        # Node is binary && or || operator
-                        oper2 = self.dequeue()
-                        oper1 = self.dequeue()
-                        if first:
-                            exprs.append({self.instr:[['if', oper1, 'goto', None]]})
-                            self.instr += 1
-                            exprs.append({self.instr:[['goto', None]]})
-                            self.instr += 1
-                            first = False
-                        exprs.append({self.instr:[['if', oper2, 'goto', None]]})
-                        self.instr += 1
-                        exprs.append({self.instr:[['goto', None]]})
-                        self.instr += 1
-                        self.enqueue(oper1 + ' ' + node.name + ' ' + oper2)
+                        # E -> E1 || E2
+                        e1 = self.dequeue()
+                        e1Truelist, e1Falselist = e1[2], e1[3]
+                        e2 = self.dequeue()
+                        e2addr, e2Truelist, e2Falselist = e2[0], e2[2], e2[3]
+                        eTruelist, eFalselist = [], []
 
-        exprs.append({self.instr:block})
-        self.instr += 1
+                        # 1. backpatch(E1.falselist, e2.addr)
+                        stmts = self.backpatch(stmts, e1Falselist, str(e2addr))
+                        # 2. E.truelist = merge(E1.truelist, E2.truelist)
+                        eTruelist = self.merge(e1Truelist, e2Truelist)
+                        # 3. E.falselist = E2.falselist
+                        eFalselist = e2Falselist
+                        
+                        self.enqueue((self.instr, '||', eTruelist, eFalselist))
 
-        return exprs
+        # exprs.append({self.instr:block})
+        # self.instr += 1
 
-    # TODO: Add comments
+        return stmts
+
+    # TODO: For each elif/else stmt, keep track of addr of first stmt in a list
+        # When an if/elif is false, jump to next addr
+        # Last addr is else addr
+        # Patch in correct values for each statement
     # TODO: Add toggling for adding to IR after implementing adding to IR
     def condStmt(self, nodes, addToIR=True):
-        condStmts = []
+        output = []
         endIfLabel = self.instr
         self.instr += 1
 
@@ -530,29 +548,45 @@ class IR:
                 # Handle ifs and else ifs
                 cond = stmt.children[0]
                 block = self.statement(stmt.children[1], False)
-                block.append(['goto', endIfLabel])
-                # print(block)
+                blockLabel = self.instr
+                self.instr += 1
 
                 stmts = self.condParse2(cond, block)
+                # [print(k, v) for k,v in stmts.keys()]
+                for k, v in stmts.items():
+                    # print("<{}>:\n{}".format(k, v))
+                    if (k % 2 == 0):
+                        # True statements that will jump to block
+                        v = v.replace('_', str(blockLabel))
+                    output.append(["<{}>:".format(k)])
+                    output.append([v])
+                
+                block.insert(0, ["<{}>:".format(blockLabel)])
+                block.append(['goto {}'.format(endIfLabel)])
+                [output.append(s) for s in block]
             else:
                 # Handle else
                 block = self.statement(stmt.children[0], False)
-                # print(block)
+                blockLabel = self.instr
                 
                 stmts = self.condParse2(None, block)
+                # [print(k, v) for k,v in stmts.keys()]
+                # print(stmts)
+                for k, v in stmts.items():
+                    # print("<{}>:\n{}".format(k, v))
+                    if (k % 2 == 0):
+                        # True statements that will jump to block
+                        v = v.replace('_', str(blockLabel))
+                    output.append(["<{}>:".format(k)])
+                    output.append([v])
+                
+                block.insert(0, ["<{}>:".format(blockLabel)])
+                block.append(['goto {}'.format(endIfLabel)])
+                [output.append(s) for s in block]
             
             # Add statements generated from condParse to list of statements
-            [condStmts.append(s) for s in stmts]
-
-        condStmts.append({endIfLabel:[None]})
-
-        for val in condStmts:
-            # print(val)
-            for k, v in val.items():
-                # print(v)
-                print('<l_{}>:'.format(k))
-                [print(l) for l in v]
-                # [" ".join(l) for l in v]
+            # [condStmts.append(s) for s in stmts]
+        self.IRS.append(["<{}>:".format(endIfLabel)])     
 
     def whileloop(self, nodes, addToIR=True):
         enterLoopLabel = self.createLabel(nodes, 'loop')
