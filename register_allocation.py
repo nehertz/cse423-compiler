@@ -1,4 +1,6 @@
 import re
+
+
 class interference_graph:
     def __init__(self, ir):
         self.ir = []
@@ -12,6 +14,8 @@ class interference_graph:
         self.funcNameDict = {}
         self.interferenceGraph = {}
         self.num = re.compile(r'\d+')
+        self.EdgesList = []
+        self.VertexList = []
 
     def create_dictionary_with_funcName(self):
         ''' 
@@ -111,3 +115,17 @@ class interference_graph:
         self.interferenceGraph['%r13'] = []
         self.interferenceGraph['%r14'] = []
         self.interferenceGraph['%r15'] = []
+
+    
+    def createEdgesList(self):
+        for key, value in self.interferenceGraph.items():
+            if (value):
+                for elem in value:
+                    self.EdgesList.append((key, elem))
+        return
+    def createVertexList(self):
+        for key, _ in self.interferenceGraph.items():
+            if (key not in self.VertexList):
+                self.VertexList.append(key)
+        return
+
