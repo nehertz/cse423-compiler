@@ -4,13 +4,9 @@ int main()
         int b;
         int c = a + b;
 
-        if ((a < b) && (a > b) || c) {
+        if (!(a > b || a < b)) {
                 a++;
                 b++;
-        } else if (!(c && a)) {
-                a = 2;
-        } else {
-                a = a - b;
         }
 
         return 0;
