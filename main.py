@@ -193,5 +193,6 @@ if __name__ == "__main__":
     # Print the assembly when the optimization flag is off      
     elif (flag == 7 and optimizationFlag == 0):
         IR = ir.run()
+        ir.printIR()
         assembly = assembly(IR)
         assembly.run()

@@ -1,4 +1,5 @@
 from ply_scanner import assignment
+from assembly_assign import *
 
 class assembly:
     def __init__(self, ir):
@@ -11,7 +12,6 @@ class assembly:
         funcScope = []
         flag = 0
         for line in self.IR:
-            print(line)
             # translate function name and args to assembly 
             if ('(' in line and ')' in line and self.IR[lineNumber+1][0] == '{'):
                 self.funcName(line)
@@ -27,6 +27,8 @@ class assembly:
             elif (flag):
                 funcScope.append(line)
             lineNumber += 1
+            
+        self.printAssembly()
     
     def funcName(self, line):
         # creates function label, creates assembly code to handel args if exist. 
@@ -70,25 +72,35 @@ class assembly:
         # and assignment with arithmetic, a = 1 + b
         # One special case: function call in arithmetic. 
         if (len(statement) == 3 ):
-            self.simpleAssign(statement)
+            simpleAssign(statement[0], statement[2], self.ass)
 
         elif (statement[3] == '+'):
-            self.plus(statement[0], statement[2], statement[4])
+            plus(statement[0], statement[2], statement[4])
         
         elif (statement[3] == '-'):
-            self.minus(statement[0], statement[2], statement[4])
+            minus(statement[0], statement[2], statement[4])
 
         #....keep going 
 
-    def plus(self, RHS, op_1, op_2):
-        pass
-
-    def minus(self, RHS, op_1, op_2):
-        pass
-
     def funcCall(self, statement):
         pass
-
+    
+    def printAssembly(self):
+        str1 = " "
+        indentFlag = 0
+        for list in self.ass:
+            if (str1.join(list) == '{'):
+                indentFlag = 1
+                print(str1.join(list))
+                continue
+            elif (str1.join(list) == '}'):
+                indentFlag = 0
+                print(str1.join(list))
+                continue
+            elif (indentFlag):
+                print('\t', str1.join(list))
+            else:
+                print(str1.join(list))
 
 
     
