@@ -1,7 +1,8 @@
 import re
+import operator
+# from main import StReg
 
-
-class interference_graph:
+class InterferenceGraph:
     def __init__(self, ir):
         self.ir = []
         self.tmpIR = ir
@@ -9,13 +10,37 @@ class interference_graph:
         # self.Lbrace = re.compile(r'\{')
         # self.Rbrace = re.compile(r'\}')
         self.expr = re.compile(r'.*=.*')
-        self.readIR(self.tmpIR)
         self.liveVars = {}
         self.funcNameDict = {}
         self.interferenceGraph = {}
         self.num = re.compile(r'\d+')
         self.EdgesList = []
         self.VertexList = []
+        self.simplicialOrdering = []
+        self.vertexRegisters = {}
+    
+    def run(self):
+        self.create_dictionary_with_funcName()
+        self.test_live()
+        self.createEdgesList()
+        self.createVertexList()
+        self.maxCardinalitySearch()
+        self.greedy_coloring()
+        
+    def get_availableReg(self,var):
+        '''
+        returns flag whether the register is whether this is memory 
+        location or a register and assigned register with the register-
+        allocation algorithm
+        '''
+        if (var in self.vertexRegisters.keys()):
+            # assuming there's an assigned register 
+            # if not this will return a memory address
+            availableReg = self.vertexRegisters[var]
+            if ('%' in availableReg):
+                return (True, availableReg)
+            return (False, availableReg)
+        return (False, None)
 
     def create_dictionary_with_funcName(self):
         ''' 
@@ -43,6 +68,10 @@ class interference_graph:
                 continue 
             else:
                 for line in reversed(val[1:]):
+                    if ('ret' in line):
+                        self.insertNodeIG('%rax')
+                        continue
+
                     if (self.expr.match(line)):
                         (lvalue, rvalue1, rvalue2) = self.checkLiveness(line)
                         self.insertNodeIG(lvalue)
@@ -90,31 +119,24 @@ class interference_graph:
         if (not val in self.interferenceGraph):
             self.interferenceGraph[val] = []
         return
-                
-    def readIR(self, fileString):
-        fileString = [x.strip() for x in fileString]  
-        fileString = [x.replace('\t', ' ') for x in fileString]  
-        for line in fileString:
-            list = line.split()
-            self.ir.append(list)
 
-    def initiateInterferenceGraph(self):
-        self.interferenceGraph['%rax'] = []
-        self.interferenceGraph['%rcx'] = []
-        self.interferenceGraph['%rdx'] = []
-        self.interferenceGraph['%rbx'] = []
-        self.interferenceGraph['%rsi'] = []
-        self.interferenceGraph['%rdi'] = []
-        self.interferenceGraph['%rsp'] = []
-        self.interferenceGraph['%rbp'] = []
-        self.interferenceGraph['%r8'] = []
-        self.interferenceGraph['%r9'] = []
-        self.interferenceGraph['%r10'] = []
-        self.interferenceGraph['%r11'] = []
-        self.interferenceGraph['%r12'] = []
-        self.interferenceGraph['%r13'] = []
-        self.interferenceGraph['%r14'] = []
-        self.interferenceGraph['%r15'] = []
+    # def initiateInterferenceGraph(self):
+    #     self.interferenceGraph['%rax'] = []
+    #     self.interferenceGraph['%rcx'] = []
+    #     self.interferenceGraph['%rdx'] = []
+    #     self.interferenceGraph['%rbx'] = []
+    #     self.interferenceGraph['%rsi'] = []
+    #     self.interferenceGraph['%rdi'] = []
+    #     self.interferenceGraph['%rsp'] = []
+    #     self.interferenceGraph['%rbp'] = []
+    #     self.interferenceGraph['%r8'] = []
+    #     self.interferenceGraph['%r9'] = []
+    #     self.interferenceGraph['%r10'] = []
+    #     self.interferenceGraph['%r11'] = []
+    #     self.interferenceGraph['%r12'] = []
+    #     self.interferenceGraph['%r13'] = []
+    #     self.interferenceGraph['%r14'] = []
+    #     self.interferenceGraph['%r15'] = []
 
     
     def createEdgesList(self):
@@ -128,4 +150,43 @@ class interference_graph:
             if (key not in self.VertexList):
                 self.VertexList.append(key)
         return
+
+    def maxCardinalitySearch(self):
+        # all the vertices are initialized to 0
+        weightDict = dict.fromkeys(self.VertexList,0)
+        for i in range(len(self.VertexList)):
+            maxElem = max (weightDict.items(), key = operator.itemgetter(1))[0]
+            self.simplicialOrdering.append(maxElem)
+            for _, value in self.interferenceGraph.items():
+                if (value):
+                    for elem in value:
+                        weightDict[elem] += 1
+        return        
+
+    def greedy_coloring(self):
+        colors = ['%rax','%rcx','%rdx','%rbx','%rsi','%rdi','%r8','%r9','%r10','%r11','%r12','%r13','%r14','%r15']
+        self.vertexRegisters = dict.fromkeys(self.vertexRegisters, '')
+        
+        for elem in self.VertexList:
+            for nelem in self.interferenceGraph[elem]:
+                if (self.vertexRegisters[nelem] == ''):
+                    enoughColors = False
+                    for color in colors:
+                        self.vertexRegisters[nelem] = color
+                        flag = False
+                        for n2elem in self.interferenceGraph[nelem]:
+                            if (self.vertexRegisters[n2elem] == color):
+                                flag = True
+                                break
+                        if (flag == False):
+                            enoughColors = True
+                            break
+                    # to spill when not enough colors
+                    if (flag == True and enoughColors == False):
+                        # spilling occurs
+                        print('spilling required')
+                        self.vertexRegisters[nelem]
+                        pass # for now
+        return
+
 
