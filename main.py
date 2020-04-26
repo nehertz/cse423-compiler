@@ -13,7 +13,8 @@ from typeChecking import TypeChecking
 from IR import IR
 from optimization import optimization
 from assembly import assembly
-
+from symbolTableRegisters import SymbolTableRegisters
+import interferenceGraph
 # Print usage instructions for the compiler
 # parameters: None
 def printHelp():
@@ -82,8 +83,8 @@ if __name__ == "__main__":
         printHelp()
         sys.exit()
 
-    unixOptions = "htpsiorma"
-    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR", "write-to-file", "read-from-file", "optimization-pass", "assembly"]
+    unixOptions = "htpsiormag"
+    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR", "write-to-file", "read-from-file", "optimization-pass", "assembly", "register-allocation-first"]
 
     try:
         arguments, values = getopt.getopt(listArgs, unixOptions, gnuOptions)
@@ -109,6 +110,8 @@ if __name__ == "__main__":
             optimizationFlag = 1
         if (currentArgument in ("-a", '--assembly')):
             flag = 7
+        if (currentArgument in ("-g", "-register-allocation-first")):
+            flag = 8
         if (currentArgument in ("-h", "--help")):
             printHelp()
             sys.exit()
@@ -195,3 +198,9 @@ if __name__ == "__main__":
         IR = ir.run()
         assembly = assembly(IR)
         assembly.run()
+
+    elif (flag == 8):
+        ir_str = ir.run()
+        ig = InterferenceGraph(ir_str)
+        StReg = SymbolTableRegisters(ir_str)
+        ig.run()
