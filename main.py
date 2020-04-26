@@ -14,7 +14,7 @@ from IR import IR
 from optimization import optimization
 from assembly import assembly
 from symbolTableRegisters import SymbolTableRegisters
-import interferenceGraph
+from interferenceGraph import *
 # Print usage instructions for the compiler
 # parameters: None
 def printHelp():
@@ -201,6 +201,8 @@ if __name__ == "__main__":
 
     elif (flag == 8):
         ir_str = ir.run()
+        ir_str = ir.getIR()
+        print(ir_str)
         ig = InterferenceGraph(ir_str)
         StReg = SymbolTableRegisters(ir_str)
         ig.run()
