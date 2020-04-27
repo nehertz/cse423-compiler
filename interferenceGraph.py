@@ -4,18 +4,19 @@ import sys
 # from main import StReg
 
 class InterferenceGraph:
-    def __init__(self, ir):
+    def __init__(self, ir, st):
         self.ir = ir
         self.ir = self.ir.replace('\t','')
         # self.func = re.compile(r'^[\w\d]+[\w\d]*\(.*\)')
         # self.Lbrace = re.compile(r'\{')
         # self.Rbrace = re.compile(r'\}')
-        self.expr = re.compile(r'.*=.*[(\+)|(-)|(\*)|(\/)|(\%)|(\|\|)|(&&)|(\^)|(\|)|(&)|(\!)|(<<)|(>>)].*')
+        self.expr = re.compile(r'.*=.*[(\+)|(-)|(\*)|(\|\|)|(&&)|(\^)|(\|)|(&)|(\!)|(<<)|(>>)].*')
+        self.divisionExpr = re.compile(r'.*=.*[(\/)|(\%)].*')
         self.arithOps = re.compile(r'[\/\+\-\*\%]')
         self.logicalExpr = re.compile(r'(\|\|)|(&&)|(\!)')
         self.bitOps = re.compile(r"(<<)|(>>)|(&)|(\|)|(\^)|(~)")
         self.compOps = re.compile(r'(==)|(\!=)|(>=)|(<=)')
-        
+        self.st = st
         self.assignmentRvalue = re.compile(r'\d+')
         self.liveVars = {}
         self.funcNameDict = {}
@@ -25,6 +26,7 @@ class InterferenceGraph:
         self.VertexList = []
         self.simplicialOrdering = []
         self.vertexRegisters = {}
+        # self.lvalues = {}
     
         
     
@@ -47,10 +49,18 @@ class InterferenceGraph:
             # assuming there's an assigned register 
             # if not this will return a memory address
             availableReg = self.vertexRegisters[var]
-            if ('%' in availableReg):
-                return (True, availableReg)
-            return (False, availableReg)
-        return (False, None)
+            if ('(' in availableReg and ')' in availableReg):
+                return (False, availableReg)
+
+            # stored_var = self.st.symboltable_reg[availableReg]
+            # if (stored_var in self.lvalues):
+            #     assCode = self.st.movFromReg2Mem(stored_var)
+            else:
+                return (True, availableReg)            
+            # return (False, availableReg)
+        # return (False, None)
+
+
 
     def create_dictionary_with_funcName(self):
         ''' 
@@ -85,28 +95,33 @@ class InterferenceGraph:
 
                     if (self.expr.match(line)):
                         (lvalue, rvalue1, rvalue2) = self.checkLiveness(line)
-                        
                         self.insertNodeIG(lvalue)
-                        if (self.num.match(rvalue1)):
-                            if (self.num.match(rvalue2)):
-                                self.liveVars[line] = [lvalue]
-                                pass
-                            else:
-                                self.liveVars[line] = [rvalue2, lvalue]
-                                self.insertNodeIG(rvalue2)
-                        else:
+                        # self.lvalues[lvalue] = 0
+                        # if (self.num.match(rvalue1)):
+                        #     if (self.num.match(rvalue2)):
+                        #         self.liveVars[line] = [lvalue]
+                        #         pass
+                        #     else:
+                        #         self.liveVars[line] = [rvalue2, lvalue]
+                        #         self.insertNodeIG(rvalue2)
+                        # else:
 
-                            if (self.num.match(rvalue2)):
-                                self.liveVars[line] = [rvalue1, lvalue]
-                                self.insertNodeIG(rvalue1)
-                            else:
-                                self.liveVars[line] = [rvalue1, rvalue2, lvalue]
-                                self.insertNodeIG(rvalue1)
-                                self.insertNodeIG(rvalue2)
+                        #     if (self.num.match(rvalue2)):
+                        #         self.liveVars[line] = [rvalue1, lvalue]
+                        #         self.insertNodeIG(rvalue1)
+                        #     else:
+                        #         self.liveVars[line] = [rvalue1, rvalue2, lvalue]
+                        #         self.insertNodeIG(rvalue1)
+                        #         self.insertNodeIG(rvalue2)
+                        self.insertNodeIG(rvalue1)
+                        self.insertNodeIG(rvalue2)
+                        # this adds numbers to the node interference graph as well
+                        # so no need to assign different registers. 
+                        # this will also check if the register is already assigned to this number
+                        # and will increase performance by a little bit
                 for line,nextLine in zip(val[1:], val[2:]):
                     if (line in self.liveVars and nextLine in self.liveVars):
                         self.liveVars[line] = self.checkLiveVarsInNextLine(self.liveVars[line], self.liveVars[nextLine])
-
         return
 
 
@@ -190,7 +205,7 @@ class InterferenceGraph:
                         if (flag == True and enoughColors == False):
                             # spilling occurs
                             print('spilling required')
-                            self.vertexRegisters[nelem]
+                            # self.vertexRegisters[nelem
                             print('currently not supported')
                             sys.exit(1)
                             pass # for now     
@@ -204,26 +219,4 @@ class InterferenceGraph:
         print('vertex registers')
         print(self.vertexRegisters)
         return
-
-    # def greedy_coloring(self):
-    #     colors = ['%rax','%rcx','%rdx','%rbx','%rsi','%rdi','%r8','%r9','%r10','%r11','%r12','%r13','%r14','%r15']
-    #     colorsUsage = {}
-    #     colorsUsage = colorsUsage.fromkeys(colors, 0)
-
-    #     self.vertexRegisters = {}
-
-    #     self.vertexRegisters = self.vertexRegisters.fromkeys(self.VertexList, '')
-    #     print('vertex registers')
-    #     print(self.vertexRegisters)
-        
-    #     # traverse over all the vertices
-    #     for elem in self.VertexList:
-    #         # if it has neighbors do this
-    #         if (self.interferenceGraph[elem]):
-
-    #         else:
-    #             # otherwise assign color without having to check 
-    #             min_reg = min(colorsUsage.items(), key = operator.itemgetter(1))[0]
-    #             self.vertexRegisters[elem] = min_reg
-    #             colorsUsage[min_reg] += 1
-
+    

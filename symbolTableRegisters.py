@@ -1,12 +1,12 @@
 import sys
 
 class SymbolTableRegisters:
-    def __init__(self, ir):
+    def __init__(self, ir, ig):
         self.symboltable_reg = {}
         self.symboltable_mem = {}
-    def insert(self):
-        return
-
+        
+        self.ig = ig
+    
     def movFromReg2Mem(self, var):
         # updates the symbol table
         # returns the assembly code
@@ -20,7 +20,7 @@ class SymbolTableRegisters:
         # updates the symbol table
         # returns the assembly code
         # get designed available register for that variable 
-        (flag, availableReg) = ig.get_availableReg(var)
+        (flag, availableReg) = self.ig.get_availableReg(var)
         if (availableReg == None):
             print("error occurred. Variable not found in interference graph")
             sys.exit(1)
@@ -28,20 +28,16 @@ class SymbolTableRegisters:
             # it's a memory location - remove unnecessary/temporary registers
             pass
         assCode = ''
-        if (self.symboltable_reg[availableReg] == ''):
+        if (self.symboltable_reg[availableReg] != ''):
             name_var = self.symboltable_reg[availableReg]
-            assCode = 'mov ' + str(availableReg) + ' ' + str(self.symboltable_mem[name_var])
+            assCode += 'mov ' + str(availableReg) + ' ' + str(self.symboltable_mem[name_var])
             assCode += '\n'
             self.symboltable_reg[availableReg] = ''
 
-        assCode = 'mov ' + str(self.symboltable_mem[var]) + ' ' + str(availableReg)
+        assCode += 'mov ' + str(self.symboltable_mem[var]) + ' ' + str(availableReg)
         assCode += '\n'
         self.symboltable_reg[availableReg] = var
         return assCode
-    
-    
-    
-    
     
     def initiate_st_reg(self):
         self.symboltable_reg['%rax'] = ''
