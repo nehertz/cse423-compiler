@@ -7,9 +7,6 @@ class InterferenceGraph:
     def __init__(self, ir):
         self.ir = ir
         self.ir = self.ir.replace('\t','')
-        # self.func = re.compile(r'^[\w\d]+[\w\d]*\(.*\)')
-        # self.Lbrace = re.compile(r'\{')
-        # self.Rbrace = re.compile(r'\}')
         self.expr = re.compile(r'.*=.*[(\+)|(-)|(\*)|(\|\|)|(&&)|(\^)|(\|)|(&)|(\!)|(<<)|(>>)].*')
         self.divisionExpr = re.compile(r'.*=.*[(\/)|(\%)].*')
         self.arithOps = re.compile(r'[\/\+\-\*\%]')
@@ -25,10 +22,7 @@ class InterferenceGraph:
         self.EdgesList = []
         self.VertexList = []
         self.simplicialOrdering = []
-        self.vertexRegisters = {}
-        # self.lvalues = {}
-    
-        
+        self.vertexRegisters = {}    
     
     def run(self,st):
         self.st = st
