@@ -22,11 +22,36 @@ def simpleAssign(LHS, RHS, assembly):
         assembly.append(["mov", RHS, LHS])
     return
 
-def plus(LHS, RHS1, RHS2):
-    
+def simpleArithmetic(statement, assembly):
+    ops = statement[3]
+    if (ops == '+'):
+        plus(statement[0], statement[2], statement[4], assembly)
+    elif (ops == '-'):
+        minus(statement[0], statement[2], statement[4], assembly)
+    elif (ops == '*'):
+        times(statement[0], statement[2], statement[4], assembly)
+    elif (ops == '/'):
+        divide(statement[0], statement[2], statement[4], assembly)
+    elif (ops == '%'):
+        modulo(statement[0], statement[2], statement[4], assembly)
+    else:
+        print('unknow ops\n')
+        exit()
+
+def plus(LHS, RHS1, RHS2, assembly):
     pass
 
-def minus(LHS, RHS1, RHS2):
+def minus(LHS, RHS1, RHS2, assembly):
     pass
+
+def times(LHS, RHS1, RHS2, assembly):
+    pass
+
+def divide(LHS, RHS1, RHS2, assembly):
+    pass
+
+def modulo(LHS, RHS1, RHS2, assembly):
+    pass
+
 
 

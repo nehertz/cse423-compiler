@@ -74,13 +74,9 @@ class assembly:
         if (len(statement) == 3 ):
             simpleAssign(statement[0], statement[2], self.ass)
 
-        elif (statement[3] == '+'):
-            plus(statement[0], statement[2], statement[4])
+        elif (statement[3] in arithmetic):
+            simpleArithmetic(statement, self.ass)
         
-        elif (statement[3] == '-'):
-            minus(statement[0], statement[2], statement[4])
-
-        #....keep going 
 
     def funcCall(self, statement):
         pass
