@@ -4,6 +4,7 @@ class SymbolTableRegisters:
     def __init__(self, ir, ig):
         self.symboltable_reg = {}
         self.symboltable_mem = {}
+        # variable names as keys and their memory location as addresses. 
         self.ig = ig
     
     def movFromReg2Mem(self, var):
@@ -13,8 +14,11 @@ class SymbolTableRegisters:
         assCode = 'mov ' + str(self.symboltable_reg[var]) + ' ' + str(memAddr) + '\n'
         self.symboltable_reg[var] = ''
         return assCode
-    
-    
+    # 4(%rsp)
+    def insertMemory(self, var, memory_location):
+        self.symboltable_mem[var] = memory_location
+        return
+
     def movFromMem2Reg(self, var):
         # updates the symbol table
         # returns the assembly code
