@@ -961,6 +961,28 @@ class IR:
             else:
                 print(str1.join(list))
 
+    def getIR(self):
+        str1 = " "
+        indentFlag = 0
+        for l in self.IRS:
+            str2 = ''
+            for elem in l:
+                str2 += elem 
+            
+            if (''.join(str2) == '{'):
+                indentFlag = 1
+                str1 += str2 + '\n'
+                continue
+            elif (''.join(str2) == '}'):
+                indentFlag = 0
+                str1 += str2 + '\n'
+                continue
+            elif (indentFlag):
+                str1 += '\t' + str2 + '\n'
+            else:
+                str1 += str2 + '\n'
+        return str1
+
     # Read the IR from fileString into the IR structure
     def readIR(self, fileString):
         fileString = [x.strip() for x in fileString]  
