@@ -204,5 +204,5 @@ if __name__ == "__main__":
         ir_str = ir.getIR()
         print(ir_str)
         ig = InterferenceGraph(ir_str)
-        StReg = SymbolTableRegisters(ir_str)
-        ig.run()
+        StReg = SymbolTableRegisters(ir_str,ig)
+        ig.run(StReg)

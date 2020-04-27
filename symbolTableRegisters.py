@@ -4,7 +4,6 @@ class SymbolTableRegisters:
     def __init__(self, ir, ig):
         self.symboltable_reg = {}
         self.symboltable_mem = {}
-        
         self.ig = ig
     
     def movFromReg2Mem(self, var):
