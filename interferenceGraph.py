@@ -4,7 +4,7 @@ import sys
 # from main import StReg
 
 class InterferenceGraph:
-    def __init__(self, ir, st):
+    def __init__(self, ir):
         self.ir = ir
         self.ir = self.ir.replace('\t','')
         # self.func = re.compile(r'^[\w\d]+[\w\d]*\(.*\)')
@@ -16,7 +16,7 @@ class InterferenceGraph:
         self.logicalExpr = re.compile(r'(\|\|)|(&&)|(\!)')
         self.bitOps = re.compile(r"(<<)|(>>)|(&)|(\|)|(\^)|(~)")
         self.compOps = re.compile(r'(==)|(\!=)|(>=)|(<=)')
-        self.st = st
+        self.st = None
         self.assignmentRvalue = re.compile(r'\d+')
         self.liveVars = {}
         self.funcNameDict = {}
@@ -30,11 +30,12 @@ class InterferenceGraph:
     
         
     
-    def run(self):
+    def run(self,st):
+        self.st = st
         self.create_dictionary_with_funcName()
-
         print(self.funcNameDict)
         self.test_live()
+        self.add_interference()
         self.createEdgesList()
         self.createVertexList()
         self.maxCardinalitySearch()
@@ -92,8 +93,15 @@ class InterferenceGraph:
                     if ('ret' in line):
                         self.insertNodeIG('%rax')
                         continue
-
-                    if (self.expr.match(line)):
+                    if (self.divisionExpr.match(line)):
+                        self.insertNodeIG('%rdx')
+                        self.insertNodeIG('%rax')
+                        (lvalue, rvalue1, rvalue2) = self.checkLiveness(line)
+                        self.insertNodeIG(lvalue)
+                        self.insertNodeIG(rvalue1)
+                        self.insertNodeIG(rvalue2)
+                        self.liveVars[line] = [rvalue1, rvalue2, '%rdx', '%rax', lvalue]
+                    elif (self.expr.match(line)):
                         (lvalue, rvalue1, rvalue2) = self.checkLiveness(line)
                         self.insertNodeIG(lvalue)
                         # self.lvalues[lvalue] = 0
@@ -115,6 +123,7 @@ class InterferenceGraph:
                         #         self.insertNodeIG(rvalue2)
                         self.insertNodeIG(rvalue1)
                         self.insertNodeIG(rvalue2)
+                        self.liveVars[line] = [rvalue1, rvalue2, lvalue]
                         # this adds numbers to the node interference graph as well
                         # so no need to assign different registers. 
                         # this will also check if the register is already assigned to this number
@@ -135,6 +144,16 @@ class InterferenceGraph:
                 vars.insert(0, elem)
         return vars            
     
+    def add_interference(self):
+        for line,val in self.liveVars.items():
+            if (self.expr.match(line) or self.divisionExpr.match(line)):
+                for elem in val:
+                    for elem2 in val:
+                        if (elem == elem2):
+                            continue
+                        self.interferenceGraph[elem].append(elem2)
+        return
+
     def checkLiveness(self, line):
         line = line.split('=')
         var1 = line[0]
@@ -152,19 +171,30 @@ class InterferenceGraph:
             if (value):
                 for elem in value:
                     self.EdgesList.append((key, elem))
+        print('edgeslist')
+        print(self.EdgesList)
         return
     def createVertexList(self):
         for key, _ in self.interferenceGraph.items():
             if (key not in self.VertexList):
                 self.VertexList.append(key)
+
+        print('vertex list')
+        print(self.VertexList)
         return
 
     def maxCardinalitySearch(self):
         # all the vertices are initialized to 0
         weightDict = dict.fromkeys(self.VertexList,0)
+        print('weightdict')
+        print(weightDict)
         for _ in range(len(self.VertexList)):
             maxElem = max (weightDict.items(), key = operator.itemgetter(1))[0]
-            del weightDict[maxElem]
+            # del weightDict[maxElem]
+            if (weightDict[maxElem] == -1):
+                break
+            weightDict[maxElem] = -1
+            
             self.simplicialOrdering.append(maxElem)
             for _, value in self.interferenceGraph.items():
                 if (value):
@@ -175,15 +205,22 @@ class InterferenceGraph:
         print(self.simplicialOrdering)
         return        
 
+
     def greedy_coloring(self):
         colors = ['%rax','%rcx','%rdx','%rbx','%rsi','%rdi','%r8','%r9','%r10','%r11','%r12','%r13','%r14','%r15']
         colorsUsage = {}
         colorsUsage = colorsUsage.fromkeys(colors, 0)
         self.vertexRegisters = {}
         self.vertexRegisters = self.vertexRegisters.fromkeys(self.VertexList, '')
-        print('vertex registers')
-        print(self.vertexRegisters)
+
         for elem in self.VertexList:
+            # if the vertex is a register, then assign it to the same-register
+            if ('%' in elem):
+                self.vertexRegisters[elem] = elem
+
+        for elem in self.VertexList:
+            if ('%' in elem):
+                continue
             if (self.interferenceGraph[elem]):
                 for nelem in self.interferenceGraph[elem]:
                     if (self.vertexRegisters[nelem] == ''):
@@ -211,7 +248,7 @@ class InterferenceGraph:
                             pass # for now     
 
             else:
-                #otherwise assign colors without having to check the 
+                # otherwise assign colors without having to check the 
                 # neighbors
                 min_reg = min(colorsUsage.items(), key = operator.itemgetter(1))[0]
                 self.vertexRegisters[elem] = min_reg
