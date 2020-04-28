@@ -149,10 +149,8 @@ class assembly:
     
     def simpleArithmetic(self, statement):
         ops = statement[3]
-        if (ops == '+'):
-            self.plus(statement[0], statement[2], statement[4])
-        elif (ops == '-'):
-            self.minus(statement[0], statement[2], statement[4])
+        if (ops == '+' or ops == '-'):
+            self.plusAndMinus(statement[0], statement[2], statement[4], ops)
         elif (ops == '*'):
             self.times(statement[0], statement[2], statement[4])
         elif (ops == '/'):
@@ -163,17 +161,128 @@ class assembly:
             print('unknow ops\n')
             exit()
 
+
+    def plusAndMinus(self, LHS, RHS1, RHS2, ops):
+        result = '0'
+        constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
+
+        # RHS1 = constant &&  RHS2 = constant
+        if (constFlag1 and constFlag2):
+            if (ops == '+'):
+                result = RHS1 + RHS2
+            elif (ops == '-'):
+                result = RHS1 - RHS2
+            self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
+        
+        # RHS1 = constant &&  RHS2 = var
+        elif (constFlag1 and not constFlag2):
+            # mov <RHS2> <reg1>
+            instruction = self.setReg.movFromMem2Reg(RHS2)
+            reges = instruction.split(" ")[2].strip()
+            self.ass.append([instruction.strip()])
+            # add <const>,<reg1> or sub 
+            if (ops == '+'):
+                self.ass.append(["add", "$"+str(RHS1) , reges])
+            elif (ops == '-'):
+                self.ass.append(["sub", "$"+str(RHS1) , reges])
+            # mov <reg1>, <LHS>
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+
+        # RHS1 = var && RHS2 = constant
+        elif (not constFlag1 and constFlag2):
+            # mov <RHS1> <reg1>
+            instruction = self.setReg.movFromMem2Reg(RHS1)
+            reges = instruction.split(" ")[2].strip()
+            self.ass.append([instruction.strip()])
+            # add <const>,<reg1>
+            if (ops == '+'):
+                self.ass.append(["add", "$"+str(RHS2) , reges])
+            elif (ops == '-'):
+                self.ass.append(["sub", "$"+str(RHS2) , reges])
+             # mov <reg1>, <LHS>
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+
+        # RHS1 = var && RHS2 = var 
+        elif (not constFlag1 and not constFlag2):
+            # mov <RHS1> <reg1>
+            instruction = self.setReg.movFromMem2Reg(RHS1)
+            reges = instruction.split(" ")[2].strip()
+            self.ass.append([instruction.strip()])
+            # add <RHS2>,<reg1>`
+            if (ops == '+'):
+                self.ass.append(["add", self.getMemLocation(RHS2) , reges])
+            elif (ops == '-'):
+                self.ass.append(["sub", self.getMemLocation(RHS2) , reges])
+            # mov <reg1>, <LHS>
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+
+
+    def times(self, LHS, RHS1, RHS2):
+        result = '0'
+        constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
+        
+        if (constFlag1 and constFlag2):
+            result = RHS1 * RHS2
+            self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
+
+        # this is the case where a constant times a varaible
+        elif (constFlag1 and not constFlag2):
+            # mov RHS1 LHS
+            self.ass.append(["mov", "$"+str(RHS1) , self.getMemLocation(LHS)])
+            # mov RHS2 reg1
+            instruction = self.setReg.movFromMem2Reg(RHS2)
+            reges = instruction.split(" ")[2].strip()
+            self.ass.append([instruction.strip()])
+            # imul LHS reg1
+            self.ass.append(["imul", self.getMemLocation(LHS) , reges])
+            # mov reg1 LHS 
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+
+        elif (not constFlag1 and constFlag2):
+            # mov RHS2 LHS
+            self.ass.append(["mov", "$"+str(RHS2) , self.getMemLocation(LHS)])
+            # mov RHS1 reg1
+            instruction = self.setReg.movFromMem2Reg(RHS1)
+            reges = instruction.split(" ")[2].strip()
+            self.ass.append([instruction.strip()])
+            # imul LHS reg1
+            self.ass.append(["imul", self.getMemLocation(LHS) , reges])
+            # mov reg1 LHS 
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+
+        elif (not constFlag1 and not constFlag2):
+            # mov RHS1 reg1 
+            instruction = self.setReg.movFromMem2Reg(RHS1)
+            reges = instruction.split(" ")[2].strip()
+            self.ass.append([instruction.strip()])
+            # imul RHS2 reg1
+            self.ass.append(["imul", self.getMemLocation(RHS2) , reges])
+            # mov reg1 LHS
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+        
+
     #  - `add <reg>,<reg>`
     # - `add <reg>,<mem>`
     # - `add <mem>,<reg>`
     # - `add <const>,<reg>`
     # - `add <const>,<mem>`
-    def plus(self, LHS, RHS1, RHS2):
+
+    #     - Destination must be a register
+    # - `imul <reg32>,<reg32>`
+    # - `imul <mem>,<reg32>`
+    def divide(self, LHS, RHS1, RHS2):
+        pass
+
+    def modulo(self, LHS, RHS1, RHS2):
+        pass
+
+
+    def determineConstant(self, RHS1, RHS2):
         constFlag1 = 0
         constFlag2 = 0
         floatPatten = re.compile(r"[0-9]+\.[0-9]+")
         intPatten = re.compile(r"^[-+]?\d+$")
-        
+
         if (intPatten.match(RHS1)):
             RHS1 = int(RHS1)
             constFlag1 = 1
@@ -188,58 +297,7 @@ class assembly:
             RHS2 = float(RHS2)
             constFlag2 = 1
 
-        # RHS1 = constant &&  RHS2 = constant
-        if (constFlag1 and constFlag2):
-            result = RHS1 + RHS2
-            self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
-        
-        # RHS1 = constant &&  RHS2 = var
-        elif (constFlag1 and not constFlag2):
-            # mov <RHS2> <reg1>
-            instruction = self.setReg.movFromMem2Reg(RHS2)
-            reges = instruction.split(" ")[2].strip()
-            self.ass.append([instruction.strip()])
-            # add <const>,<reg1>
-            self.ass.append(["add", "$"+str(RHS1) , reges])
-            # mov <reg1>, <LHS>
-            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
-
-        # RHS1 = var && RHS2 = constant
-        elif (not constFlag1 and constFlag2):
-            # mov <RHS1> <reg1>
-            instruction = self.setReg.movFromMem2Reg(RHS1)
-            reges = instruction.split(" ")[2].strip()
-            self.ass.append([instruction.strip()])
-            # add <const>,<reg1>
-            self.ass.append(["add", "$"+str(RHS2) , reges])
-             # mov <reg1>, <LHS>
-            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
-
-        # RHS1 = var && RHS2 = var 
-        elif (not constFlag1 and not constFlag2):
-            # mov <RHS1> <reg1>
-            instruction = self.setReg.movFromMem2Reg(RHS1)
-            reges = instruction.split(" ")[2].strip()
-            self.ass.append([instruction.strip()])
-            # add <RHS2>,<reg1>`
-            self.ass.append(["add", self.getMemLocation(RHS2) , reges])
-            # mov <reg1>, <LHS>
-            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
-
-        
-        
-
-    def minus(self, LHS, RHS1, RHS2):
-        pass
-
-    def times(self, LHS, RHS1, RHS2):
-        pass
-
-    def divide(self, LHS, RHS1, RHS2):
-        pass
-
-    def modulo(self, LHS, RHS1, RHS2):
-        pass
+        return constFlag1, constFlag2, RHS1, RHS2
 
     def goto(self, statement):
         label = list(filter(None, re.split(r'goto |:', statement[0])))[0]
