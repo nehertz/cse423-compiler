@@ -21,10 +21,10 @@ int main()
         //// Test var decl 
         // int aa;
         // int bb; 
-        int a;
+        int a = 10;
         // int b;
         int c;
-        c = a + c; 
+        c = a / 5; 
         // float e = 20.2;
         // return a;
         // int a = 1;
