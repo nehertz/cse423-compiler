@@ -140,6 +140,9 @@ class assembly:
         # mov %eax a_location
         # mov $0 %eax 
         else:
+            # print(RHS)
+            # self.setReg.movFromReg2Mem(str(RHS))
+            # print("here ", str(self.setReg.movFromMem2Reg(str(RHS))))
             self.ass.append(["mov", self.getMemLocation(RHS), "%eax"])
             self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
             self.ass.append(["mov", "$0", "%eax"])
