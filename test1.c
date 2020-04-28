@@ -1,6 +1,7 @@
 // int add3(int a, int b, int c)
 // {
-//   return a + b + c;
+//         int e = 1;
+// //   return a + b + c;
 // }
 // enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
@@ -23,8 +24,11 @@ int main()
         // int a = 100;
         // int b = 30;
         // float e = 20.2;
-        int a = 5;
-        int c = 10 + 1;
+        int a;
+        a = 2; 
+        
+        // int b;
+        // int c;
         // return aa;
         // int c; 
         // float d;
@@ -38,8 +42,8 @@ int main()
         // a =  b + 3;
         // a =  b - 3;
         // a = b * 3;
-        a = b / 3;
-        a = b % 3;
+        // a = b / 3;
+        // a = b % 3;
         // a = b | 3;
         // a = b & 3;
         // a = b ^ 3;
@@ -47,7 +51,7 @@ int main()
         // a /=  b + 3;
         // a %=  b - 3;
         // a += b * 3;
-        a -= b / 3;
+        // a -= b / 3;
         // a <<= b % 3;
         // a >>= b | 3;
         // a &= b & 3;
@@ -79,10 +83,10 @@ int main()
         //         float j = j + 2;
         // }
 
-        // do {
-        //         int i = i + 1;
-        //         float j = j + 2;
-        // } while (a < 3);
+        do {
+                int i =  10;
+                // float j = j + 2;
+        } while (a < 3);
 
         
         ////test for loop 

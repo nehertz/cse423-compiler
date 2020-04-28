@@ -38,19 +38,19 @@ def simpleArithmetic(statement, assembly):
         print('unknow ops\n')
         exit()
 
-def plus(LHS, RHS1, RHS2, assembly):
+def plus(LHS, RHS1, RHS2):
     pass
 
-def minus(LHS, RHS1, RHS2, assembly):
+def minus(LHS, RHS1, RHS2):
     pass
 
-def times(LHS, RHS1, RHS2, assembly):
+def times(LHS, RHS1, RHS2):
     pass
 
-def divide(LHS, RHS1, RHS2, assembly):
+def divide(LHS, RHS1, RHS2):
     pass
 
-def modulo(LHS, RHS1, RHS2, assembly):
+def modulo(LHS, RHS1, RHS2):
     pass
 
 

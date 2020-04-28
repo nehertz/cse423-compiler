@@ -189,7 +189,13 @@ if __name__ == "__main__":
         IR = ir.run()
         optimizedIR = optimization(IR)
         IR = optimizedIR.run()
-        assembly = assembly(IR)
+        
+        ir_str = ir.getIR()
+        ig = InterferenceGraph(ir_str)
+        StReg = SymbolTableRegisters(ir_str,ig)
+
+        # assembly = assembly(IR)
+        assembly = assembly(IR, ig, StReg)
         assembly.run()
 
         
@@ -197,7 +203,12 @@ if __name__ == "__main__":
     elif (flag == 7 and optimizationFlag == 0):
         IR = ir.run()
         ir.printIR()
-        assembly = assembly(IR)
+
+        ir_str = ir.getIR()
+        ig = InterferenceGraph(ir_str)
+        StReg = SymbolTableRegisters(ir_str,ig)
+
+        assembly = assembly(IR, ig, StReg)
         assembly.run()
 
     elif (flag == 8):
