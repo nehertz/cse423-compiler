@@ -5,6 +5,7 @@ class SymbolTableRegisters:
         self.symboltable_reg = {}
         self.symboltable_mem = {}
         # variable names as keys and their memory location as addresses. 
+        self.initiate_st_reg()
         self.ig = ig
     
     def movFromReg2Mem(self, var):
