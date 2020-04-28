@@ -1,6 +1,7 @@
 // int add3(int a, int b, int c)
 // {
-//   return a + b + c;
+//         int e = 1;
+// //   return a + b + c;
 // }
 // enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
@@ -18,13 +19,18 @@ int main()
         // day = Mon + 10; 
 
         //// Test var decl 
-        int aa;
-        int bb; 
-        int a = 100;
-        int b = 30;
-        float e = 20.2;
-        int c = 10 / e;
-        return aa;
+        // int aa;
+        // int bb; 
+        // int a = 100;
+        // int b = 30;
+        // float e = 20.2;
+        // int a = 1;
+        // int b = 2;
+        // a = b;
+        
+        // int b;
+        // int c;
+        // return aa;
         // int c; 
         // float d;
         // int e, f, g;
@@ -37,8 +43,8 @@ int main()
         // a =  b + 3;
         // a =  b - 3;
         // a = b * 3;
-        a = b / 3;
-        a = b % 3;
+        // a = b / 3;
+        // a = b % 3;
         // a = b | 3;
         // a = b & 3;
         // a = b ^ 3;
@@ -46,7 +52,7 @@ int main()
         // a /=  b + 3;
         // a %=  b - 3;
         // a += b * 3;
-        a -= b / 3;
+        // a -= b / 3;
         // a <<= b % 3;
         // a >>= b | 3;
         // a &= b & 3;
@@ -79,8 +85,8 @@ int main()
         // }
 
         // do {
-        //         int i = i + 1;
-        //         float j = j + 2;
+        //         int i =  10;
+        //         // float j = j + 2;
         // } while (a < 3);
 
         
@@ -96,7 +102,7 @@ int main()
         // return a = 1 + 2;
         // return 1 + 2 + 3;
 
-        // //Samuel Example 1:
+        //Samuel Example 1:
         // int i, j, k;
         // i = 1;
         // j = 3;
@@ -126,5 +132,5 @@ int main()
         //   a = 1;
         // }
 
-        return 0;
+        // return 0;
 }

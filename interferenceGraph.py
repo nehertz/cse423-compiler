@@ -27,7 +27,7 @@ class InterferenceGraph:
     def run(self,st):
         self.st = st
         self.create_dictionary_with_funcName()
-        print(self.funcNameDict)
+        # print(self.funcNameDict)
         self.test_live()
         self.add_interference()
         self.createEdgesList()
@@ -165,23 +165,23 @@ class InterferenceGraph:
             if (value):
                 for elem in value:
                     self.EdgesList.append((key, elem))
-        print('edgeslist')
-        print(self.EdgesList)
+        # print('edgeslist')
+        # print(self.EdgesList)
         return
     def createVertexList(self):
         for key, _ in self.interferenceGraph.items():
             if (key not in self.VertexList):
                 self.VertexList.append(key)
 
-        print('vertex list')
-        print(self.VertexList)
+        # print('vertex list')
+        # print(self.VertexList)
         return
 
     def maxCardinalitySearch(self):
         # all the vertices are initialized to 0
         weightDict = dict.fromkeys(self.VertexList,0)
-        print('weightdict')
-        print(weightDict)
+        # print('weightdict')
+        # print(weightDict)
         for _ in range(len(self.VertexList)):
             maxElem = max (weightDict.items(), key = operator.itemgetter(1))[0]
             # del weightDict[maxElem]
@@ -195,8 +195,8 @@ class InterferenceGraph:
                     for elem in value:
                         weightDict[elem] += 1
         # print(weightDict)
-        print('simplicial order: ')
-        print(self.simplicialOrdering)
+        # print('simplicial order: ')
+        # print(self.simplicialOrdering)
         return        
 
 
@@ -247,7 +247,7 @@ class InterferenceGraph:
                 min_reg = min(colorsUsage.items(), key = operator.itemgetter(1))[0]
                 self.vertexRegisters[elem] = min_reg
                 colorsUsage[min_reg] += 1       
-        print('vertex registers')
-        print(self.vertexRegisters)
+        # print('vertex registers')
+        # print(self.vertexRegisters)
         return
     
