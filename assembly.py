@@ -140,9 +140,8 @@ class assembly:
         # mov %eax a_location
         # mov $0 %eax 
         else:
-            # print(RHS)
-            # self.setReg.movFromReg2Mem(str(RHS))
-            # print("here ", str(self.setReg.movFromMem2Reg(str(RHS))))
+            
+            #TODO self.setReg.movFromMem2Reg(str(RHS))
             self.ass.append(["mov", self.getMemLocation(RHS), "%eax"])
             self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
             self.ass.append(["mov", "$0", "%eax"])
@@ -164,8 +163,71 @@ class assembly:
             print('unknow ops\n')
             exit()
 
+    #  - `add <reg>,<reg>`
+    # - `add <reg>,<mem>`
+    # - `add <mem>,<reg>`
+    # - `add <const>,<reg>`
+    # - `add <const>,<mem>`
     def plus(self, LHS, RHS1, RHS2):
-        pass
+        constFlag1 = 0
+        constFlag2 = 0
+        floatPatten = re.compile(r"[0-9]+\.[0-9]+")
+        intPatten = re.compile(r"^[-+]?\d+$")
+        
+        if (intPatten.match(RHS1)):
+            RHS1 = int(RHS1)
+            constFlag1 = 1
+        elif (floatPatten.match(RHS1)):
+            RHS1 = float(RHS1)
+            constFlag1 = 1
+        
+        if (intPatten.match(RHS2)):
+            RHS2 = int(RHS2)
+            constFlag2 = 1
+        elif (floatPatten.match(RHS2)):
+            RHS2 = float(RHS2)
+            constFlag2 = 1
+
+        # RHS1 = constant &&  RHS2 = constant
+        if (constFlag1 and constFlag2):
+            result = RHS1 + RHS2
+            self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
+        
+        # RHS1 = constant &&  RHS2 = var
+        elif (constFlag1 and not constFlag2):
+            # mov <RHS2> <reg1>
+            instruction = self.setReg.movFromMem2Reg(RHS2)
+            reges = instruction.split(" ")[2].strip()
+            self.ass.append([instruction.strip()])
+            # add <const>,<reg1>
+            self.ass.append(["add", "$"+str(RHS1) , reges])
+            # mov <reg1>, <LHS>
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+
+        # RHS1 = var && RHS2 = constant
+        elif (not constFlag1 and constFlag2):
+            # mov <RHS1> <reg1>
+            instruction = self.setReg.movFromMem2Reg(RHS1)
+            reges = instruction.split(" ")[2].strip()
+            self.ass.append([instruction.strip()])
+            # add <const>,<reg1>
+            self.ass.append(["add", "$"+str(RHS2) , reges])
+             # mov <reg1>, <LHS>
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+
+        # RHS1 = var && RHS2 = var 
+        elif (not constFlag1 and not constFlag2):
+            # mov <RHS1> <reg1>
+            instruction = self.setReg.movFromMem2Reg(RHS1)
+            reges = instruction.split(" ")[2].strip()
+            self.ass.append([instruction.strip()])
+            # add <RHS2>,<reg1>`
+            self.ass.append(["add", self.getMemLocation(RHS2) , reges])
+            # mov <reg1>, <LHS>
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+
+        
+        
 
     def minus(self, LHS, RHS1, RHS2):
         pass
