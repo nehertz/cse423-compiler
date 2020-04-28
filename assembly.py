@@ -45,13 +45,17 @@ class assembly:
 
     def funcBody(self, body):
         self.symbolTable = {}
-        # initialize the stack, create initial space on the stack for local variables
+        
         self.stackInitial(body)
 
         # scanning through the body, 
         for statement in body:
-            # translate assignment statement 
-            if (len(statement) >= 3 and statement[1] in assignment):
+            # translates the function call. 
+            if ('(' in statement and ')' in statement):
+                self.funcCall(statement)    
+
+             # translate assignment statement 
+            elif (len(statement) >= 3 and statement[1] in assignment):
                 self.assignment(statement)
             
             # simply creates the goto and label code
@@ -62,10 +66,7 @@ class assembly:
             elif ('if' in statement):
                 self.conditional(statement)
 
-            # translates the function call. 
-            elif ('(' in statement and ')' in statement):
-                self.funcCall(statement)            
-
+    # initialize the stack, create initial space on the stack for local variables
     def stackInitial(self, body):
         stackSize = 4
         tempCode = []
@@ -90,12 +91,15 @@ class assembly:
         for itme in tempCode:
             self.ass.append(itme)
 
+    # Takes variable name as input, returns its corresponding mem location
+    # return will be something like -4(%ebp)
     def getMemLocation(self, var):
         if(var not in self.symbolTable):
             print("var not on the stack")
         else:
             return self.symbolTable[var]
     
+
     def assignment(self, statement):
         # Assignment should handles simple assignment like a = 1
         # and assignment with arithmetic, a = 1 + b
@@ -107,18 +111,22 @@ class assembly:
             self.simpleArithmetic(statement)
     
     def simpleAssign(self, LHS, RHS):
-    #Find location of LHS, is it in memory stack or register. 
-    #location = findLocation(LHS)
-        #RHS could be varible or constant. 
         floatPatten = re.compile(r"[0-9]+\.[0-9]+")
         intPatten = re.compile(r"^[-+]?\d+$")
+        # assignment like a = 2 will be translate to 'mov $2 a_location'
         if (intPatten.match(RHS) or floatPatten.match(RHS)):
-            #need to find the location of LHS 
             RHS = "$" + str(RHS)
+            LHS = self.getMemLocation(LHS)
             self.ass.append(["mov", RHS, LHS])
+
+        # assignment like a = b will be tranlate to:
+        # mov b_location %eax
+        # mov %eax a_location
+        # mov $0 %eax 
         else:
-            #need to find the location of LHS and RHS
-            self.ass.append(["mov", RHS, LHS])
+            self.ass.append(["mov", self.getMemLocation(RHS), "%eax"])
+            self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
+            self.ass.append(["mov", "$0", "%eax"])
         return
     
     def simpleArithmetic(self, statement):

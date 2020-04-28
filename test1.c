@@ -24,8 +24,9 @@ int main()
         // int a = 100;
         // int b = 30;
         // float e = 20.2;
-        int a;
-        a = 2; 
+        // int a = 1;
+        // int b = 2;
+        // a = b;
         
         // int b;
         // int c;
@@ -83,10 +84,10 @@ int main()
         //         float j = j + 2;
         // }
 
-        do {
-                int i =  10;
-                // float j = j + 2;
-        } while (a < 3);
+        // do {
+        //         int i =  10;
+        //         // float j = j + 2;
+        // } while (a < 3);
 
         
         ////test for loop 
@@ -101,7 +102,7 @@ int main()
         // return a = 1 + 2;
         // return 1 + 2 + 3;
 
-        // //Samuel Example 1:
+        //Samuel Example 1:
         // int i, j, k;
         // i = 1;
         // j = 3;
@@ -131,5 +132,5 @@ int main()
         //   a = 1;
         // }
 
-        return 0;
+        // return 0;
 }
