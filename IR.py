@@ -526,7 +526,7 @@ class IR:
         if cond:
             for node in reversed(self.getSubtree(cond)):
                 # print(node.name)
-                print(self.queue)
+                # print(self.queue)
 
                 if node.name == 'M':
                     # Node is conditional marker
@@ -620,7 +620,6 @@ class IR:
                         eTruelist, eFalselist = [], []
 
                         # 1. backpatch(E1.falselist, e2.addr)
-                        print("backpatching {} with {}".format(e1Falselist, e2addr))
                         stmts = self.backpatch(stmts, e1Falselist, str(e2addr))
                         # 2. E.truelist = merge(E1.truelist, E2.truelist)
                         eTruelist = self.merge(e1Truelist, e2Truelist)
@@ -629,7 +628,7 @@ class IR:
                         
                         self.enqueue([self.instr, [e1addr, e2addr], eTruelist, eFalselist])
         # Negate expressions
-        print(negAddrs)
+        # print(negAddrs)
         for a in negAddrs:
             for n in negate:
                 if (n in stmts[a]):
@@ -698,7 +697,7 @@ class IR:
                 [output.append(s) for s in block]
         [self.IRS.append(s) for s in output]
         self.IRS.append(["<{}>:".format(endIfLabel)])
-        print(ifLabels)  
+        # print(ifLabels)
 
     # Translate while loop into IR
     # parameters: nodes, AST subtree with relevant parsed data

@@ -1,5 +1,8 @@
 __pycache__/
 ply/__pycache__/
+__init__.*
+yacc.*
+lex.*
 a.out
 parsetab.py
 parser.out
