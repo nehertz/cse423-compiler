@@ -393,7 +393,7 @@ class IR:
         for node in nodes:
             if(node.name != None):
                 if addToIR:
-                    self.IRS.append(node.name)
+                    self.IRS.append([node.name])
                 else:
                     return node.name
 

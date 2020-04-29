@@ -60,12 +60,12 @@ int main()
         // a = f;
         // a = f + b;
 
-        //// Goto stmt 
+        // Goto stmt 
         // goto even;
         // even:
         //         a = 1;
          
-        // // while and do while loop
+        // while and do while loop
         // int a;
         // while ( a + 1 > 3 || a < 1 ) {
         //         //continue;
@@ -85,13 +85,13 @@ int main()
         // }
         // a = a + 1;
         ////test return stmt
-        //return add(a, b);
+        // return add3(a, b, c);
         // return 1 + 2 + a +b;
         // return 1+2;
         // return a = 1 + 2;
         // return 1 + 2 + 3;
 
-        // //Samuel Example 1:
+        //Samuel Example 1:
         // int i, j, k;
         // i = 1;
         // j = 3;
@@ -110,16 +110,24 @@ int main()
         // }
         // return j;
 
+        // if(i%2 == 0 && i < 3 || (i != 0 && i > 10)){
+        //         ++j;    
+        // }
+
         ////test if-statement 
         // if(a%2 == 0){
         //   ++b;    
         // } else if (a > b){
-        //   a = b;
-        // } else if (a > b){
-        //   a = b;
+        //   a = 2; 
         // } else {
         //   a = 1;
         // }
+
+        // } else if (a > b){
+        //   a = b;
+        // } else if (a > b){
+        //   a = b;
+
 
 
 }
