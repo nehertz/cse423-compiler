@@ -29,7 +29,7 @@ class IR:
 
         self.temporaryVarible = 0
         self.label = 0
-        self.instr = 100
+        # self.instr = 100
         self.enterLoopLabel = ''
         self.endLoopLabel = ''
         self.loopConditionLabel = ''
@@ -514,6 +514,7 @@ class IR:
         self.queue = []
         stmts = {}
         negate = {
+            '== 1':'== 0',
             '==':'!=',
             '!=':'==',
             '<':'>=',
@@ -522,23 +523,25 @@ class IR:
             '>=':'<',
         }
         negAddrs = []
-        
-        if cond:
+        if cond is not None:
+            firstLabel = 'L' + str(self.label) + ':'
             for node in reversed(self.getSubtree(cond)):
                 # print(node.name)
                 # print(self.queue)
                 if node.name not in alc:
                     # Node is a variable
-                    if (node.parent.name in logical):
+                    if (node.parent.name in logical or node.parent.name in ["if", "else-if", "else"]):
                         # Node is an expression where var == 1 is true
                         expr = '{} == 1'.format(node.name)
-                        stmts[self.instr] = 'if {} goto _'.format(expr)
-                        self.enqueue([self.instr, expr, self.makeList(self.instr), self.makeList(self.instr + 1)])
-                        stmts[self.instr + 1] = 'goto _'
-                        self.instr += 2
+                        l1 = self.createLabel(node, 'condLabel')
+                        l2 = self.createLabel(node, 'condLabel')
+
+                        stmts[l1] = 'if {} goto _'.format(expr)
+                        self.enqueue([l1, expr, self.makeList(l1), self.makeList(l2)])
+                        stmts[l2] = 'goto _'
                     else:
                         # Node is a variable in an arithmetic or comparison expression
-                        self.enqueue((self.instr, node.name, [], []))
+                        self.enqueue((self.createLabel(node, 'condLabel'), node.name, [], []))
                 elif node.name in arithmetic + comparison:
                     # Node is a non-logical operator
                     # E -> id1 relop id2
@@ -552,18 +555,22 @@ class IR:
                     if (node.name == '~'):
                         oper = self.dequeue()
                         expr = '{} {}'.format(node.name, oper[1])
-                        stmts[self.instr] = 'if {} goto _'.format(expr)
-                        self.enqueue([self.instr, expr, self.makeList(self.instr), self.makeList(self.instr + 1)])
-                        stmts[self.instr + 1] = 'goto _'
-                        self.instr += 2
+                        l1 = self.createLabel(node, 'condLabel')
+                        l2 = self.createLabel(node, 'condLabel')
+
+                        stmts[l1] = 'if {} goto _'.format(expr)
+                        self.enqueue([l1, expr, self.makeList(l1), self.makeList(l2)])
+                        stmts[l2] = 'goto _'
                     else:
                         oper2 = self.dequeue()
                         oper1 = self.dequeue()
                         expr = '{} {} {}'.format(oper1[1], node.name, oper2[1])
-                        stmts[self.instr] = 'if {} goto _'.format(expr)
-                        self.enqueue([self.instr, expr, self.makeList(self.instr), self.makeList(self.instr + 1)])
-                        stmts[self.instr + 1] = 'goto _'
-                        self.instr += 2
+                        l1 = self.createLabel(node, 'condLabel')
+                        l2 = self.createLabel(node, 'condLabel')
+
+                        stmts[l1] = 'if {} goto _'.format(expr)
+                        self.enqueue([l1, expr, self.makeList(l1), self.makeList(l2)])
+                        stmts[l2] = 'goto _'
                 else:
                     # Node is a logical operator
                     if (node.name == '!'):
@@ -597,6 +604,7 @@ class IR:
                         e2 = self.dequeue()
                         e2addr, e2Truelist, e2Falselist = e2[0], e2[2], e2[3]
                         eTruelist, eFalselist = [], []
+                        l = self.createLabel(node, 'condLabel')
 
                         # 1. backpatch(E1.truelist, e2.addr)
                         stmts = self.backpatch(stmts, e1Truelist, str(e2addr))
@@ -605,7 +613,8 @@ class IR:
                         # 3. E.falselist = merge(E1.falselist, E2.falselist)
                         eFalselist = self.merge(e1Falselist, e2Falselist)
 
-                        self.enqueue([self.instr, [e1addr, e2addr], eTruelist, eFalselist])
+                        # self.enqueue([self.instr, [e1addr, e2addr], eTruelist, eFalselist])
+                        self.enqueue([l, [e1addr, e2addr], eTruelist, eFalselist])
                     else:
                         # E -> E1 || E2
 
@@ -614,6 +623,7 @@ class IR:
                         e2 = self.dequeue()
                         e2addr, e2Truelist, e2Falselist = e2[0], e2[2], e2[3]
                         eTruelist, eFalselist = [], []
+                        l = self.createLabel(node, 'condLabel')
 
                         # 1. backpatch(E1.falselist, e2.addr)
                         stmts = self.backpatch(stmts, e1Falselist, str(e2addr))
@@ -622,24 +632,27 @@ class IR:
                         # 3. E.falselist = E2.falselist
                         eFalselist = e2Falselist
                         
-                        self.enqueue([self.instr, [e1addr, e2addr], eTruelist, eFalselist])
+                        # self.enqueue([self.instr, [e1addr, e2addr], eTruelist, eFalselist])
+                        self.enqueue([l, [e1addr, e2addr], eTruelist, eFalselist])
+
         # Negate expressions
-        # print(negAddrs)
         for a in negAddrs:
             for n in negate:
                 if (n in stmts[a]):
                     stmts[a] = stmts[a].replace(n, negate[n])
                     break
 
-        return stmts
+        if cond is not None:
+            return stmts, firstLabel
+        else:
+            return stmts
 
     # TODO: Add toggling for adding to IR after implementing adding to IR
     def condStmt(self, nodes, addToIR=True):
         output = []
-        ifLabels = []
         firstFlag = True
-        endIfLabel = self.instr
-        self.instr += 1
+        condLabels = []
+        endIfLabel = self.createLabel(nodes, 'endIfLabel')
 
         for i, stmt in enumerate(nodes):
             # Loop through if/else statements
@@ -647,53 +660,56 @@ class IR:
                 # Handle ifs and else ifs
                 cond = stmt.children[0]
                 block = self.statement(stmt.children[1], False)
-                blockLabel = self.instr
-                self.instr += 1
+                blockLabel = self.createLabel(nodes, 'condBlockLabel')
 
-                stmts = self.condParse(cond, block)
+                stmts, condLabel = self.condParse(cond, block)
+                condLabels.append(condLabel)
+                # Add first label of first statement to list
                 for k, v in stmts.items():
-                    if (v == "goto _"):
-                        # False jumps
-                        if (i == len(nodes) - 1):
-                            # Last condition; should jump to end of conditionals
-                            v = v.replace('_', str(endIfLabel))
-                        elif (i == len(nodes) - 2 and stmt.name == 'else-if'):
-                            # Else if right before else; should jump to else block
-                            v = v.replace('_', str(self.instr))
-                        else:
-                            # Any other case; should jump to next label
-                            v = v.replace('_', str(self.instr + 1))
-                    else:
+                    if ('if' in v):
                         # True jumps; should jump to block of conditional
                         v = v.replace('_', str(blockLabel))
                     if not firstFlag:
                         # Don't print the label for the very first if
-                        output.append(["<{}>:".format(k)])
+                        output.append([k])
                     output.append([v])
                     firstFlag = False
                 
                 # Append label and escape goto to block
-                block.insert(0, ["<{}>:".format(blockLabel)])
+                block.insert(0, [blockLabel])
                 block.append(['goto {}'.format(endIfLabel)])
                 [output.append(s) for s in block]
             else:
                 # Handle else
-                blockLabel = self.instr
+                blockLabel = self.createLabel(nodes, 'condBlockLabel')
                 block = self.statement(stmt.children[0], False)
                 
                 stmts = self.condParse(None, block)
+                condLabels.append(blockLabel)
+
                 for k, v in stmts.items():
-                    # if (v == "goto _"):
-                    #     v = v.replace('_', str(blockLabel))
-                    output.append(["<{}>:".format(k)])
+                    output.append([k])
                     output.append([v])
                 
-                block.insert(0, ["<{}>:".format(blockLabel)])
+                block.insert(0, [blockLabel])
                 block.append(['goto {}'.format(endIfLabel)])
                 [output.append(s) for s in block]
-        [self.IRS.append(s) for s in output]
-        self.IRS.append(["<{}>:".format(endIfLabel)])
-        # print(ifLabels)
+
+        for i, val in enumerate(condLabels):
+            # Backpatch jumps to next conditional statement
+            for s in output:
+                if '_' in s[0] and i + 1 < len(condLabels):
+                    s[0] = s[0].replace('_', condLabels[i + 1])
+                    break
+                else:
+                    s[0] = s[0].replace('_', endIfLabel)
+
+        if addToIR:
+            [self.IRS.append(s) for s in output]
+            self.IRS.append([endIfLabel])
+        else:
+            output.append([endIfLabel])
+            return output
 
     # Translate while loop into IR
     # parameters: nodes, AST subtree with relevant parsed data

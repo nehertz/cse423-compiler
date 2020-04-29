@@ -1,13 +1,8 @@
 int main()
 {
         int a;
-        int b;
-        int c = a + b;
 
-        if (!(a > b || a < b)) {
+        if (a < 3 || (a != 0 && a > 10)) {
                 a++;
-                b++;
         }
-
-        return 0;
 }
