@@ -66,6 +66,9 @@ class assembly:
             # not sure about this part -.- 
             elif ('if' in statement):
                 self.conditional(statement)
+            
+            elif ('ret' in statement):
+                self.returnStmt(statement)
 
     # initialize the stack, create initial space on the stack for local variables
     def stackInitial(self, body):
@@ -127,6 +130,7 @@ class assembly:
         else:
             
             #TODO self.setReg.movFromMem2Reg(str(RHS))
+            #TODO The following 3 lines of code will be replaced with Yash's algorithm
             self.ass.append(["mov", self.getMemLocation(RHS), "%eax"])
             self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
             self.ass.append(["mov", "$0", "%eax"])
@@ -247,17 +251,6 @@ class assembly:
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
         
 
-    #  - `add <reg>,<reg>`
-    # - `add <reg>,<mem>`
-    # - `add <mem>,<reg>`
-    # - `add <const>,<reg>`
-    # - `add <const>,<mem>`
-
-    #     - Destination must be a register
-    # - `imul <reg32>,<reg32>`
-    # - `imul <mem>,<reg32>`
-    # - `idiv <reg32>`
-    # - `idiv <mem>`
     def divideAndModulo(self, LHS, RHS1, RHS2, ops):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
@@ -272,27 +265,75 @@ class assembly:
         
         # 500/b
         elif (constFlag1 and not constFlag2):
-            
-            pass
-            # mov RHS1 mem 
-            # mov 
+            # mov RHS1_const mem 
+            location = self.addToMem(RHS1)
+            self.ass.append(["mov", "$"+str(RHS1) , self.getMemLocation(RHS1)])
+            # mov RHS1_mem reg
+            instruction1 = self.setReg.movFromMem2Reg(str(RHS1))
+            reg1 = instruction1.split(" ")[2].strip()
+            self.ass.append([instruction1.strip()])
+            # mov RHS2_mem reg 
+            instruction2 = self.setReg.movFromMem2Reg(str(RHS2))
+            reg2 = instruction2.split(" ")[2].strip()
+            self.ass.append([instruction2.strip()])
+            # idiv reg2
+            self.ass.append(["idiv", reg2])
+
+            if(ops == '/'):
+                # quotient in %eax
+                self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
+            else:
+                # remainder in %edx 
+                self.ass.append(["mov", "%edx", self.getMemLocation(LHS)])
 
         # b/500
         elif (not constFlag1 and constFlag2):
-            pass
-        elif (not constFlag1 and not constFlag2):
-            # mov RHS1 %eax 
-            # mov RHS2 %ebx
-            # idiv %ebx
-            # mov %eax LHS
-            pass
+            # mov RHS2_const mem 
+            location = self.addToMem(RHS2)
+            self.ass.append(["mov", "$"+str(RHS2) , self.getMemLocation(RHS2)])
+            # mov RHS2_mem reg
+            instruction1 = self.setReg.movFromMem2Reg(str(RHS2))
+            reg1 = instruction1.split(" ")[2].strip()
+            self.ass.append([instruction1.strip()])
+            # mov RHS1_mem reg 
+            instruction2 = self.setReg.movFromMem2Reg(str(RHS1))
+            reg2 = instruction2.split(" ")[2].strip()
+            self.ass.append([instruction2.strip()])
+            # idiv reg2
+            self.ass.append(["idiv", reg2])
 
+            if(ops == '/'):
+                # quotient in %eax
+                self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
+            else:
+                # remainder in %edx 
+                self.ass.append(["mov", "%edx", self.getMemLocation(LHS)])
+
+        elif (not constFlag1 and not constFlag2):
+            # mov RHS1_mem reg
+            instruction1 = self.setReg.movFromMem2Reg(str(RHS1))
+            reg1 = instruction1.split(" ")[2].strip()
+            self.ass.append([instruction1.strip()])
+            # mov RHS2_mem reg 
+            instruction2 = self.setReg.movFromMem2Reg(str(RHS2))
+            reg2 = instruction2.split(" ")[2].strip()
+            self.ass.append([instruction2.strip()])
+            # idiv reg2
+            self.ass.append(["idiv", reg2])
+            if(ops == '/'):
+                # quotient in %eax
+                self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
+            else:
+                # remainder in %edx 
+                self.ass.append(["mov", "%edx", self.getMemLocation(LHS)])
+            pass
 
     def addToMem(self, var):
         stackLocation = "-" + str(self.stackSize) + "(%ebp)"
         dict = {var : stackLocation}
         self.stackSize += 4
         self.symbolTable.update(dict)
+        self.setReg.insertMemory(str(var), stackLocation)
         return stackLocation
 
     def determineConstant(self, RHS1, RHS2):
@@ -316,6 +357,17 @@ class assembly:
             constFlag2 = 1
 
         return constFlag1, constFlag2, RHS1, RHS2
+
+    def returnStmt(self, statement):
+        args = statement[1]
+        location = self.getMemLocation(args)
+        # mov result %eax
+        self.ass.append(["mov", location ,"%eax"])
+        # Deallocate local variables
+        self.ass.append(["mov", "%ebp" ,"%esp"])
+        # Restore the caller's base pointer value
+        self.ass.append(["pop", "%ebp"])
+        self.ass.append(["ret"])
 
     def goto(self, statement):
         pass

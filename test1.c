@@ -22,9 +22,10 @@ int main()
         // int aa;
         // int bb; 
         int a = 10;
-        // int b;
-        int c;
-        c = a * 5; 
+        // // int b;
+        // int c;
+        // c = 5 / a; 
+        return a; 
         // float e = 20.2;
         // return a;
         // int a = 1;
