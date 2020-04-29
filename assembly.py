@@ -153,10 +153,8 @@ class assembly:
             self.plusAndMinus(statement[0], statement[2], statement[4], ops)
         elif (ops == '*'):
             self.times(statement[0], statement[2], statement[4])
-        elif (ops == '/'):
-            self.divide(statement[0], statement[2], statement[4])
-        elif (ops == '%'):
-            self.modulo(statement[0], statement[2], statement[4])
+        elif (ops == '%' or ops == '/'):
+            self.divideAndModulo(statement[0], statement[2], statement[4], ops)
         else:
             print('unknow ops\n')
             exit()
@@ -270,11 +268,35 @@ class assembly:
     #     - Destination must be a register
     # - `imul <reg32>,<reg32>`
     # - `imul <mem>,<reg32>`
-    def divide(self, LHS, RHS1, RHS2):
-        pass
+    # - `idiv <reg32>`
+    # - `idiv <mem>`
+    def divideAndModulo(self, LHS, RHS1, RHS2, ops):
+        result = '0'
+        constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
+        
+        if (constFlag1 and constFlag2):
+            if (ops == '/')
+                result = RHS1 / RHS2
+                result = int(result)
+            elif (ops == '%')
+                result = RHS1 % RHS2
+            self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
+        
+        # 500/b
+        elif (constFlag1 and not constFlag2):
+            pass
+            # mov RHS1 LHS 
+            # mov 
 
-    def modulo(self, LHS, RHS1, RHS2):
-        pass
+        # b/500
+        elif (not constFlag1 and constFlag2):
+            pass
+        elif (not constFlag1 and not constFlag2):
+            # mov RHS1 %eax 
+            # mov RHS2 %ebx
+            # idiv %ebx
+            # mov %eax LHS
+            pass
 
 
     def determineConstant(self, RHS1, RHS2):
