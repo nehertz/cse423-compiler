@@ -451,13 +451,18 @@ def p_expr(p):
 def p_logicalExpr(p):
     '''
     logicalExpr : compOps
-                | logicalExpr LOR compOps
-                | logicalExpr LAND compOps
+                | logicalExpr LOR condMarker compOps
+                | logicalExpr LAND condMarker compOps
                 | logicalExpr OR compOps
                 | logicalExpr XOR compOps
                 | logicalExpr AND compOps
     '''
     return astConstruct(p, 'logicalExpr')
+
+def p_condMarker(p):
+    '''
+    condMarker : empty
+    '''
 
 def p_compOps(p):
     '''

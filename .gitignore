@@ -1,7 +1,7 @@
-__pycache__/*
-ply/__pycache__/*
+__pycache__/
+ply/__pycache__/
 a.out
 parsetab.py
 parser.out
 ast.txt
-
+*.pyc

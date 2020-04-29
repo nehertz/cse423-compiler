@@ -29,6 +29,7 @@ class IR:
 
         self.temporaryVarible = 0
         self.label = 0
+        self.instr = 100
         self.enterLoopLabel = ''
         self.endLoopLabel = ''
         self.loopConditionLabel = ''
@@ -111,65 +112,113 @@ class IR:
     # The statement function handles the statement body (scope) of functions, 
     # loops, and if-stmts
     # parameters: nodes, AST subtree with relevant parsed data
-    # TODO: add IF-stmt and switch stmt. 
-    def statement(self, nodes):
+    def statement(self, nodes, addToIR=True):
+        statements = []
+
         for node in nodes.children:
             # convert var decl with assignment
             # int a = expr or a = expr
             if (node.name in assignment):
-                self.assign(node)
+                if addToIR:
+                    self.assign(node, addToIR)
+                else:
+                    [statements.append(stmt) for stmt in self.assign(node, addToIR)]
 
             # convert the var-decl without assignment
             # Example: int a 
             elif (node.name == 'varDecl'):
-                self.varDecl(node)
+                if addToIR:
+                    self.varDecl(node, addToIR)
+                else:
+                    statements.append(self.varDecl(node, addToIR))
 
             # convert function calls.
             elif ('func-' in str(node.name)):
-                self.funcCall(node, node.name, 0, 0)
+                if addToIR:
+                    self.funcCall(node, node.name, 0, 0)
+                else:
+                    statements.append(self.funcCall(node, node.name, 0, 1))
 
             elif ('enum-' in str(node.name)):
                 self.enumInst(node, node.name)
+
+            elif(node.name == 'condStmt'):
+                # Handle conditional statments
+                if addToIR:
+                    self.condStmt(node, addToIR)
+                else:
+                    # TODO: This might need to be changed to match others
+                    statements.append(self.condStmt(node, addToIR))
+
             # convert simple expressions
             # those are expressions without assignment
             # examples : '1 + 2 + 3', 'a << 1'
             # reference to scanner for the alc list,
             elif (node.name in alc):
-                self.simpleExpr(node)
+                if addToIR:
+                    self.simpleExpr(node, addToIR)
+                else:
+                    [statements.append(stmt) for stmt in self.simpleExpr(node, addToIR)]
 
+            # convert the goto stmt, and its label
             elif (node.name == 'goto'):
-                self.gotoStmt(node)
+                if addToIR:
+                    self.gotoStmt(node, addToIR)
+                else:
+                    statements.append(self.gotoStmt(node, addToIR))
 
             elif (node.name == 'label'):
-                self.createLabel(node, None)
+                if addToIR:
+                    self.createLabel(node, None, addToIR)
+                else:
+                    statements.append(self.createLabel(node, None, addToIR))
 
+            # convert return stmt
             elif (node.name == 'return'):
-                self.returnStmt(node)
+                if addToIR:
+                    self.returnStmt(node, addToIR)
+                else:
+                    statements.append(self.returnStmt(node, addToIR))
 
             # convert increment and decrement, ++a and --a
             # the a = ++a case is handled by the assign() function
             elif (node.name == '++' or node.name == '--'):
-                self.increment(node, node.name)
+                if addToIR:
+                    self.increment(node, node.name, addToIR)
+                else:
+                    statements.append(self.increment(node, node.name, addToIR))
 
+            # convert while loop
             elif (node.name == 'while'):
-                self.whileloop(node)
+                if addToIR:
+                    self.whileloop(node)
+                else:
+                    statements.append(self.whileloop(node))
 
             elif (node.name == 'dowhile'):
-                self.dowhile(node)
-            
-            elif (node.name == 'forLoop'):
-                self.forloop(node)
+                if addToIR:
+                    self.dowhile(node)
+                else:
+                    statements.append(self.dowhile(node))
 
+            elif (node.name == 'forLoop'):
+                if addToIR:
+                    self.forloop(node)
+                else:
+                    statements.append(self.forloop(node))
             elif (node.name == 'break'):
                 self.breakStmt(node)
 
             elif (node.name == 'continue'):
                 self.continueStmt(node)
             
-            elif (node.name == 'ifstmt'):
-                self.ifstmt(node)
+            # elif (node.name == 'ifstmt'):
+            #     self.ifstmt(node)
             # else:
             #     print("Node ", node.name, " can not be converted")
+
+        if not addToIR:
+            return statements
 
     # Construct a dict structure to store an enum declaration
     # Key is the enum constant, value is the corresponding value of that constant
@@ -199,61 +248,49 @@ class IR:
         dict = self.enumList.get(str(name).replace('enum-', ''))
         dict = {eName : dict}
         self.enumInstance.update(dict)
-    
-    # Translate all assignment expression into IR
-    # parameters: nodes, AST subtree with relevant parsed data
-    def assign(self, nodes):
+
+    def assign(self, nodes, addToIR=True):
         subtree = self.getSubtree(nodes)
         operand2 = ''
         self.queue = []
+        statements = []
         for node in reversed(subtree):
+            # print(self.queue)
+            # print(node.name)
             if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
-                # Enqueue identifiers and constants
                 self.enqueue(node.name)
-            elif(node.name not in assignment and node.name in alc and node.name != '!' and len(node.children) != 1):
-                # Handle logical or comparison operator
+            elif(node.name not in assignment and node.name in alc):
                 operand2 = self.dequeue()
                 operand1 = self.dequeue()
                 operator = node.name
-                flag = 1
-                for enum in self.enumConst:
-                    if (operand1 in enum):
-                        tempVar = ['enumExpr', str(operand1) , str(operator) , str(operand2)]
-                        self.enqueue(tempVar)
-                        flag = 0
-                if (flag):        
-                    tempVar = 't_' + str(self.temporaryVarible)
-                    ir = [tempVar, '=', operand1, operator, operand2]
+                tempVar = 't_' + str(self.temporaryVarible)
+                self.temporaryVarible += 1
+                ir = [tempVar, '=', operand1, operator, operand2]
+                if addToIR:
                     self.IRS.append(ir)
-                    self.enqueue(tempVar)
-                    self.temporaryVarible += 1
-            elif(node.name == '-' and len(node.children) == 1):
-                # Handle negative number
-                operand1 = self.dequeue()
-                operator = node.name
-                self.enqueue(operator+operand1)
+                else:
+                    statements.append(ir)
+                self.enqueue(tempVar)
             elif(node.name == '++' or node.name == '--'):
-                # Handle increment and decrement
                 operand1 = self.dequeue()
                 operator = node.name[0]
                 ir = [operand1, '=', operand1, operator, '1']
-                self.IRS.append(ir)
+                if addToIR:
+                    self.IRS.append(ir)
+                else:
+                    statements.append(ir)
                 self.enqueue(operand1)
-            elif(node.name == '!'):
-                # Handle !
-                operand1 = self.dequeue()
-                operator = node.name
-                self.enqueue(operator+operand1)
             elif('func' in node.name):
-                # Handle function call
                 ir = " ".join(self.funcCall(node, node.name, 0, 1))
                 tempVar = 't_' + str(self.temporaryVarible)
-                ir = [tempVar, '=', ir]
-                self.enqueue(tempVar)
-                self.IRS.append(ir)
                 self.temporaryVarible += 1
+                ir = [tempVar, '=', ir]
+                if addToIR:
+                    self.IRS.append(ir)
+                else:
+                    statements.append(ir)
+                self.enqueue(tempVar)
             elif(node.name == 'cast'):
-                # Handle type casting
                 operand = self.dequeue() 
                 typeSpec = self.dequeue()
                 ir = '(' + str(typeSpec) + ')' +  str(operand)
@@ -271,10 +308,16 @@ class IR:
                         else :
                             value = dict.get(operand1)
                         ir = [operand2, '=', str(value)]
-                        self.IRS.append(ir)
+                        if addToIR:
+                            self.IRS.append(ir)
+                        else:
+                            statements.append(ir)
                     else:
                         ir = [operand2, '=', operand1]
-                        self.IRS.append(ir)
+                        if addToIR:
+                            self.IRS.append(ir)
+                        else:
+                            statements.append(ir)
                 else:
                     # e,g : if we have +=, operator1 is '+', operator2 is '='
                     if (len(node.name) == 2):
@@ -287,56 +330,81 @@ class IR:
                     operand1 = self.dequeue()
                     operand2 = self.dequeue()
                     ir = [operand2, operator2, operand2, operator1, operand1]
-                    self.IRS.append(ir)
-        return operand2
+                    if addToIR:
+                        self.IRS.append(ir)
+                    else:
+                        statements.append(ir)
 
-    # Translate expression without assignment into IR using temporary
-    # variables (e.g. a >> 1, 1 + 2 + 3, etc.)
-    # parameters: nodes, AST subtree with relevant parsed data
-    def simpleExpr(self, nodes):
+        if addToIR:
+            return operand2
+        else:
+            return statements
+
+    # simpleExpr converts experssion which does not have assigment
+    # updated 3/30/20: now supports logical and comparison ops and unary ops
+    # e,g a >> 1, 1 + 2 + 3
+    def simpleExpr(self, nodes, addToIR=True):
         subtree = self.getSubtree(nodes)
+        ops = alc
+        unary = ['~', '!']
         operand2 = ''
+        statements = []
         self.queue = []
         for node in reversed(subtree):
-            if (node.name not in arithmetic):
-                # Enqueue identifiers and constants
+            if (node.name not in ops):
                 self.enqueue(node.name)
-            elif (node.name in arithmetic and node.name != '!' and len(node.children) != 1):
-                # Handle binary operators
-                operand2 = self.dequeue()
-                operand1 = self.dequeue()
-                operator = node.name
-                tempVar = 't_' + str(self.temporaryVarible)
-                ir = [tempVar, '=', operand1, operator, operand2]
-                self.IRS.append(ir)
+            elif (node.name in ops):
+                if (node.name in unary):
+                    operand1 = self.dequeue()
+                    operator = node.name
+                    tempVar = 't_' + str(self.temporaryVarible)
+                    ir = [tempVar, '=', operator + operand1]
+                    print(ir)
+
+                else:
+                    operand2 = self.dequeue()
+                    operand1 = self.dequeue()
+                    operator = node.name
+                    tempVar = 't_' + str(self.temporaryVarible)
+                    ir = [tempVar, '=', operand1, operator, operand2]
+                    print(ir)
+
+                if addToIR:
+                    self.IRS.append(ir)
+                else:
+                    statements.append(ir)
                 self.enqueue(tempVar)
                 self.temporaryVarible += 1
-            elif (node.name == '!'):
-                # Handle !
-                operand1 = self.dequeue()
-                operator = node.name
-                self.enqueue(operator+operand1)
             elif(node.name == '-' and len(node.children) == 1):
                 # Handle negative number
                 operand1 = self.dequeue()
                 operator = node.name
                 self.enqueue(operator+operand1)
         self.dequeue()
-        return tempVar
-    
+        if addToIR:
+            return tempVar
+        else:
+            return statements
+
     # Translate variable declaration without assignment into IR
     # Not necessary for the final IR
     # parameters: nodes, AST subtree with relevant parsed data
-    def varDecl(self, nodes):
+    def varDecl(self, nodes, addToIR=True):
         for node in nodes:
             if(node.name != None):
-                self.IRS.append([node.name])
-    
+                if addToIR:
+                    self.IRS.append(node.name)
+                else:
+                    return node.name
+
     # Translate goto statement into IR.
     # parameters: nodes, AST subtree with relevant parsed data
-    def gotoStmt(self, nodes):
+    def gotoStmt(self, nodes, addToIR=True):
         for node in nodes.children:
-            self.IRS.append(['goto', node.name])
+            if addToIR:
+                self.IRS.append(['goto', node.name])
+            else:
+                return ['goto', node.name]
 
     # Create a label for goto statements, conditionals, or loops
     # parameters: nodes, AST subtree with relevant parsed data
@@ -346,38 +414,54 @@ class IR:
     # instead of appending to IR
     # Else if: label name already exists, creates the label with available name
     # (e.g 'goto even:', 'label even:')
-    def createLabel(self, nodes, type):
+    def createLabel(self, nodes, type, addToIR=True):
         if (type != None):
             loopL = 'L' + str(self.label) + ':'
             self.label += 1
             return loopL
         else:
             for node in nodes.children:
-                self.IRS.append([node.name + ':'])
-        
+                if addToIR:
+                    self.IRS.append([node.name, ':'])
+                else:
+                    return [node.name, ':']
+
     # Translate return statement into IR
     # parameters: nodes, AST subtree with relevant parsed data
-    def returnStmt(self, nodes):
+    def returnStmt(self, nodes, addToIR=True):
         for node in nodes.children:
             if (node.name in assignment):
-                # Handle assignments
                 operand = self.assign(node)
-                self.IRS.append(['ret', operand])
+                if addToIR:
+                    self.IRS.append(['ret', operand])
+                else:
+                    return ['ret', operand]
             elif (node.name in arithmetic):
-                # Handle arithmetic expressions
                 tempVar = self.simpleExpr(node)
-                self.IRS.append(['ret', tempVar])
+                if addToIR:
+                    self.IRS.append(['ret', tempVar])
+                else:
+                    return ['ret', tempVar]
             elif ('func-' in str(node.name)):
-                # Handle function calls
-                self.funcCall(node, node.name, 1, 0)
+                # Treating funcCall a bit different since there was already a method for returning the expr using exprFlag
+                if addToIR:
+                    self.funcCall(node, node.name, 1, 0)
+                else:
+                    return self.funcCall(node, node.name, 1, 1)
             else:
-                self.IRS.append(['ret', node.name])
-
+                if addToIR:
+                    self.IRS.append(['ret', node.name])
+                else:
+                    return ['ret', node.name]
+    
     # Translates increment and decrement statements into IR
-    def increment(self, nodes, name):
+    def increment(self, nodes, name, addToIR=True):
         operator = name[0]
         for node in nodes.children:
-            self.IRS.append([node.name, '=', node.name, operator, '1'])
+            if addToIR:
+                self.IRS.append([node.name, '=', node.name, operator, '1'])
+            else:
+                return [node.name, '=', node.name, operator, '1']
 
     # Translate function calls into IR
     # parameters: funcName, name of the function
@@ -411,6 +495,210 @@ class IR:
             return ir
         else:
             self.IRS.append(ir)
+
+    def makeList(self, i):
+        return [i]
+
+    def merge(self, p1, p2):
+        return sorted(p1 + p2)
+
+    def backpatch(self, exprs, p, i):
+        for k in p:
+            exprs[k] = exprs[k].replace('_', i)
+
+        return exprs
+
+    # NOT SUPPORTED: negation of logical operators
+    def condParse(self, cond, block):
+        # Clear the queue
+        self.queue = []
+        stmts = {}
+        negate = {
+            '==':'!=',
+            '!=':'==',
+            '<':'>=',
+            '>':'<=',
+            '<=':'>',
+            '>=':'<',
+        }
+        negAddrs = []
+        
+        if cond:
+            for node in reversed(self.getSubtree(cond)):
+                # print(node.name)
+                print(self.queue)
+
+                if node.name == 'M':
+                    # Node is conditional marker
+                    continue
+                elif node.name not in alc:
+                    # Node is a variable
+                    if (node.parent.name in logical):
+                        # Node is an expression where var == 1 is true
+                        expr = '{} == 1'.format(node.name)
+                        stmts[self.instr] = 'if {} goto _'.format(expr)
+                        self.enqueue([self.instr, expr, self.makeList(self.instr), self.makeList(self.instr + 1)])
+                        stmts[self.instr + 1] = 'goto _'
+                        self.instr += 2
+                    else:
+                        # Node is a variable in an arithmetic or comparison expression
+                        self.enqueue((self.instr, node.name, [], []))
+                elif node.name in arithmetic + comparison:
+                    # Node is a non-logical operator
+                    # E -> id1 relop id2
+                    # 1. E.truelist = makelist(self.instr)
+                    # 2. self.instr += 1
+                    # 3. E.falselist = makelist(self.instr)
+                    # 4. self.instr += 1
+                    # 5. print('if {} {} {} goto _'.format(oper1, node.name, oper2))
+                    # 6. print('goto _')
+
+                    if (node.name == '~'):
+                        oper = self.dequeue()
+                        expr = '{} {}'.format(node.name, oper[1])
+                        stmts[self.instr] = 'if {} goto _'.format(expr)
+                        self.enqueue([self.instr, expr, self.makeList(self.instr), self.makeList(self.instr + 1)])
+                        stmts[self.instr + 1] = 'goto _'
+                        self.instr += 2
+                    else:
+                        oper2 = self.dequeue()
+                        oper1 = self.dequeue()
+                        expr = '{} {} {}'.format(oper1[1], node.name, oper2[1])
+                        stmts[self.instr] = 'if {} goto _'.format(expr)
+                        self.enqueue([self.instr, expr, self.makeList(self.instr), self.makeList(self.instr + 1)])
+                        stmts[self.instr + 1] = 'goto _'
+                        self.instr += 2
+                else:
+                    # Node is a logical operator
+                    if (node.name == '!'):
+                        # E -> NOT E1
+
+                        # Don't want to dequeue; want to modify the enqueued entry
+                        oper = self.queue[0]
+
+                        if (isinstance(oper[1], list) is True):
+                            # Operand is the result of a logical operation
+                            addrs = oper[1]
+                            for a in addrs:
+                                # Append addr of expr that needs to be negated
+                                if (a not in negAddrs):
+                                    negAddrs.append(a)
+                        else:
+                            # Operand is an expression
+                            expr = oper[1]
+                            addr = oper[0]
+                            for n in negate:
+                                # Negate expression
+                                if (n in stmts[addr]):
+                                    expr = stmts[addr].replace(n, negate[n])
+                                    stmts[addr] = expr
+                                    break
+                    elif(node.name == '&&'):
+                        # E -> E1 && E2
+
+                        e1 = self.dequeue()
+                        e1addr, e1Truelist, e1Falselist = e1[0], e1[2], e1[3]
+                        e2 = self.dequeue()
+                        e2addr, e2Truelist, e2Falselist = e2[0], e2[2], e2[3]
+                        eTruelist, eFalselist = [], []
+
+                        # 1. backpatch(E1.truelist, e2.addr)
+                        stmts = self.backpatch(stmts, e1Truelist, str(e2addr))
+                        # 2. E.truelist = E2.truelist
+                        eTruelist = e2Truelist
+                        # 3. E.falselist = merge(E1.falselist, E2.falselist)
+                        eFalselist = self.merge(e1Falselist, e2Falselist)
+
+                        self.enqueue([self.instr, [e1addr, e2addr], eTruelist, eFalselist])
+                    else:
+                        # E -> E1 || E2
+
+                        e1 = self.dequeue()
+                        e1addr, e1Truelist, e1Falselist = e1[0], e1[2], e1[3]
+                        e2 = self.dequeue()
+                        e2addr, e2Truelist, e2Falselist = e2[0], e2[2], e2[3]
+                        eTruelist, eFalselist = [], []
+
+                        # 1. backpatch(E1.falselist, e2.addr)
+                        print("backpatching {} with {}".format(e1Falselist, e2addr))
+                        stmts = self.backpatch(stmts, e1Falselist, str(e2addr))
+                        # 2. E.truelist = merge(E1.truelist, E2.truelist)
+                        eTruelist = self.merge(e1Truelist, e2Truelist)
+                        # 3. E.falselist = E2.falselist
+                        eFalselist = e2Falselist
+                        
+                        self.enqueue([self.instr, [e1addr, e2addr], eTruelist, eFalselist])
+        # Negate expressions
+        print(negAddrs)
+        for a in negAddrs:
+            for n in negate:
+                if (n in stmts[a]):
+                    stmts[a] = stmts[a].replace(n, negate[n])
+                    break
+
+        return stmts
+
+    # TODO: Add toggling for adding to IR after implementing adding to IR
+    def condStmt(self, nodes, addToIR=True):
+        output = []
+        ifLabels = []
+        firstFlag = True
+        endIfLabel = self.instr
+        self.instr += 1
+
+        for i, stmt in enumerate(nodes):
+            # Loop through if/else statements
+            if (stmt.name == 'if' or stmt.name == 'else-if'):
+                # Handle ifs and else ifs
+                cond = stmt.children[0]
+                block = self.statement(stmt.children[1], False)
+                blockLabel = self.instr
+                self.instr += 1
+
+                stmts = self.condParse(cond, block)
+                for k, v in stmts.items():
+                    if (v == "goto _"):
+                        # False jumps
+                        if (i == len(nodes) - 1):
+                            # Last condition; should jump to end of conditionals
+                            v = v.replace('_', str(endIfLabel))
+                        elif (i == len(nodes) - 2 and stmt.name == 'else-if'):
+                            # Else if right before else; should jump to else block
+                            v = v.replace('_', str(self.instr))
+                        else:
+                            # Any other case; should jump to next label
+                            v = v.replace('_', str(self.instr + 1))
+                    else:
+                        # True jumps; should jump to block of conditional
+                        v = v.replace('_', str(blockLabel))
+                    if not firstFlag:
+                        # Don't print the label for the very first if
+                        output.append(["<{}>:".format(k)])
+                    output.append([v])
+                    firstFlag = False
+                
+                # Append label and escape goto to block
+                block.insert(0, ["<{}>:".format(blockLabel)])
+                block.append(['goto {}'.format(endIfLabel)])
+                [output.append(s) for s in block]
+            else:
+                # Handle else
+                blockLabel = self.instr
+                block = self.statement(stmt.children[0], False)
+                
+                stmts = self.condParse(None, block)
+                for k, v in stmts.items():
+                    # if (v == "goto _"):
+                    #     v = v.replace('_', str(blockLabel))
+                    output.append(["<{}>:".format(k)])
+                    output.append([v])
+                
+                block.insert(0, ["<{}>:".format(blockLabel)])
+                block.append(['goto {}'.format(endIfLabel)])
+                [output.append(s) for s in block]
+        [self.IRS.append(s) for s in output]
+        self.IRS.append(["<{}>:".format(endIfLabel)])
+        print(ifLabels)  
 
     # Translate while loop into IR
     # parameters: nodes, AST subtree with relevant parsed data
@@ -746,117 +1034,6 @@ class IR:
                 newLabel = [placeExpr2_1, self.enterLoopLabel, self.endLoopLabel]
                 self.labelPlace[expr2] = newLabel
 
-    # ifStmt function creates the inital labels for if statement 
-    # store the label for 'if', 'else if', and 'else' nodes
-    # those labels are important for deciding the jump location 
-    def ifstmt(self, nodes):
-        self.ifLabel = []
-        self.elifLabel = []
-        self.elseLabel = []
-        self.conditionLabel = []
-        
-        for node in nodes.children:
-            if (node.name == 'if'):
-                label = self.createLabel(None, 'condiiton')
-                list = [label, node]
-                self.ifLabel.append(list)
-
-            elif (node.name == 'elseif'):
-                label = self.createLabel(None, 'condiiton')
-                list = [label, node]
-                self.elifLabel.append(list)
-
-            elif (node.name == 'else'):
-                label = self.createLabel(None, 'condiiton')
-                list = [label, node]
-                self.elseLabel.append(list)
-
-        for node in nodes.children:
-                condLabel = self.createLabel(None, 'condiiton')
-                self.conditionLabel.append(condLabel)
-
-        self.exitIFLabel = self.createLabel(None, 'condiiton')
-        list = ['goto', self.conditionLabel[0]]
-        self.IRS.append(list)
-
-        enterLabel = self.ifLabel[0][0]
-        self.enterIFlabel = enterLabel
-        self.IRS.append([enterLabel])
-        self.placeStmt(self.ifLabel[0][1])
-        
-        if(len(self.elifLabel) != 0):
-            for label in self.elifLabel:
-                self.IRS.append([label[0]])
-                self.placeStmt(label[1])
-        if(len(self.elseLabel) != 0):
-            for label in self.elseLabel:
-                self.IRS.append([label[0]])
-                self.placeStmt(label[1])
-                list = ['goto', self.exitIFLabel]   
-                self.IRS.append(list)
-        i = 0
-        for node in nodes.children:
-            if (node.name != 'else'):
-                for n in node.children:
-                    if(n.name == 'condition'):
-                        self.IRS.append([self.conditionLabel[i]])
-                        self.ifConditional(n, i, node.name)
-            else:
-                self.IRS.append([self.conditionLabel[i]])
-                gotoTrue = str(self.elseLabel[0][0])
-                list = ['goto', gotoTrue]   
-                self.IRS.append(list)
-            i += 1    
-        self.IRS.append([self.exitIFLabel])   
-
-    # The function scanns the if statement nodes, and recognizes the boolean expression 
-    # in the if conditionals. when no logic ops are in side the conditionals, the function
-    # passes node to simpleIF function.  
-    def ifConditional(self, nodes, order, parent):
-        for node in nodes.children:
-            if(node.name in comparison):
-                self.simpleIF(node,order, parent)
-            elif(node.name in logical):
-                self.complexIF(node,order, parent)
-    
-    # The function converts IF statement with simple boolean expression 
-    # which means the boolean expresion only contains comparsion ops, 
-    # logical ops can not be converted. 
-    def simpleIF(self, nodes,order, parent):
-        opand = []
-        list = []
-        for node in nodes.children:
-            if (node.name not in comparison and node.name != '!' and node.name not in arithmetic):
-                opand.append(node.name)
-            elif (node.name in arithmetic):
-                temp = self.simpleExpr(node)
-                opand.append(temp)
-            elif (node.name == '!'):
-                opand.append(node.name + str(node.children[0]).replace(';', '').strip())
-            print(opand)
-        expr = opand[0] + nodes.name + opand[1]
-
-        if (parent == 'if'):
-            gotoTrue = str(self.ifLabel[0][0])
-            if (len(self.conditionLabel) > 1):
-                gotoFalse = self.conditionLabel[order + 1]
-            else :
-                gotoFalse = self.exitIFLabel
-            list = ['if', expr, 'goto', gotoTrue, 'else', 'goto', gotoFalse]
-
-        elif (parent == 'elseif'):
-            gotoTrue = str(self.elifLabel[order-1][0])
-            if(order + 1 < len(self.conditionLabel)):
-                gotoFalse = self.conditionLabel[order + 1]
-            else:
-                gotoFalse = self.exitIFLabel
-            list = ['if', expr, 'goto', gotoTrue, 'else', 'goto', gotoFalse]   
-        self.IRS.append(list)
-
-
-    def complexIF(self, nodes, order, parent):
-        pass
-    
     # helper function that breaks down the given expr 
     # the give expr should be boolean expression with logical ops
     # the function returns left hand side or right hand side of the expr 
@@ -990,4 +1167,3 @@ class IR:
         for line in fileString:
             list = line.split()
             self.IRS.append(list)
-    
