@@ -9,6 +9,7 @@ class assembly:
         self.ig = ig
         self.setReg = setReg
         self.symbolTable = {}
+        self.stackSize = 4
 
     def run(self):
         lineNumber = 0
@@ -45,7 +46,7 @@ class assembly:
 
     def funcBody(self, body):
         self.symbolTable = {}
-        
+        self.stackSize = 4
         self.stackInitial(body)
 
         # scanning through the body, 
@@ -75,25 +76,25 @@ class assembly:
 
     # initialize the stack, create initial space on the stack for local variables
     def stackInitial(self, body):
-        stackSize = 4
+        
         tempCode = []
         tempCode.append(["push", "%ebp"])
         tempCode.append(["mov", "esp", "ebp"])
         for statement in body:
-            stackLocation = "-" + str(stackSize) + "(%ebp)"
+            stackLocation = "-" + str(self.stackSize) + "(%ebp)"
             if(len(statement) == 1 and ":" not in statement[0] and (statement[0] not in self.symbolTable.keys())):
                 dict = {statement[0] : stackLocation}
                 self.symbolTable.update(dict)
-                stackSize += 4
+                self.stackSize += 4
                 self.setReg.insertMemory(statement[0], stackLocation)
 
             elif(len(statement) >= 3 and statement[1] == '=' and (statement[0] not in self.symbolTable.keys()) and ":" not in statement[0]):
                 dict = {statement[0] : stackLocation}
                 self.symbolTable.update(dict)
-                stackSize += 4
+                self.stackSize += 4
                 self.setReg.insertMemory(statement[0], stackLocation)
 
-        tempCode.append(["sub", "$" + str(stackSize), "esp"])
+        tempCode.append(["sub", "$" + str(self.stackSize), "esp"])
         # print(self.symbolTable)
         for itme in tempCode:
             self.ass.append(itme)
@@ -225,28 +226,31 @@ class assembly:
 
         # this is the case where a constant times a varaible
         elif (constFlag1 and not constFlag2):
-            # mov RHS1 LHS
-            self.ass.append(["mov", "$"+str(RHS1) , self.getMemLocation(LHS)])
+            # move RHS1 mem
+            location = self.addToMem(RHS1)
+            self.ass.append(["mov", "$"+str(RHS1) , location])
             # mov RHS2 reg1
             instruction = self.setReg.movFromMem2Reg(RHS2)
             reges = instruction.split(" ")[2].strip()
             self.ass.append([instruction.strip()])
-            # imul LHS reg1
-            self.ass.append(["imul", self.getMemLocation(LHS) , reges])
+            # imul RHS1 reg1
+            self.ass.append(["imul", self.getMemLocation(RHS1) , reges])
             # mov reg1 LHS 
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
         elif (not constFlag1 and constFlag2):
-            # mov RHS2 LHS
-            self.ass.append(["mov", "$"+str(RHS2) , self.getMemLocation(LHS)])
+            # move RHS2 mem
+            location = self.addToMem(RHS2)
+            self.ass.append(["mov", "$"+str(RHS2) , location])
             # mov RHS1 reg1
             instruction = self.setReg.movFromMem2Reg(RHS1)
             reges = instruction.split(" ")[2].strip()
             self.ass.append([instruction.strip()])
-            # imul LHS reg1
-            self.ass.append(["imul", self.getMemLocation(LHS) , reges])
+            # imul RHS1 reg1
+            self.ass.append(["imul", self.getMemLocation(RHS2) , reges])
             # mov reg1 LHS 
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+
 
         elif (not constFlag1 and not constFlag2):
             # mov RHS1 reg1 
@@ -275,17 +279,18 @@ class assembly:
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
         
         if (constFlag1 and constFlag2):
-            if (ops == '/')
+            if (ops == '/'):
                 result = RHS1 / RHS2
                 result = int(result)
-            elif (ops == '%')
+            elif (ops == '%'):
                 result = RHS1 % RHS2
             self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
         
         # 500/b
         elif (constFlag1 and not constFlag2):
+            
             pass
-            # mov RHS1 LHS 
+            # mov RHS1 mem 
             # mov 
 
         # b/500
@@ -298,6 +303,13 @@ class assembly:
             # mov %eax LHS
             pass
 
+
+    def addToMem(self, var):
+        stackLocation = "-" + str(self.stackSize) + "(%ebp)"
+        dict = {var : stackLocation}
+        self.stackSize += 4
+        self.symbolTable.update(dict)
+        return stackLocation
 
     def determineConstant(self, RHS1, RHS2):
         constFlag1 = 0

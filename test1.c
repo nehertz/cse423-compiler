@@ -24,7 +24,7 @@ int main()
         int a = 10;
         // int b;
         int c;
-        c = a / 5; 
+        c = a * 5; 
         // float e = 20.2;
         // return a;
         // int a = 1;
@@ -119,6 +119,11 @@ int main()
         // for(i = 0; i < 10; ++i)
         // {
         // if(i%2 == 0){
+        //         ++j;    
+        // }
+        // }
+        // return j;
+         // if(i%2 == 0){
         //         ++j;    
         // }
         // }
