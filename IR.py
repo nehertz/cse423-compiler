@@ -527,11 +527,7 @@ class IR:
             for node in reversed(self.getSubtree(cond)):
                 # print(node.name)
                 # print(self.queue)
-
-                if node.name == 'M':
-                    # Node is conditional marker
-                    continue
-                elif node.name not in alc:
+                if node.name not in alc:
                     # Node is a variable
                     if (node.parent.name in logical):
                         # Node is an expression where var == 1 is true
