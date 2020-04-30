@@ -25,10 +25,10 @@ int main()
         // // int b;
         int c, b;
         
-        // c = 5 * a; 
+        c = a * 5; 
         // a = c << 10;
-        a = b / 5000;
-        return a; 
+        // a = b / 5000;
+        // return a; 
         // float e = 20.2;
         // return a;
         // int a = 1;
@@ -48,6 +48,7 @@ int main()
         // a =  b << 3;
         // a =  b >> 3;
         // a =  b + 3;
+        // return a;
         // a =  b - 3;
         // a = b * 3;
         // a = b / 3;

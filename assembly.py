@@ -1,5 +1,6 @@
 from ply_scanner import assignment, comparison
 from ply_scanner import arithmetic
+from ply_scanner import logical
 import re
 
 class assembly:
@@ -48,6 +49,7 @@ class assembly:
         self.symbolTable = {}
         self.stackSize = 8
         self.stackInitial(body)
+        flag = 1
 
         # scanning through the body, 
         for statement in body:
@@ -76,6 +78,10 @@ class assembly:
             
             elif ('ret' in statement):
                 self.returnStmt(statement)
+                flag = 0
+        
+        if (flag):
+            self.returnStmt(None)
 
     # initialize the stack, create initial space on the stack for local variables
     def stackInitial(self, body):
@@ -144,32 +150,29 @@ class assembly:
         # mov %eax a_location
         # mov $0 %eax 
         else:
-            
             #TODO self.setReg.movFromMem2Reg(str(RHS))
             #TODO The following 3 lines of code will be replaced with Yash's algorithm
             self.ass.append(["mov", self.getMemLocation(RHS), "%rax"])
             self.ass.append(["mov", "%rax", self.getMemLocation(LHS)])
-            self.ass.append(["mov", "$0", "%rax"])
+           
         return
     
     def simpleArithmetic(self, statement):
         ops = statement[3]
-        if (ops == '+' or ops == '-'):
-            self.plusAndMinus(statement[0], statement[2], statement[4], ops)
+        if (ops == '+' or ops == '-' or ops == '|' or ops == '&' or ops == '^'):
+            self.plusAndMinusAndLogic(statement[0], statement[2], statement[4], ops)
         elif (ops == '*'):
             self.times(statement[0], statement[2], statement[4])
         elif (ops == '%' or ops == '/'):
             self.divideAndModulo(statement[0], statement[2], statement[4], ops)
         elif (ops == '<<' or ops == '>>'):
             self.shift(statement[0], statement[2], statement[4], ops)
-        elif (ops == '|' or ops == '&' or ops == '^'):
-            pass
         else:
             print('unknow ops\n')
             exit()
 
 
-    def plusAndMinus(self, LHS, RHS1, RHS2, ops):
+    def plusAndMinusAndLogic(self, LHS, RHS1, RHS2, ops):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
 
@@ -179,19 +182,35 @@ class assembly:
                 result = RHS1 + RHS2
             elif (ops == '-'):
                 result = RHS1 - RHS2
+            elif (ops == '|'):
+                result = RHS1 | RHS2
+            elif (ops == '&'):
+                result = RHS1 & RHS2
+            elif (ops == '^'):
+                result = RHS1 ^ RHS2
             self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
-        
+
         # RHS1 = constant &&  RHS2 = var
         elif (constFlag1 and not constFlag2):
             # mov <RHS2> <reg1>
-            instruction = self.setReg.movFromMem2Reg(RHS2)
-            reges = instruction.split(" ")[2].strip()
-            self.ass.append([instruction.strip()])
+            instruction = self.setReg.movFromMem2Reg(RHS1)
+            instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
+            if(instruction2 != None):
+                self.ass.append([instruction1])
+                self.ass.append([instruction2])
+            else: 
+                self.ass.append([instruction1])
             # add <const>,<reg1> or sub 
             if (ops == '+'):
                 self.ass.append(["add", "$"+str(RHS1) , reges])
             elif (ops == '-'):
                 self.ass.append(["sub", "$"+str(RHS1) , reges])
+            elif (ops == '|'):
+                self.ass.append(["or", "$"+str(RHS1) , reges])
+            elif (ops == '&'):
+                self.ass.append(["and", "$"+str(RHS1) , reges])
+            elif (ops == '^'):
+                self.ass.append(["xor", "$"+str(RHS1) , reges])
             # mov <reg1>, <LHS>
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
@@ -199,13 +218,24 @@ class assembly:
         elif (not constFlag1 and constFlag2):
             # mov <RHS1> <reg1>
             instruction = self.setReg.movFromMem2Reg(RHS1)
-            reges = instruction.split(" ")[2].strip()
-            self.ass.append([instruction.strip()])
+            instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
+            if(instruction2 != None):
+                self.ass.append([instruction1])
+                self.ass.append([instruction2])
+            else: 
+                self.ass.append([instruction1])
+
             # add <const>,<reg1>
             if (ops == '+'):
                 self.ass.append(["add", "$"+str(RHS2) , reges])
             elif (ops == '-'):
                 self.ass.append(["sub", "$"+str(RHS2) , reges])
+            elif (ops == '|'):
+                self.ass.append(["or", "$"+str(RHS2) , reges])
+            elif (ops == '&'):
+                self.ass.append(["and", "$"+str(RHS2) , reges])
+            elif (ops == '^'):
+                self.ass.append(["xor", "$"+str(RHS2) , reges])
              # mov <reg1>, <LHS>
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
@@ -213,13 +243,24 @@ class assembly:
         elif (not constFlag1 and not constFlag2):
             # mov <RHS1> <reg1>
             instruction = self.setReg.movFromMem2Reg(RHS1)
-            reges = instruction.split(" ")[2].strip()
-            self.ass.append([instruction.strip()])
+            instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
+            if(instruction2 != None):
+                self.ass.append([instruction1])
+                self.ass.append([instruction2])
+            else: 
+                self.ass.append([instruction1])
             # add <RHS2>,<reg1>`
             if (ops == '+'):
                 self.ass.append(["add", self.getMemLocation(RHS2) , reges])
             elif (ops == '-'):
                 self.ass.append(["sub", self.getMemLocation(RHS2) , reges])
+            elif (ops == '|'):
+                self.ass.append(["or", self.getMemLocation(RHS2) , reges])
+            elif (ops == '&'):
+                self.ass.append(["and", self.getMemLocation(RHS2) , reges])
+            elif (ops == '^'):
+                self.ass.append(["xor", self.getMemLocation(RHS2) , reges])
+
             # mov <reg1>, <LHS>
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
@@ -234,28 +275,48 @@ class assembly:
 
         # this is the case where a constant times a varaible
         elif (constFlag1 and not constFlag2):
-            # move RHS1 mem
-            location = self.addToMem(RHS1)
-            self.ass.append(["mov", "$"+str(RHS1) , location])
-            # mov RHS2 reg1
+            # move RHS1 regs0
+            # location = self.addToMem(RHS1)
+            # self.ass.append(["mov", "$"+str(RHS1) , location])
+            (flag, availableReg) = self.ig.get_availableReg(str(RHS1))
+            if (availableReg == None):
+                print("error occurred. Variable not found in interference graph")
+                sys.exit(1)
+            self.ass.append(["mov", "$"+str(RHS1) , availableReg])
+
+            # mov RHS2 regs
             instruction = self.setReg.movFromMem2Reg(RHS2)
-            reges = instruction.split(" ")[2].strip()
-            self.ass.append([instruction.strip()])
-            # imul RHS1 reg1
-            self.ass.append(["imul", self.getMemLocation(RHS1) , reges])
-            # mov reg1 LHS 
+            instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
+            if(instruction2 != None):
+                self.ass.append([instruction1])
+                self.ass.append([instruction2])
+            else: 
+                self.ass.append([instruction1])
+            # imul regs0 regs
+            self.ass.append(["imul", availableReg , reges])
+            # mov reg0 LHS 
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
         elif (not constFlag1 and constFlag2):
             # move RHS2 mem
-            location = self.addToMem(RHS2)
-            self.ass.append(["mov", "$"+str(RHS2) , location])
+            # location = self.addToMem(RHS2)
+            # self.ass.append(["mov", "$"+str(RHS2) , location])
+            (flag, availableReg) = self.ig.get_availableReg(str(RHS2))
+            if (availableReg == None):
+                print("error occurred. Variable not found in interference graph")
+                sys.exit(1)
+            self.ass.append(["mov", "$"+str(RHS1) , availableReg])
+
             # mov RHS1 reg1
             instruction = self.setReg.movFromMem2Reg(RHS1)
-            reges = instruction.split(" ")[2].strip()
-            self.ass.append([instruction.strip()])
+            instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
+            if(instruction2 != None):
+                self.ass.append([instruction1])
+                self.ass.append([instruction2])
+            else: 
+                self.ass.append([instruction1])
             # imul RHS1 reg1
-            self.ass.append(["imul", self.getMemLocation(RHS2) , reges])
+            self.ass.append(["imul", availableReg , reges])
             # mov reg1 LHS 
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
@@ -263,8 +324,12 @@ class assembly:
         elif (not constFlag1 and not constFlag2):
             # mov RHS1 reg1 
             instruction = self.setReg.movFromMem2Reg(RHS1)
-            reges = instruction.split(" ")[2].strip()
-            self.ass.append([instruction.strip()])
+            instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
+            if(instruction2 != None):
+                self.ass.append([instruction1])
+                self.ass.append([instruction2])
+            else: 
+                self.ass.append([instruction1])
             # imul RHS2 reg1
             self.ass.append(["imul", self.getMemLocation(RHS2) , reges])
             # mov reg1 LHS
@@ -335,7 +400,6 @@ class assembly:
                 # remainder in %edx 
                 self.ass.append(["mov", "%rdx", self.getMemLocation(LHS)])
 
-        
     def shift(self, LHS, RHS1, RHS2, ops):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
@@ -365,30 +429,42 @@ class assembly:
         # a = b << 10
         elif (not constFlag1 and constFlag2):
             # mov b reg 
-            instruction1 = self.setReg.movFromMem2Reg(RHS1)
-            availableReg = instruction1.split(" ")[2].strip()
-            self.ass.append([instruction1.strip()])
+            instruction = self.setReg.movFromMem2Reg(RHS1)
+            instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
+            if(instruction2 != None):
+                self.ass.append([instruction1])
+                self.ass.append([instruction2])
+            else: 
+                self.ass.append([instruction1])
             # shl 10 reg
             if (ops == "<<"):
-                self.ass.append(["shl", "$" + str(RHS2), availableReg])
+                self.ass.append(["shl", "$" + str(RHS2), reges])
             elif (ops == ">>"):
-                self.ass.append(["shr", "$" + str(RHS2), availableReg])
+                self.ass.append(["shr", "$" + str(RHS2), reges])
+
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
+            
         # a = b << a
         elif (not constFlag1 and not constFlag2):
              # mov b reg 
-            instruction1 = self.setReg.movFromMem2Reg(RHS1)
-            availableReg = instruction1.split(" ")[2].strip()
-            self.ass.append([instruction1.strip()])
+            instruction = self.setReg.movFromMem2Reg(RHS1)
+            instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
+            if(instruction2 != None):
+                self.ass.append([instruction1])
+                self.ass.append([instruction2])
+            else: 
+                self.ass.append([instruction1])
             # mov a rcx 
             self.ass.append(["mov", self.getMemLocation(RHS2) , "%rcx"])
             # shl cl reg 
             if (ops == "<<"):
-                self.ass.append(["shl", "%cl" , availableReg])
+                self.ass.append(["shl", "%cl" , reges])
             elif (ops == ">>"):
-                self.ass.append(["shr", "%cl" , availableReg])
+                self.ass.append(["shr", "%cl" , reges])
             # mov reg LHS
-            self.ass.append(["mov", availableReg , self.getMemLocation(LHS)])
+            self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
+   
     def addToMem(self, var):
         stackLocation = "-" + str(self.stackSize) + "(%ebp)"
         dict = {var : stackLocation}
@@ -419,13 +495,31 @@ class assembly:
 
         return constFlag1, constFlag2, RHS1, RHS2
 
+    def splitMovFromMem2RegReturns(self, instruciton):
+        list = instruciton.split('\n')
+        
+        for item in list:
+            if (item == ''):
+                list.remove(item)
+        if (len(list) == 2):
+            reges = list[1].split(" ")[2]
+            return list[0], list[1], reges
+        else:
+            reges = list[0].split(" ")[2]
+            return list[0], None, reges
+
+
     def returnStmt(self, statement):
-        args = statement[1]
-        location = self.getMemLocation(args)
-        # mov result %eax
-        self.ass.append(["mov", location ,"%rax"])
+        if (statement != None):
+            args = statement[1]
+            location = self.getMemLocation(args)
+            # mov result %eax
+            self.ass.append(["mov", location ,"%rax"])
+        else:
+            self.ass.append(["mov", "$0", "%rax"])
         # Deallocate local variables
         self.ass.append(["mov", "%rbp" ,"%rsp"])
+        
         # Restore the caller's base pointer value
         self.ass.append(["pop", "%rbp"])
         self.ass.append(["ret"])
