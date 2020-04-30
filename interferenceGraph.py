@@ -13,6 +13,7 @@ class InterferenceGraph:
         self.logicalExpr = re.compile(r'(\|\|)|(&&)|(\!)')
         self.bitOps = re.compile(r"(<<)|(>>)|(&)|(\|)|(\^)|(~)")
         self.compOps = re.compile(r'(==)|(\!=)|(>=)|(<=)')
+        self.functionCall = re.compile(r'.*=.*\(.*\)')
         self.st = None
         self.assignmentRvalue = re.compile(r'\d+')
         self.liveVars = {}
@@ -95,6 +96,10 @@ class InterferenceGraph:
                         self.insertNodeIG(rvalue1)
                         self.insertNodeIG(rvalue2)
                         self.liveVars[line] = [rvalue1, rvalue2, '%rdx', '%rax', lvalue]
+                    elif (self.functionCall.match(line)):
+                        self.insertNodeIG( )
+
+
                     elif (self.expr.match(line)):
                         (lvalue, rvalue1, rvalue2) = self.checkLiveness(line)
                         self.insertNodeIG(lvalue)
@@ -215,6 +220,7 @@ class InterferenceGraph:
         for elem in self.VertexList:
             if ('%' in elem):
                 continue
+            # check that element has neighbors 
             if (self.interferenceGraph[elem]):
                 for nelem in self.interferenceGraph[elem]:
                     if (self.vertexRegisters[nelem] == ''):
