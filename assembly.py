@@ -9,7 +9,7 @@ class assembly:
         self.ig = ig
         self.setReg = setReg
         self.symbolTable = {}
-        self.stackSize = 4
+        self.stackSize = 8
 
     def run(self):
         lineNumber = 0
@@ -46,7 +46,7 @@ class assembly:
 
     def funcBody(self, body):
         self.symbolTable = {}
-        self.stackSize = 4
+        self.stackSize = 8
         self.stackInitial(body)
 
         # scanning through the body, 
@@ -74,23 +74,23 @@ class assembly:
     def stackInitial(self, body):
         
         tempCode = []
-        tempCode.append(["push", "%ebp"])
-        tempCode.append(["mov", "esp", "ebp"])
+        tempCode.append(["push", "%rbp"])
+        tempCode.append(["mov", "%rsp", "%rbp"])
         for statement in body:
-            stackLocation = "-" + str(self.stackSize) + "(%ebp)"
+            stackLocation = "-" + str(self.stackSize) + "(%rbp)"
             if(len(statement) == 1 and ":" not in statement[0] and (statement[0] not in self.symbolTable.keys())):
                 dict = {statement[0] : stackLocation}
                 self.symbolTable.update(dict)
-                self.stackSize += 4
+                self.stackSize += 8
                 self.setReg.insertMemory(statement[0], stackLocation)
 
             elif(len(statement) >= 3 and statement[1] == '=' and (statement[0] not in self.symbolTable.keys()) and ":" not in statement[0]):
                 dict = {statement[0] : stackLocation}
                 self.symbolTable.update(dict)
-                self.stackSize += 4
+                self.stackSize += 8
                 self.setReg.insertMemory(statement[0], stackLocation)
 
-        tempCode.append(["sub", "$" + str(self.stackSize), "esp"])
+        tempCode.append(["sub", "$" + str(self.stackSize), "%rsp"])
         # print(self.symbolTable)
         for itme in tempCode:
             self.ass.append(itme)
@@ -131,9 +131,9 @@ class assembly:
             
             #TODO self.setReg.movFromMem2Reg(str(RHS))
             #TODO The following 3 lines of code will be replaced with Yash's algorithm
-            self.ass.append(["mov", self.getMemLocation(RHS), "%eax"])
-            self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
-            self.ass.append(["mov", "$0", "%eax"])
+            self.ass.append(["mov", self.getMemLocation(RHS), "%rax"])
+            self.ass.append(["mov", "%rax", self.getMemLocation(LHS)])
+            self.ass.append(["mov", "$0", "%rax"])
         return
     
     def simpleArithmetic(self, statement):
@@ -144,6 +144,10 @@ class assembly:
             self.times(statement[0], statement[2], statement[4])
         elif (ops == '%' or ops == '/'):
             self.divideAndModulo(statement[0], statement[2], statement[4], ops)
+        elif (ops == '<<' or ops == '>>'):
+            self.shift(statement[0], statement[2], statement[4], ops)
+        elif (ops == '|' or ops == '&' or ops == '^'):
+            pass
         else:
             print('unknow ops\n')
             exit()
@@ -265,73 +269,114 @@ class assembly:
         
         # 500/b
         elif (constFlag1 and not constFlag2):
-            # mov RHS1_const mem 
-            location = self.addToMem(RHS1)
-            self.ass.append(["mov", "$"+str(RHS1) , self.getMemLocation(RHS1)])
-            # mov RHS1_mem reg
-            instruction1 = self.setReg.movFromMem2Reg(str(RHS1))
-            reg1 = instruction1.split(" ")[2].strip()
-            self.ass.append([instruction1.strip()])
-            # mov RHS2_mem reg 
-            instruction2 = self.setReg.movFromMem2Reg(str(RHS2))
-            reg2 = instruction2.split(" ")[2].strip()
-            self.ass.append([instruction2.strip()])
-            # idiv reg2
-            self.ass.append(["idiv", reg2])
-
+            # mov RSH1 %eax
+            self.ass.append(["mov", "$"+str(RHS1) , "%rax"])
+            # get most significant 32bits of reg1 store it in mem1
+            self.ass.append(["idiv", self.getMemLocation(LH2)])
             if(ops == '/'):
                 # quotient in %eax
-                self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
+                self.ass.append(["mov", "%rax", self.getMemLocation(LHS)])
             else:
                 # remainder in %edx 
-                self.ass.append(["mov", "%edx", self.getMemLocation(LHS)])
+                self.ass.append(["mov", "%rdx", self.getMemLocation(LHS)])
+            
 
         # b/500
         elif (not constFlag1 and constFlag2):
-            # mov RHS2_const mem 
-            location = self.addToMem(RHS2)
-            self.ass.append(["mov", "$"+str(RHS2) , self.getMemLocation(RHS2)])
-            # mov RHS2_mem reg
-            instruction1 = self.setReg.movFromMem2Reg(str(RHS2))
-            reg1 = instruction1.split(" ")[2].strip()
-            self.ass.append([instruction1.strip()])
-            # mov RHS1_mem reg 
-            instruction2 = self.setReg.movFromMem2Reg(str(RHS1))
-            reg2 = instruction2.split(" ")[2].strip()
-            self.ass.append([instruction2.strip()])
-            # idiv reg2
-            self.ass.append(["idiv", reg2])
-
+            # mov b rdx and eax 
+            self.ass.append(["mov", self.getMemLocation(RHS1) , "%rax"])
+            self.ass.append(["mov", "%rax" , "%rdx"])
+            self.ass.append(["shr", "$32" , "%rdx"])
+            self.ass.append(["shl", "$32" , "%rax"])
+            # mov 500 ebx 
+            self.ass.append(["mov", "$"+str(RHS1) , "%rbx"])
+            # idiv ebx 
+            self.ass.append(["idiv", "%rbx"])
+            # Place the quotient in eax and the remainder in edx.
             if(ops == '/'):
                 # quotient in %eax
-                self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
+                self.ass.append(["mov", "%rax", self.getMemLocation(LHS)])
             else:
                 # remainder in %edx 
-                self.ass.append(["mov", "%edx", self.getMemLocation(LHS)])
-
+                self.ass.append(["mov", "%rdx", self.getMemLocation(LHS)])
+            
+        # b/a
         elif (not constFlag1 and not constFlag2):
-            # mov RHS1_mem reg
-            instruction1 = self.setReg.movFromMem2Reg(str(RHS1))
-            reg1 = instruction1.split(" ")[2].strip()
-            self.ass.append([instruction1.strip()])
-            # mov RHS2_mem reg 
-            instruction2 = self.setReg.movFromMem2Reg(str(RHS2))
-            reg2 = instruction2.split(" ")[2].strip()
-            self.ass.append([instruction2.strip()])
-            # idiv reg2
-            self.ass.append(["idiv", reg2])
+            # mov b rdx and eax 
+            self.ass.append(["mov", self.getMemLocation(RHS1) , "%rax"])
+            self.ass.append(["mov", "%rax" , "%rdx"])
+            self.ass.append(["shr", "$32" , "%rdx"])
+            self.ass.append(["shl", "$32" , "%rax"])
+            # mov a ebx 
+            self.ass.append(["mov", self.getMemLocation(RHS2) , "%rbx"])
+            # idiv ebx 
+            self.ass.append(["idiv", "%rbx"])
+            # Place the quotient in eax and the remainder in edx.
             if(ops == '/'):
                 # quotient in %eax
-                self.ass.append(["mov", "%eax", self.getMemLocation(LHS)])
+                self.ass.append(["mov", "%rax", self.getMemLocation(LHS)])
             else:
                 # remainder in %edx 
-                self.ass.append(["mov", "%edx", self.getMemLocation(LHS)])
-            pass
+                self.ass.append(["mov", "%rdx", self.getMemLocation(LHS)])
+
+        
+    def shift(self, LHS, RHS1, RHS2, ops):
+        result = '0'
+        constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
+        if (constFlag1 and constFlag2):
+            if(ops == "<<"):
+                result = RHS1 << RHS2
+            elif(ops == ">>"):
+                result = RHS1 >> RHS2
+            self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
+        # a = 10 << b
+        elif (constFlag1 and not constFlag2):
+            # mov 10 reg 
+            (flag, availableReg) = self.ig.get_availableReg(str(RHS1))
+            if (availableReg == None):
+                print("error occurred. Variable not found in interference graph")
+                sys.exit(1)
+            self.ass.append(["mov", "$"+str(RHS1) , availableReg])
+            # mov b rcx 
+            self.ass.append(["mov", self.getMemLocation(RHS2) , "%rcx"])
+            # shl cl reg 
+            if (ops == "<<"):
+                self.ass.append(["shl", "%cl" , availableReg])
+            elif (ops == ">>"):
+                self.ass.append(["shr", "%cl" , availableReg])
+            # mov reg LHS
+            self.ass.append(["mov", availableReg , self.getMemLocation(LHS)])
+        # a = b << 10
+        elif (not constFlag1 and constFlag2):
+            # mov b reg 
+            instruction1 = self.setReg.movFromMem2Reg(RHS1)
+            availableReg = instruction1.split(" ")[2].strip()
+            self.ass.append([instruction1.strip()])
+            # shl 10 reg
+            if (ops == "<<"):
+                self.ass.append(["shl", "$" + str(RHS2), availableReg])
+            elif (ops == ">>"):
+                self.ass.append(["shr", "$" + str(RHS2), availableReg])
+        # a = b << a
+        elif (not constFlag1 and not constFlag2):
+             # mov b reg 
+            instruction1 = self.setReg.movFromMem2Reg(RHS1)
+            availableReg = instruction1.split(" ")[2].strip()
+            self.ass.append([instruction1.strip()])
+            # mov a rcx 
+            self.ass.append(["mov", self.getMemLocation(RHS2) , "%rcx"])
+            # shl cl reg 
+            if (ops == "<<"):
+                self.ass.append(["shl", "%cl" , availableReg])
+            elif (ops == ">>"):
+                self.ass.append(["shr", "%cl" , availableReg])
+            # mov reg LHS
+            self.ass.append(["mov", availableReg , self.getMemLocation(LHS)])
 
     def addToMem(self, var):
         stackLocation = "-" + str(self.stackSize) + "(%ebp)"
         dict = {var : stackLocation}
-        self.stackSize += 4
+        self.stackSize += 8
         self.symbolTable.update(dict)
         self.setReg.insertMemory(str(var), stackLocation)
         return stackLocation
@@ -362,11 +407,11 @@ class assembly:
         args = statement[1]
         location = self.getMemLocation(args)
         # mov result %eax
-        self.ass.append(["mov", location ,"%eax"])
+        self.ass.append(["mov", location ,"%rax"])
         # Deallocate local variables
-        self.ass.append(["mov", "%ebp" ,"%esp"])
+        self.ass.append(["mov", "%rbp" ,"%rsp"])
         # Restore the caller's base pointer value
-        self.ass.append(["pop", "%ebp"])
+        self.ass.append(["pop", "%rbp"])
         self.ass.append(["ret"])
 
     def goto(self, statement):
