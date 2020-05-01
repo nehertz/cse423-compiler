@@ -1,4 +1,5 @@
 import re
+import operator
 class BasicRegAlloc:
     def __init__(self, ir):
         self.ir = ir
@@ -10,9 +11,11 @@ class BasicRegAlloc:
         self.liveVars = {}
         self.lvalues = {}
         self.vertexRegisters = {}
-
-
+        self.registers = ['%rax','%rcx','%rdx','%rbx','%rsi','%rdi','%r8','%r9','%r10','%r11','%r12','%r13','%r14','%r15']
+        self.registersUsage = {}
+        self.registersUsage = self.registersUsage.fromkeys(self.registers, 0)
     def run(self, stReg):
+        self.create_dictionary_with_funcName()
         self.analyzeIR()
 
 
@@ -66,5 +69,26 @@ class BasicRegAlloc:
                 elif(self.assignment.match(line)):
                     l = line.split('=')
                     self.liveVars[line] = [l[1]]
+        return
+    
+    def mapVertex2Register(self):
+        for key, value in self.funcNameDict.items():
+            if (key == '__initiate_first__'):
+                continue
+            for line in value:
+                for elem in self.liveVars[line]:
+                    if ('%r' in elem):
+                        self.vertexRegisters[elem] = elem
+                        self.registersUsage[elem] += 1
+                        continue
+                    self.insertVertexRegisters(elem)
+        return
+
+    def insertVertexRegisters(self, var):
+        if (var in self.vertexRegisters):
+            return 
+        min_reg = min(self.registersUsage.items(), key = operator.itemgetter(1))[0]
+        self.vertexRegisters[var] = min_reg 
+        self.registersUsage[min_reg] += 1
         return
 
