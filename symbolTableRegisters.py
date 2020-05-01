@@ -4,6 +4,7 @@ class SymbolTableRegisters:
     def __init__(self, ir, ig):
         self.symboltable_reg = {}
         self.symboltable_mem = {}
+        self.initiate_st_reg()
         # variable names as keys and their memory location as addresses. 
         self.ig = ig
     
@@ -38,7 +39,7 @@ class SymbolTableRegisters:
             self.symboltable_reg[availableReg] = ''
 
         assCode += 'mov ' + str(self.symboltable_mem[var]) + ' ' + str(availableReg)
-        assCode += '\n'
+        # assCode += '\n'
         self.symboltable_reg[availableReg] = var
         return assCode
     

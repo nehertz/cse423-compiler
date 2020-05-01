@@ -2,7 +2,9 @@ int main()
 {
         int a;
 
-        if (a < 3 || (a != 0 && a > 10)) {
+        if (a) {
                 a++;
         }
+
+        return 0;
 }
