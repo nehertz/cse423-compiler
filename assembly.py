@@ -17,12 +17,13 @@ class assembly:
         funcScope = []
         flag = 0
         name = ""
+        paramCount = 0
         self.ig.run(self.setReg)
 
         for line in self.IR:
             # translate function name to assembly 
             if ('(' in line and ')' in line and self.IR[lineNumber+1][0] == '{'):
-                name = self.funcName(line)
+                name, paramCount = self.funcName(line)
             # translate function statement body to assembly 
             elif ('{' in line):
                 flag = 1
@@ -30,7 +31,7 @@ class assembly:
                 continue
             elif ('}' in line):
                 flag = 0
-                self.funcBody(funcScope, name)
+                self.funcBody(funcScope, name, paramCount)
                 funcScope = []
             elif (flag):
                 funcScope.append(line)
@@ -40,13 +41,18 @@ class assembly:
     def funcName(self, line):
         # creates function label, creates assembly code to handel args if exist. 
         self.ass.append(["_" + line[0]])
-        return "_" + line[0]
+        paramCount = []
+        for item in line:
+            if ("(" not in item and ")" not in item and "," not in item and item != line[0]):
+               paramCount.append(item)
+        return "_" + line[0], paramCount
 
-    def funcBody(self, body, name):
+    def funcBody(self, body, name, paramCount):
 
         self.symbolTable = {}
         self.stackSize = 8
-        self.stackInitial(body)
+       
+        self.stackInitial(body, paramCount)
         flag = 1
         mainFlag = 1
        
@@ -84,24 +90,47 @@ class assembly:
             self.returnStmt(None, mainFlag)
 
     # initialize the stack, create initial space on the stack for local variables
-    def stackInitial(self, body):
+    def stackInitial(self, body, paramCount):
         
         tempCode = []
         tempCode.append(["push", "%rbp"])
         tempCode.append(["mov", "%rsp", "%rbp"])
+        paramSize = 16
         for statement in body:
             stackLocation = "-" + str(self.stackSize) + "(%rbp)"
             if(len(statement) == 1 and ":" not in statement[0] and (statement[0] not in self.symbolTable.keys())):
                 dict = {statement[0] : stackLocation}
                 self.symbolTable.update(dict)
+
+                dict = {"-" + statement[0] : stackLocation}
+                self.symbolTable.update(dict)
+                self.setReg.insertMemory("-" + statement[0], stackLocation)
+
                 self.stackSize += 8
                 self.setReg.insertMemory(statement[0], stackLocation)
 
             elif(len(statement) >= 3 and statement[1] == '=' and (statement[0] not in self.symbolTable.keys()) and ":" not in statement[0]):
                 dict = {statement[0] : stackLocation}
                 self.symbolTable.update(dict)
+
+                dict = {"-" + statement[0] : stackLocation}
+                self.symbolTable.update(dict)
+                self.setReg.insertMemory("-" + statement[0], stackLocation)
+
                 self.stackSize += 8
                 self.setReg.insertMemory(statement[0], stackLocation)
+
+        if (len(paramCount) != 0):
+            for param in paramCount:
+                stackLocation = "+" + str(paramSize) + "(%rbp)"
+                dict = {param : stackLocation}
+                self.symbolTable.update(dict)
+                dict = {"-" + param : stackLocation}
+                self.symbolTable.update(dict)
+                self.setReg.insertMemory("-" + param, stackLocation)
+                paramSize += 8
+                self.setReg.insertMemory(param, stackLocation)
+
 
         tempCode.append(["sub", "$" + str(self.stackSize), "%rsp"])
         # print(self.symbolTable)
@@ -172,6 +201,7 @@ class assembly:
 
 
     def plusAndMinusAndLogic(self, LHS, RHS1, RHS2, ops):
+
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
         
@@ -191,7 +221,7 @@ class assembly:
 
         # RHS1 = constant &&  RHS2 = var/function call
         elif (constFlag1 and not constFlag2):
-
+            
             # mov <RHS2> <reg1>
             instruction = self.setReg.movFromMem2Reg(RHS2)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
@@ -268,6 +298,7 @@ class assembly:
 
 
     def times(self, LHS, RHS1, RHS2):
+        
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
 
@@ -325,7 +356,7 @@ class assembly:
 
         elif (not constFlag1 and not constFlag2):
             # mov RHS1 reg1 
-
+            
             instruction = self.setReg.movFromMem2Reg(RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
