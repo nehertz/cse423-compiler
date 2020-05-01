@@ -1,3 +1,4 @@
+<<<<<<< master
 int add3(int a, int b, int c)
 {
 <<<<<<< master
@@ -12,6 +13,13 @@ int add3(int a, int b, int c)
         return 1;
 >>>>>>> Function Calls are done
 }
+=======
+// int add3(int a, int b, int c)
+// {
+//         int e = 1;
+//   return a + b + c;
+// }
+>>>>>>> Fixed some bugs in code gen
 
 int main()
 {     
@@ -19,25 +27,11 @@ int main()
         //// Test var decl 
         // int aa;
         // int bb; 
-        // int a;
-        // // int b;
-        // int c, b;
-        
-        // c = a * 5; 
-        // a = c << 10;
-        // a = b / 5000;
-        // return a; 
+        // int a = 100;
+        // int b = 30;
         // float e = 20.2;
-        // return a;
-        // int a = 1;
-        // int b = 2;
-        // a = b;
-        
-        // int b;
         // int c;
-        // return aa;
-        // int c; 
-        // float d;
+        // a = b;
         // int e, f, g;
 
         //// Test assignment and Arithmetic
@@ -46,7 +40,6 @@ int main()
         // a =  b << 3;
         // a =  b >> 3;
         // a =  b + 3;
-        // return a;
         // a =  b - 3;
         // a = b * 3;
         // a = b / 3;
@@ -68,11 +61,17 @@ int main()
         // a = (a + b) * 2;
 
         //// Unary 
+<<<<<<< master
         int a,b;
         // a = (-a + b) * 2;
         // b = sizeof(a);
+=======
+        // int a,b;
+        // b = (-a + b) * 2;
+        ///TODO: sizeof not supported;
+>>>>>>> Fixed some bugs in code gen
 
-        //// Type casting
+        ////TODO: Type casting not support 
         // float f = 10.5;
         // a = f;
         // a = f + b;
@@ -102,7 +101,11 @@ int main()
         // }
         // a = a + 1;
         ////test return stmt
+<<<<<<< master
         // return add(a, b);
+=======
+        // return add3(a, b, c);
+>>>>>>> Fixed some bugs in code gen
         // return 1 + 2 + a +b;
         // return 1+2;
         // return a = 1 + 2;
@@ -113,8 +116,8 @@ int main()
         // i = 1;
         // j = 3;
         // k = 5;
-        // return add3(i, j, k);
-        
+        // i = i * add3(i,j,k);
+        // return i;
 
         // Samuel Example 2:
         // int i, j;
@@ -122,11 +125,6 @@ int main()
         // for(i = 0; i < 10; ++i)
         // {
         // if(i%2 == 0){
-        //         ++j;    
-        // }
-        // }
-        // return j;
-         // if(i%2 == 0){
         //         ++j;    
         // }
         // }
