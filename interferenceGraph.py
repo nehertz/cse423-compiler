@@ -14,6 +14,7 @@ class InterferenceGraph:
         self.bitOps = re.compile(r"(<<)|(>>)|(&)|(\|)|(\^)|(~)")
         self.compOps = re.compile(r'(==)|(\!=)|(>=)|(<=)')
         self.functionCall = re.compile(r'.*=.*\(.*\)')
+        self.assignment = re.compile(r'.*=.*')
         self.st = None
         self.assignmentRvalue = re.compile(r'\d+')
         self.liveVars = {}
@@ -87,6 +88,7 @@ class InterferenceGraph:
                 for line in reversed(val[1:]):
                     if ('ret' in line):
                         self.insertNodeIG('%rax')
+                        self.liveVars['%rax']
                         continue
                     if (self.divisionExpr.match(line)):
                         self.insertNodeIG('%rdx')
@@ -97,9 +99,9 @@ class InterferenceGraph:
                         self.insertNodeIG(rvalue2)
                         self.liveVars[line] = [rvalue1, rvalue2, '%rdx', '%rax', lvalue]
                     elif (self.functionCall.match(line)):
-                        self.insertNodeIG( )
-
-
+                        l = line.split('=')
+                        self.liveVars[line] = [l[0]]
+                        continue
                     elif (self.expr.match(line)):
                         (lvalue, rvalue1, rvalue2) = self.checkLiveness(line)
                         self.insertNodeIG(lvalue)
@@ -127,13 +129,21 @@ class InterferenceGraph:
                         # so no need to assign different registers. 
                         # this will also check if the register is already assigned to this number
                         # and will increase performance by a little bit
+                    elif (self.assignment.match(line)):
+                        # if the assignment is a type of a = b, then 
+                        # the rvalue will be assigned a register 
+                        # Note that l-value should not be a register as You can move
+                        # from register to memory.
+                        l = line.split('=')
+                        self.liveVars[line] = [l[1]]
+
                 for line,nextLine in zip(val[1:], val[2:]):
                     if (line in self.liveVars and nextLine in self.liveVars):
                         self.liveVars[line] = self.checkLiveVarsInNextLine(self.liveVars[line], self.liveVars[nextLine])
         return
 
 
-    def checkLiveVarsInNextLine(self, vars, varsNextLine):
+    def checkLiveVarsInNextLine(self, vars, varsNextLine):+
         lvalue = vars[-1]
         vars.remove(lvalue)
         for elem in varsNextLine:
