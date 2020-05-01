@@ -16,14 +16,13 @@ class assembly:
         lineNumber = 0
         funcScope = []
         flag = 0
-
+        name = ""
         self.ig.run(self.setReg)
 
         for line in self.IR:
-            # translate function name and args to assembly 
+            # translate function name to assembly 
             if ('(' in line and ')' in line and self.IR[lineNumber+1][0] == '{'):
-                self.funcName(line)
-
+                name = self.funcName(line)
             # translate function statement body to assembly 
             elif ('{' in line):
                 flag = 1
@@ -31,36 +30,44 @@ class assembly:
                 continue
             elif ('}' in line):
                 flag = 0
-                self.funcBody(funcScope)
+                self.funcBody(funcScope, name)
                 funcScope = []
             elif (flag):
                 funcScope.append(line)
-
             lineNumber += 1
-            
         self.printAssembly()
     
     def funcName(self, line):
         # creates function label, creates assembly code to handel args if exist. 
-        self.ass.append(["_" + line[0] + ':'])
-    
+        self.ass.append(["_" + line[0]])
+        return "_" + line[0]
 
-    def funcBody(self, body):
+    def funcBody(self, body, name):
+
         self.symbolTable = {}
         self.stackSize = 8
         self.stackInitial(body)
         flag = 1
+        mainFlag = 1
+       
+        if ('_main' not in name):
+            instructions =self.setReg.calleeSavedReg()
+            self.ass.append([instructions.split("\n")[0]])
+            self.ass.append([instructions.split("\n")[1]])
+            self.ass.append([instructions.split("\n")[2]])
+            mainFlag = 0 
 
         # scanning through the body, 
-        for statement in body:
-            # translates the function call. 
-            if ('(' in statement and ')' in statement):
-                self.funcCall(statement)    
-
+        for statement in body:        
+               
              # translate assignment statement 
-            elif (len(statement) >= 3 and statement[1] in assignment):
+            if (len(statement) >= 3 and statement[1] in assignment):
                 self.assignment(statement)
-            
+                
+            # translates the function call. 
+            elif ('(' in statement[0] and 'ret' not in statement[0]):
+                self.funcCall(statement, 0)    
+
             # simply creates the goto and label code
             elif (re.match(r'goto L[0-9]+', statement[0])):
                 self.goto(statement)
@@ -76,12 +83,12 @@ class assembly:
             elif (re.match(r'L[0-9]+:', statement[0])):
                 self.label(statement)
             
-            elif ('ret' in statement):
-                self.returnStmt(statement)
+            elif ('ret' in statement or 'ret' in statement[0]):
+                self.returnStmt(statement, mainFlag)
                 flag = 0
         
         if (flag):
-            self.returnStmt(None)
+            self.returnStmt(None, mainFlag)
 
     # initialize the stack, create initial space on the stack for local variables
     def stackInitial(self, body):
@@ -135,6 +142,7 @@ class assembly:
 
         elif (statement[3] in arithmetic):
             self.simpleArithmetic(statement)
+        
     
     def simpleAssign(self, LHS, RHS):
         floatPatten = re.compile(r"[0-9]+\.[0-9]+")
@@ -142,9 +150,16 @@ class assembly:
         # assignment like a = 2 will be translate to 'mov $2 a_location'
         if (intPatten.match(RHS) or floatPatten.match(RHS)):
             RHS = "$" + str(RHS)
-            LHS = self.getMemLocation(LHS)
-            self.ass.append(["mov", RHS, LHS])
-
+            self.ass.append(["mov", RHS, self.getMemLocation(LHS)])
+        # assignment like a = add3(i, j)
+        elif ("(" in RHS):
+            RHS_list = RHS.split(" ")
+            self.funcCall(RHS_list, 1)
+            self.ass.append(["mov", "%rax", self.getMemLocation(LHS)])
+            instructions = self.setReg.afterFunctionCall()
+            self.ass.append([instructions.split("\n")[0]])
+            self.ass.append([instructions.split("\n")[1]])
+            self.ass.append([instructions.split("\n")[2]])
         # assignment like a = b will be tranlate to:
         # mov b_location %eax
         # mov %eax a_location
@@ -175,7 +190,7 @@ class assembly:
     def plusAndMinusAndLogic(self, LHS, RHS1, RHS2, ops):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
-
+        
         # RHS1 = constant &&  RHS2 = constant
         if (constFlag1 and constFlag2):
             if (ops == '+'):
@@ -190,10 +205,11 @@ class assembly:
                 result = RHS1 ^ RHS2
             self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
 
-        # RHS1 = constant &&  RHS2 = var
+        # RHS1 = constant &&  RHS2 = var/function call
         elif (constFlag1 and not constFlag2):
+
             # mov <RHS2> <reg1>
-            instruction = self.setReg.movFromMem2Reg(RHS1)
+            instruction = self.setReg.movFromMem2Reg(RHS2)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
                 self.ass.append([instruction1])
@@ -214,9 +230,10 @@ class assembly:
             # mov <reg1>, <LHS>
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
-        # RHS1 = var && RHS2 = constant
+        # RHS1 = var/funcCall && RHS2 = constant
         elif (not constFlag1 and constFlag2):
             # mov <RHS1> <reg1>
+
             instruction = self.setReg.movFromMem2Reg(RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
@@ -241,6 +258,7 @@ class assembly:
 
         # RHS1 = var && RHS2 = var 
         elif (not constFlag1 and not constFlag2):
+
             # mov <RHS1> <reg1>
             instruction = self.setReg.movFromMem2Reg(RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
@@ -268,16 +286,15 @@ class assembly:
     def times(self, LHS, RHS1, RHS2):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
-        
+
         if (constFlag1 and constFlag2):
             result = RHS1 * RHS2
             self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
 
         # this is the case where a constant times a varaible
         elif (constFlag1 and not constFlag2):
+           
             # move RHS1 regs0
-            # location = self.addToMem(RHS1)
-            # self.ass.append(["mov", "$"+str(RHS1) , location])
             (flag, availableReg) = self.ig.get_availableReg(str(RHS1))
             if (availableReg == None):
                 print("error occurred. Variable not found in interference graph")
@@ -298,6 +315,7 @@ class assembly:
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
         elif (not constFlag1 and constFlag2):
+            
             # move RHS2 mem
             # location = self.addToMem(RHS2)
             # self.ass.append(["mov", "$"+str(RHS2) , location])
@@ -323,6 +341,7 @@ class assembly:
 
         elif (not constFlag1 and not constFlag2):
             # mov RHS1 reg1 
+
             instruction = self.setReg.movFromMem2Reg(RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
@@ -339,7 +358,7 @@ class assembly:
     def divideAndModulo(self, LHS, RHS1, RHS2, ops):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
-        
+
         if (constFlag1 and constFlag2):
             if (ops == '/'):
                 result = RHS1 / RHS2
@@ -350,6 +369,7 @@ class assembly:
         
         # 500/b
         elif (constFlag1 and not constFlag2):
+    
             # mov RSH1 %eax
             self.ass.append(["mov", "$"+str(RHS1) , "%rax"])
             # get most significant 32bits of reg1 store it in mem1
@@ -364,6 +384,7 @@ class assembly:
 
         # b/500
         elif (not constFlag1 and constFlag2):
+
             # mov b rdx and eax 
             self.ass.append(["mov", self.getMemLocation(RHS1) , "%rax"])
             self.ass.append(["mov", "%rax" , "%rdx"])
@@ -383,6 +404,7 @@ class assembly:
             
         # b/a
         elif (not constFlag1 and not constFlag2):
+            
             # mov b rdx and eax 
             self.ass.append(["mov", self.getMemLocation(RHS1) , "%rax"])
             self.ass.append(["mov", "%rax" , "%rdx"])
@@ -403,6 +425,8 @@ class assembly:
     def shift(self, LHS, RHS1, RHS2, ops):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
+     
+
         if (constFlag1 and constFlag2):
             if(ops == "<<"):
                 result = RHS1 << RHS2
@@ -411,6 +435,7 @@ class assembly:
             self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
         # a = 10 << b
         elif (constFlag1 and not constFlag2):
+            
             # mov 10 reg 
             (flag, availableReg) = self.ig.get_availableReg(str(RHS1))
             if (availableReg == None):
@@ -428,6 +453,7 @@ class assembly:
             self.ass.append(["mov", availableReg , self.getMemLocation(LHS)])
         # a = b << 10
         elif (not constFlag1 and constFlag2):
+
             # mov b reg 
             instruction = self.setReg.movFromMem2Reg(RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
@@ -446,6 +472,7 @@ class assembly:
             
         # a = b << a
         elif (not constFlag1 and not constFlag2):
+            
              # mov b reg 
             instruction = self.setReg.movFromMem2Reg(RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
@@ -485,7 +512,7 @@ class assembly:
         elif (floatPatten.match(RHS1)):
             RHS1 = float(RHS1)
             constFlag1 = 1
-        
+    
         if (intPatten.match(RHS2)):
             RHS2 = int(RHS2)
             constFlag2 = 1
@@ -509,14 +536,36 @@ class assembly:
             return list[0], None, reges
 
 
-    def returnStmt(self, statement):
+    def returnStmt(self, statement, flag):
+        floatPatten = re.compile(r"[0-9]+\.[0-9]+")
+        intPatten = re.compile(r"^[-+]?\d+$")
+        
         if (statement != None):
-            args = statement[1]
-            location = self.getMemLocation(args)
-            # mov result %eax
-            self.ass.append(["mov", location ,"%rax"])
+            if (len(statement) <= 2):
+                args = statement[1]
+                if (intPatten.match(args) or floatPatten.match(args)):
+                    location = args
+                else:
+                    location = self.getMemLocation(args)
+                self.ass.append(["mov", location ,"%rax"])
+            
+            # return 1+2+3 or return function call
+            else:
+                if ("(" in statement[0]):
+                    statement[0] = statement[0].replace('ret', "").strip()
+                    self.funcCall(statement, 1)
+                    instructions = self.setReg.afterFunctionCall()
+                    self.ass.append([instructions.split("\n")[0]])
+                    self.ass.append([instructions.split("\n")[1]])
         else:
             self.ass.append(["mov", "$0", "%rax"])
+
+        if (not flag):
+            instructions =self.setReg.calleeEnd()
+            self.ass.append([instructions.split("\n")[0]])
+            self.ass.append([instructions.split("\n")[1]])
+            self.ass.append([instructions.split("\n")[2]])
+
         # Deallocate local variables
         self.ass.append(["mov", "%rbp" ,"%rsp"])
         
@@ -676,8 +725,59 @@ class assembly:
 
         return
 
-    def funcCall(self, statement):
-        pass
+    def funcCall(self, statement, flag):
+       
+        # stores parameter inverse order 
+        parameterList = []
+        funcName = statement[0].replace('(', '').strip()
+        # the caller saved registers : EAX, ECX, EDX
+        instructions = self.setReg.callerSavedReg()
+        self.ass.append([instructions.split("\n")[0]])
+        self.ass.append([instructions.split("\n")[1]])
+        self.ass.append([instructions.split("\n")[2]])
+       
+        # Push funcCall parameters to stack in inverse order
+        
+        parameterList = self.pushParameters(statement, funcName)
+
+        # invoke the call instruction, return value stored in EAX 
+       
+        self.ass.append(["call", "_" + funcName])
+
+        # after the return, pop parameters from stack
+        self.popParameters(parameterList)
+
+        # pop EAX, ECX, EDX
+        if(not flag):
+            instructions = self.setReg.afterFunctionCall()
+            self.ass.append([instructions.split("\n")[0]])
+            self.ass.append([instructions.split("\n")[1]])
+            self.ass.append([instructions.split("\n")[2]])
+
+    def pushParameters(self, statement, funcName):
+        parameterList = []
+        for item in statement:
+            if ("(" not in item and ")" not in item and "," not in item and item != funcName):
+                parameterList.append(item)
+        temp = parameterList
+        
+        for item in parameterList[::-1]:
+            self.ass.append(["push", self.getMemLocation(item)])
+        return temp
+    
+    def popParameters(self, list):
+        for item in list:
+            self.ass.append(["pop", self.getMemLocation(item)])
+
+    def funCallinExpr(self, RHS):
+        RHS_list = RHS.split(" ")
+        self.funcCall(RHS_list, 1)
+        self.ass.append(["mov", "%rax" , self.getMemLocation(RHS)])
+        instructions = self.setReg.afterFunctionCall()
+        self.ass.append([instructions.split("\n")[0]])
+        self.ass.append([instructions.split("\n")[1]])
+        self.ass.append([instructions.split("\n")[2]])
+
 
     def printAssembly(self):
         str1 = " "
@@ -686,6 +786,7 @@ class assembly:
             if(len(list) == 1 and list[0][0] == '_'):
                 print(list[0])
             else:
+                # print(list)
                 print('\t', str1.join(list))
 
 

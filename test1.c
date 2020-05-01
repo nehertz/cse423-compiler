@@ -1,26 +1,20 @@
 int add3(int a, int b, int c)
 {
+<<<<<<< master
         int e = 1;
 <<<<<<< master
 //   return a + b + c;
 =======
         return a + b + c;
 >>>>>>> fixed bugs
+=======
+        
+        return 1;
+>>>>>>> Function Calls are done
 }
-// enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
 int main()
 {     
-        // Test enum 
-        // enum week day; 
-        // day = Mon; 
-        // day = Tue; 
-        // day = Wed; 
-        // day = Thur; 
-        // day = Fri; 
-        // day = Sat; 
-        // day = Sun;
-        // day = Mon + 10; 
 
         //// Test var decl 
         // int aa;
@@ -115,12 +109,12 @@ int main()
         // return 1 + 2 + 3;
 
         //Samuel Example 1:
-        int i, j, k;
-        i = 1;
-        j = 3;
-        k = 5;
-        i = i * add3(i,j,k);
-        return i;
+        // int i, j, k;
+        // i = 1;
+        // j = 3;
+        // k = 5;
+        // return add3(i, j, k);
+        
 
         // Samuel Example 2:
         // int i, j;

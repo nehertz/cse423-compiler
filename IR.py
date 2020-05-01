@@ -88,6 +88,7 @@ class IR:
         argsCount = 0
         ir = []
         if(funcCallFlag):
+           
             for node in self.getSubtree(nodes):
                 if (node.name != 'args' and node.name != None and node.name != funcName):
                     self.enqueue(node.name)
@@ -573,25 +574,38 @@ class IR:
     # and if funcCall is in expr, such as a * add(i, j). return the IR instead of appending to the IRS
     def funcCall(self, nodes, funcName, retStmtFlag, exprFlag):
         ir = []
+        temp = []
+        temp2 = []
         # Obtain the call arguments
         argsCount = self.args(nodes, funcName, 1)
+       
         if(exprFlag):
             tempCount = argsCount
             while (tempCount > 0):
-                self.dequeue()
+                temp.append(self.dequeue())
                 tempCount -= 1
         funcName = funcName.replace('func-', '')
         if(retStmtFlag):
             ir.append('ret ' + funcName + ' (')
         else:
             ir.append(funcName + ' (')
+
         while argsCount > 0:
-            ir.append(str(self.dequeue()))
-            if argsCount != 1:
-                ir.append(',')
-            argsCount -= 1
+            item = str(self.dequeue())
+            if (len(temp) != 0 and item not in temp):
+                temp2.append(item)
+            else:     
+                ir.append(item)
+                if argsCount != 1:
+                    ir.append(',')
+                argsCount -= 1
         ir.append(')')
+
+        for item in temp2:
+            self.enqueue(item)
+
         if(exprFlag):
+
             return ir
         else:
             self.IRS.append(ir)
