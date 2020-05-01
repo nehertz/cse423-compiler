@@ -1,8 +1,8 @@
-// int add3(int a, int b, int c)
-// {
-//         int e = 1;
-// //   return a + b + c;
-// }
+int add3(int a, int b, int c)
+{
+        int e = 1;
+        return a + b + c;
+}
 // enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
 int main()
@@ -21,11 +21,11 @@ int main()
         //// Test var decl 
         // int aa;
         // int bb; 
-        int a;
+        // int a;
         // // int b;
-        int c, b;
+        // int c, b;
         
-        c = a * 5; 
+        // c = a * 5; 
         // a = c << 10;
         // a = b / 5000;
         // return a; 
@@ -111,12 +111,12 @@ int main()
         // return 1 + 2 + 3;
 
         //Samuel Example 1:
-        // int i, j, k;
-        // i = 1;
-        // j = 3;
-        // k = 5;
-        // i = i * add3(i,j,k);
-        // return i;
+        int i, j, k;
+        i = 1;
+        j = 3;
+        k = 5;
+        i = i * add3(i,j,k);
+        return i;
 
         // Samuel Example 2:
         // int i, j;

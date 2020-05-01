@@ -88,7 +88,7 @@ class InterferenceGraph:
                 for line in reversed(val[1:]):
                     if ('ret' in line):
                         self.insertNodeIG('%rax')
-                        self.liveVars['%rax']
+                        self.liveVars[line] = ['%rax']
                         continue
                     if (self.divisionExpr.match(line)):
                         self.insertNodeIG('%rdx')
@@ -145,7 +145,7 @@ class InterferenceGraph:
         return
 
 
-    def checkLiveVarsInNextLine(self, vars, varsNextLine):+
+    def checkLiveVarsInNextLine(self, vars, varsNextLine):
         lvalue = vars[-1]
         vars.remove(lvalue)
         for elem in varsNextLine:
