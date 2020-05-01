@@ -8,3 +8,4 @@ parsetab.py
 parser.out
 ast.txt
 *.pyc
+.vscode/settings.json

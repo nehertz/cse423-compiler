@@ -3,5 +3,7 @@
         "files.associations": {
                 "algorithm": "c",
                 "random": "c"
-        }
+        },
+        "python.linting.pylintEnabled": true,
+        "python.linting.enabled": true
 }
