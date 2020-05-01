@@ -70,8 +70,8 @@ int main()
         // while ( a + 1 > 3 || a < 1 ) {
         //         //continue;
         //         // break;
-        //         float j = j + 2;
-        // }
+         //        float j = j + 2;
+         //}
 
         // do {
         //         int i = i + 1;
@@ -80,9 +80,12 @@ int main()
 
         
         ////test for loop 
-        // for (int i = 1; i < 5; i++){
-        //         i += 10;
-        // }
+         for (int i = 1; i <= 5; i++){
+                //i += 10;
+                i++;
+                
+                //i++;
+         }
         // a = a + 1;
         ////test return stmt
         // return add3(a, b, c);
