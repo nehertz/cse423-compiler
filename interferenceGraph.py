@@ -100,6 +100,7 @@ class InterferenceGraph:
                         self.liveVars[line] = [rvalue1, rvalue2, '%rdx', '%rax', lvalue]
                     elif (self.functionCall.match(line)):
                         l = line.split('=')
+                        self.insertNodeIG(l[0])
                         self.liveVars[line] = [l[0]]
                         continue
                     elif (self.expr.match(line)):
@@ -135,6 +136,7 @@ class InterferenceGraph:
                         # Note that l-value should not be a register as You can move
                         # from register to memory.
                         l = line.split('=')
+                        self.insertNodeIG(l[1])
                         self.liveVars[line] = [l[1]]
 
                 for line,nextLine in zip(val[1:], val[2:]):
