@@ -24,10 +24,6 @@ int main()
         // int a = 100;
         // int b = 30;
         // float e = 20.2;
-<<<<<<< master
-        // int c;
-        // a = b;
-=======
         // return a;
         int a = 1;
         // int b = 2;
@@ -38,22 +34,27 @@ int main()
         // return aa;
         // int c; 
         // float d;
->>>>>>> WIP basic algorithm
         // int e, f, g;
 
         //// Test assignment and Arithmetic
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
+<<<<<<< HEAD
 <<<<<<< master
         // a =  b << 3;
         // a =  b >> 3;
         // a =  b + 3;
 =======
+=======
+>>>>>>> register_alloc
         a =  b << 3;
         a =  b >> 3;
         a =  b + 3;
         return a;
+<<<<<<< HEAD
 >>>>>>> WIP basic algorithm
+=======
+>>>>>>> register_alloc
         // a =  b - 3;
         // a = b * 3;
         // a = b / 3;
@@ -137,7 +138,10 @@ int main()
         // Samuel Example 1:
 =======
         //Samuel Example 1:
+<<<<<<< HEAD
 >>>>>>> WIP basic algorithm
+=======
+>>>>>>> register_alloc
         // int i, j, k;
         // i = 1;
         // j = 3;
