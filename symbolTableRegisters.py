@@ -32,7 +32,12 @@ class SymbolTableRegisters:
         # updates the symbol table
         # returns the assembly code
         # get designed available register for that variable 
+        
+        if (self.ig.get_availableReg(var) == None):
+            print("error occurred. Variable not found in interference graph")
+            sys.exit(1)
         (flag, availableReg) = self.ig.get_availableReg(var)
+
         if (availableReg == None):
             print("error occurred. Variable not found in interference graph")
             sys.exit(1)
