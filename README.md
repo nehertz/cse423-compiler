@@ -25,8 +25,8 @@ python3 main.py -options filename
 * -i : print IR
 * -o : write IR into a file
 * -r : read IR from a file
-* -m : turn on the optimization pass
-* -a : output assembly
+* -m : turn on the optimization pass(in progress)
+* -a : output assembly(in progress)
 
 # test1.c in the main directory contains all the test cases we used. 
 
@@ -36,13 +36,7 @@ python3 main.py -o source_filename output_filename
 ```
 # How to use option -r
 ```
-Read IR from a file and print the IR
 python3 main.py -r filename
-```
-
-```
-Read IR from a file and print the assembly code
-python3 main.py -r -a filename
 ```
 # How to use option -m
 ```
