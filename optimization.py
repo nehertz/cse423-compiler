@@ -14,7 +14,7 @@ class optimization:
         self.findLeaders()
         self.removeDupLeader()
         self.invoke()
-        self.removeLines()
+        # self.removeLines()
         return self.IRS
     
     def findFunctionBlocks(self):
@@ -119,7 +119,7 @@ class optimization:
                 result = self.compute(line)
                 if (result != 'N/A'):
                     flag = 1
-                    self.IRS[lineNum] = [line[0], line[1], result]
+                    self.IRS[lineNum] = [line[0], line[1],result]
                     if (line[0] not in self.varValue.keys()):
                         dict = {line[0] : result}
                         self.varValue.update(dict)
@@ -135,9 +135,11 @@ class optimization:
         flag = 0
         for line in basicBlock:
             index = 1
+            
             for opand in line[1:]:
+                
                 if (len(line) > 3 and line[1] == '=' and opand in self.varValue and (type(self.varValue[opand]) == int or type(self.varValue[opand]) == float)):
-                    self.IRS[lineNum][index] = self.varValue[opand]
+                    self.IRS[lineNum][index] = str(self.varValue[opand])
                     flag = 1
                     if (line[0] in self.varValue.keys()):
                         del self.varValue[line[0]]

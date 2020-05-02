@@ -73,6 +73,7 @@ if __name__ == "__main__":
     listArgs = cmdArgument[1:]
     flag = 0  # flag that tells us which options are enabled
     optimizationFlag = 0
+    readIrFromFileFlag = 0
     inputFile = ' '
     outputFile = ' '
     ir = ' '
@@ -106,6 +107,7 @@ if __name__ == "__main__":
             flag = 5
         if (currentArgument in ("-r", '--read-from-file')):
             flag = 6
+            readIrFromFileFlag = 1
         if (currentArgument in ("-m", '--optimization-pass')):
             optimizationFlag = 1
         if (currentArgument in ("-a", '--assembly')):
@@ -136,7 +138,8 @@ if __name__ == "__main__":
         print("ERROR: Could not open/read " + inputFile + ".")
     with f:
         # Read the IR from a file, skip the tokenizer and parser
-        if (flag == 6):
+        if (readIrFromFileFlag):
+            
             fileString = f.readlines()
             ir = IR(None)
         else :
@@ -150,6 +153,7 @@ if __name__ == "__main__":
 
     # Print tokens with labels
     if (flag == 1 or flag == 0):
+        
         printTokens(lexer)
 
     # Print the AST
@@ -179,11 +183,24 @@ if __name__ == "__main__":
         IR = ir.run()
         writeIRtoFile(IR, outputFile)
 
-    # Read the IR from an input file
+    # Read the IR from an input file and print the IR
     elif (flag == 6):
         ir.readIR(fileString)
         ir.printIR()
     
+    # Read the IR from an input file and print the assembly
+    elif (flag == 7 and readIrFromFileFlag == 1):
+        
+        IR = ir.readIR(fileString)
+        ir_str = ir.getIR()
+        print(ir_str)
+        ig = InterferenceGraph(ir_str)
+        StReg = SymbolTableRegisters(ir_str,ig)
+
+        assembly = assembly(IR, ig, StReg)
+        assembly.run()
+
+
     # Print the assembly when the optimization flag is on
     elif (flag == 7 and optimizationFlag == 1):
         IR = ir.run()
@@ -191,6 +208,7 @@ if __name__ == "__main__":
         IR = optimizedIR.run()
         
         ir_str = ir.getIR()
+        print(ir_str)
         ig = InterferenceGraph(ir_str)
         StReg = SymbolTableRegisters(ir_str,ig)
 
@@ -202,9 +220,10 @@ if __name__ == "__main__":
     # Print the assembly when the optimization flag is off      
     elif (flag == 7 and optimizationFlag == 0):
         IR = ir.run()
-        ir.printIR()
+        # ir.printIR()
 
         ir_str = ir.getIR()
+        
         ig = InterferenceGraph(ir_str)
         StReg = SymbolTableRegisters(ir_str,ig)
 

@@ -1292,3 +1292,4 @@ class IR:
         for line in fileString:
             list = line.split()
             self.IRS.append(list)
+        return self.IRS

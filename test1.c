@@ -111,7 +111,7 @@ int main()
         // return a = 1 + 2;
         // return 1 + 2 + 3;
 
-        //Samuel Example 1:
+        // Samuel Example 1:
         // int i, j, k;
         // i = 1;
         // j = 3;

@@ -239,6 +239,7 @@ class assembly:
         elif (constFlag1 and not constFlag2):
             
             # mov <RHS2> <reg1>
+            
             instruction = self.setReg.movFromMem2Reg(RHS2)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
@@ -404,7 +405,7 @@ class assembly:
             # mov RSH1 %eax
             self.ass.append(["mov", "$"+str(RHS1) , "%rax"])
             # get most significant 32bits of reg1 store it in mem1
-            self.ass.append(["idiv", self.getMemLocation(LH2)])
+            self.ass.append(["idiv", self.getMemLocation(RHS2)])
             if(ops == '/'):
                 # quotient in %eax
                 self.ass.append(["mov", "%rax", self.getMemLocation(LHS)])
