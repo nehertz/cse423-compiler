@@ -15,6 +15,7 @@ from optimization import optimization
 from assembly import assembly
 from symbolTableRegisters import SymbolTableRegisters
 from interferenceGraph import *
+from BasicRegAlloc import *
 # Print usage instructions for the compiler
 # parameters: None
 def printHelp():
@@ -112,8 +113,10 @@ if __name__ == "__main__":
             optimizationFlag = 1
         if (currentArgument in ("-a", '--assembly')):
             flag = 7
-        if (currentArgument in ("-g", "-register-allocation-first")):
+        if (currentArgument in ("-er", "-register-allocation-efficient")):
             flag = 8
+        if (currentArgument in ("-er0", "register-allocation-inefficient")):
+            flag = 9
         if (currentArgument in ("-h", "--help")):
             printHelp()
             sys.exit()

@@ -1,8 +1,9 @@
-import re
+import re 
 import operator
 class BasicRegAlloc:
     def __init__(self, ir):
         self.ir = ir
+        ir = ir.replace('\t', '')
         self.funcNameDict = {}
         self.expr = re.compile(r'.*=.*[(\+)|(-)|(\*)|(\|\|)|(&&)|(\^)|(\|)|(&)|(\!)|(<<)|(>>)].*')
         self.divisionExpr = re.compile(r'.*=.*[(\/)|(\%)].*')
@@ -17,6 +18,7 @@ class BasicRegAlloc:
     def run(self, stReg):
         self.create_dictionary_with_funcName()
         self.analyzeIR()
+        self.mapVertex2Register()
 
 
     def create_dictionary_with_funcName(self):
@@ -91,4 +93,3 @@ class BasicRegAlloc:
         self.vertexRegisters[var] = min_reg 
         self.registersUsage[min_reg] += 1
         return
-

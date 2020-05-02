@@ -24,16 +24,36 @@ int main()
         // int a = 100;
         // int b = 30;
         // float e = 20.2;
+<<<<<<< master
         // int c;
         // a = b;
+=======
+        // return a;
+        int a = 1;
+        // int b = 2;
+        // a = b;
+        
+        int b;
+        int c;
+        // return aa;
+        // int c; 
+        // float d;
+>>>>>>> WIP basic algorithm
         // int e, f, g;
 
         //// Test assignment and Arithmetic
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
+<<<<<<< master
         // a =  b << 3;
         // a =  b >> 3;
         // a =  b + 3;
+=======
+        a =  b << 3;
+        a =  b >> 3;
+        a =  b + 3;
+        return a;
+>>>>>>> WIP basic algorithm
         // a =  b - 3;
         // a = b * 3;
         // a = b / 3;
@@ -50,6 +70,7 @@ int main()
         // a >>= b | 3;
         // a &= b & 3;
         // a |= b ^ 3;
+        // return b;
 
         // Test complex arithmetic expression 
         // a = (a + b) * 2;
@@ -112,7 +133,11 @@ int main()
         // return a = 1 + 2;
         // return 1 + 2 + 3;
 
+<<<<<<< master
         // Samuel Example 1:
+=======
+        //Samuel Example 1:
+>>>>>>> WIP basic algorithm
         // int i, j, k;
         // i = 1;
         // j = 3;
