@@ -1,8 +1,8 @@
-// int add3(int a, int b, int c)
-// {
-//         int e = 1;
-// //   return a + b + c;
-// }
+int add3(int a, int b, int c)
+{
+        int e = 1;
+//   return a + b + c;
+}
 // enum week{Mon = 10, Tue, Wed, Thur = 20, Fri, Sat, Sun};
 
 int main()
@@ -62,8 +62,8 @@ int main()
         // a = (a + b) * 2;
 
         //// Unary 
-        // int a,b;
-        // b = (-a + b) * 2;
+        int a,b;
+        // a = (-a + b) * 2;
         // b = sizeof(a);
 
         //// Type casting
@@ -71,7 +71,7 @@ int main()
         // a = f;
         // a = f + b;
 
-        //// Goto stmt 
+        // // Goto stmt 
         // goto even;
         // even:
         //         a = 1;
@@ -79,7 +79,7 @@ int main()
         // while and do while loop
         // int a;
         // while ( a + 1 > 3 || a < 1 ) {
-        //         //continue;
+        //         // continue;
         //         // break;
         //         float j = j + 2;
         // }
@@ -96,7 +96,7 @@ int main()
         // }
         // a = a + 1;
         ////test return stmt
-        //return add(a, b);
+        // return add(a, b);
         // return 1 + 2 + a +b;
         // return 1+2;
         // return a = 1 + 2;
@@ -121,16 +121,14 @@ int main()
         // }
         // return j;
 
-        ////test if-statement 
-        // if(a%2 == 0){
-        //   ++b;    
-        // } else if (a > b){
-        //   a = b;
-        // } else if (a > b){
-        //   a = b;
-        // } else {
-        //   a = 1;
-        // }
+        //test if-statement 
+        if(a > 2){
+          ++b;    
+        } else if (a > b){
+          a = b;
+        } else {
+          a = 1;
+        }
 
         // return 0;
 }

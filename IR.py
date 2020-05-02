@@ -255,23 +255,36 @@ class IR:
         self.queue = []
         statements = []
         for node in reversed(subtree):
-            # print(self.queue)
-            # print(node.name)
             if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
+                # Enqueue identifiers and constants
                 self.enqueue(node.name)
-            elif(node.name not in assignment and node.name in alc):
+            elif(node.name not in assignment and node.name in alc and node.name != '!' and len(node.children) != 1):
+                # Handle logical or comparison operator
                 operand2 = self.dequeue()
                 operand1 = self.dequeue()
                 operator = node.name
-                tempVar = 't_' + str(self.temporaryVarible)
-                self.temporaryVarible += 1
-                ir = [tempVar, '=', operand1, operator, operand2]
-                if addToIR:
-                    self.IRS.append(ir)
-                else:
-                    statements.append(ir)
-                self.enqueue(tempVar)
+                flag = 1
+                for enum in self.enumConst:
+                    if (operand1 in enum):
+                        tempVar = ['enumExpr', str(operand1) , str(operator) , str(operand2)]
+                        self.enqueue(tempVar)
+                        flag = 0
+                if (flag):        
+                    tempVar = 't_' + str(self.temporaryVarible)
+                    ir = [tempVar, '=', operand1, operator, operand2]
+                    if addToIR:
+                        self.IRS.append(ir)
+                    else:
+                        statements.append(ir)
+                    self.enqueue(tempVar)
+                    self.temporaryVarible += 1
+            elif(node.name == '-' and len(node.children) == 1):
+                # Handle negative number
+                operand1 = self.dequeue()
+                operator = node.name
+                self.enqueue(operator+operand1)
             elif(node.name == '++' or node.name == '--'):
+                # Handle increment and decrement
                 operand1 = self.dequeue()
                 operator = node.name[0]
                 ir = [operand1, '=', operand1, operator, '1']
@@ -280,17 +293,25 @@ class IR:
                 else:
                     statements.append(ir)
                 self.enqueue(operand1)
+            elif(node.name == '!'):
+                # Handle !
+                operand1 = self.dequeue()
+                operator = node.name
+                self.enqueue(operator+operand1)
             elif('func' in node.name):
+                # Handle function call
+                
                 ir = " ".join(self.funcCall(node, node.name, 0, 1))
                 tempVar = 't_' + str(self.temporaryVarible)
-                self.temporaryVarible += 1
                 ir = [tempVar, '=', ir]
+                self.enqueue(tempVar)
                 if addToIR:
                     self.IRS.append(ir)
                 else:
                     statements.append(ir)
-                self.enqueue(tempVar)
+                self.temporaryVarible += 1
             elif(node.name == 'cast'):
+                # Handle type casting
                 operand = self.dequeue() 
                 typeSpec = self.dequeue()
                 ir = '(' + str(typeSpec) + ')' +  str(operand)
@@ -334,11 +355,94 @@ class IR:
                         self.IRS.append(ir)
                     else:
                         statements.append(ir)
-
         if addToIR:
             return operand2
         else:
             return statements
+        #     # print(self.queue)
+        #     # print(node.name)
+        #     if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
+        #         self.enqueue(node.name)
+        #     elif(node.name not in assignment and node.name in alc):
+        #         operand2 = self.dequeue()
+        #         operand1 = self.dequeue()
+        #         operator = node.name
+        #         tempVar = 't_' + str(self.temporaryVarible)
+        #         self.temporaryVarible += 1
+        #         ir = [tempVar, '=', operand1, operator, operand2]
+        #         if addToIR:
+        #             self.IRS.append(ir)
+        #         else:
+        #             statements.append(ir)
+        #         self.enqueue(tempVar)
+        #     elif(node.name == '++' or node.name == '--'):
+        #         operand1 = self.dequeue()
+        #         operator = node.name[0]
+        #         ir = [operand1, '=', operand1, operator, '1']
+        #         if addToIR:
+        #             self.IRS.append(ir)
+        #         else:
+        #             statements.append(ir)
+        #         self.enqueue(operand1)
+        #     elif('func' in node.name):
+        #         ir = " ".join(self.funcCall(node, node.name, 0, 1))
+        #         tempVar = 't_' + str(self.temporaryVarible)
+        #         self.temporaryVarible += 1
+        #         ir = [tempVar, '=', ir]
+        #         if addToIR:
+        #             self.IRS.append(ir)
+        #         else:
+        #             statements.append(ir)
+        #         self.enqueue(tempVar)
+        #     elif(node.name == 'cast'):
+        #         operand = self.dequeue() 
+        #         typeSpec = self.dequeue()
+        #         ir = '(' + str(typeSpec) + ')' +  str(operand)
+        #         self.enqueue(ir)
+        #     elif(node.name in assignment):
+        #         # Handle assignment operators
+        #         if(node.name == '='):
+        #             operand1 = self.dequeue()
+        #             operand2 = self.dequeue()
+        #             if (operand2 in self.enumInstance):
+        #                 dict = self.enumInstance.get(operand2)
+        #                 if ('enumExpr' in operand1):
+        #                     value = dict.get(operand1[1])
+        #                     value = self.simpleArithmetic(int(value), operand1[2], int(operand1[3]))
+        #                 else :
+        #                     value = dict.get(operand1)
+        #                 ir = [operand2, '=', str(value)]
+        #                 if addToIR:
+        #                     self.IRS.append(ir)
+        #                 else:
+        #                     statements.append(ir)
+        #             else:
+        #                 ir = [operand2, '=', operand1]
+        #                 if addToIR:
+        #                     self.IRS.append(ir)
+        #                 else:
+        #                     statements.append(ir)
+        #         else:
+        #             # e,g : if we have +=, operator1 is '+', operator2 is '='
+        #             if (len(node.name) == 2):
+        #                 operator1 = node.name[0]
+        #                 operator2 = node.name[1]
+        #             # >>= and <<= , operator1 is '>>' or '<<', operator2 is '='
+        #             elif(len(node.name) == 3):
+        #                 operator1 = node.name[0] + node.name[1]
+        #                 operator2 = node.name[2]
+        #             operand1 = self.dequeue()
+        #             operand2 = self.dequeue()
+        #             ir = [operand2, operator2, operand2, operator1, operand1]
+        #             if addToIR:
+        #                 self.IRS.append(ir)
+        #             else:
+        #                 statements.append(ir)
+
+        # if addToIR:
+        #     return operand2
+        # else:
+        #     return statements
 
     # simpleExpr converts experssion which does not have assigment
     # updated 3/30/20: now supports logical and comparison ops and unary ops
@@ -346,7 +450,7 @@ class IR:
     def simpleExpr(self, nodes, addToIR=True):
         subtree = self.getSubtree(nodes)
         ops = alc
-        unary = ['~', '!']
+        unary = ['~', '!', '-']
         operand2 = ''
         statements = []
         self.queue = []
@@ -359,16 +463,12 @@ class IR:
                     operator = node.name
                     tempVar = 't_' + str(self.temporaryVarible)
                     ir = [tempVar, '=', operator + operand1]
-                    print(ir)
-
                 else:
                     operand2 = self.dequeue()
                     operand1 = self.dequeue()
                     operator = node.name
                     tempVar = 't_' + str(self.temporaryVarible)
                     ir = [tempVar, '=', operand1, operator, operand2]
-                    print(ir)
-
                 if addToIR:
                     self.IRS.append(ir)
                 else:
