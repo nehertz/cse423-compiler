@@ -169,7 +169,9 @@ class InterferenceGraph:
         for key, _ in self.interferenceGraph.items():
             if (key not in self.VertexList):
                 self.VertexList.append(key)
+        
         return
+        
 
     def maxCardinalitySearch(self):
         # all the vertices are initialized to 0

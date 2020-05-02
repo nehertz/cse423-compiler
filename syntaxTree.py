@@ -231,8 +231,10 @@ def astConstruct(p, type):
     elif(type == 'logicalExpr'):
         if (len(p) == 2):
             p[0] = p[1]
-        else:
+        elif (len(p) == 4):
             p[0] = '(' + str(p[1]) + ',' + str(p[3]) + ')' + str(p[2])
+        elif (len(p) == 5):
+            p[0] = '(' + str(p[1]) + ',' + str(p[4]) + ')' + str(p[2])
 
     elif(type == 'compOps'):
         if (len(p) == 2):
