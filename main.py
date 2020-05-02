@@ -13,6 +13,7 @@ from typeChecking import TypeChecking
 from IR import IR
 from optimization import optimization
 from assembly import assembly
+from assembly2 import assembly2
 from symbolTableRegisters import SymbolTableRegisters
 from interferenceGraph import *
 from BasicRegAlloc import *
@@ -80,6 +81,7 @@ if __name__ == "__main__":
     inputFile = ' '
     outputFile = ' '
     ir = ' '
+    basicAlgFlag = 0
 
     # Check that the user has supplied enough arguments
     if not len(listArgs):
@@ -87,7 +89,7 @@ if __name__ == "__main__":
         printHelp()
         sys.exit()
 
-    unixOptions = "htpsiormag"
+    unixOptions = "htpsiormagb"
     gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR", "write-to-file", "read-from-file", "optimization-pass", "assembly", "register-allocation-first"]
 
     try:
@@ -115,9 +117,9 @@ if __name__ == "__main__":
             optimizationFlag = 1
         if (currentArgument in ("-a", '--assembly')):
             flag = 7
-        if (currentArgument in ("-g1", "-register-allocation-efficient")):
+        if (currentArgument in ("-g", "-register-allocation-efficient")):
             flag = 8
-        if (currentArgument in ("-g0", "register-allocation-inefficient")):
+        if (currentArgument in ("-b", "register-allocation-inefficient")):
             flag = 9
         if (currentArgument in ("-h", "--help")):
             printHelp()
@@ -244,9 +246,37 @@ if __name__ == "__main__":
         ig.run(StReg)
 
     elif (flag == 9):
+        basicAlgFlag = 1
         ir_str = ir.run()
         ir_str = ir.getIR()
         print(ir_str)
-        ig = BasicRegAlloc(ir)
+        ig = BasicRegAlloc(ir_str)
         StReg = SymbolTableRegisters(ir_str, ig)
         ig.run(StReg)
+    
+    # Print the assembly when the optimization flag is off      
+    elif (flag == 7 and optimizationFlag == 0 and basicAlgFlag == 1):
+        IR = ir.run()
+        # ir.printIR()
+
+        ir_str = ir.getIR()
+        print(ir_str)
+        ig= BasicRegAlloc(ir_str)
+        StReg = SymbolTableRegisters(ir_str,ig)
+
+        assembly = assembly2(IR, ig, StReg)
+        assembly.run()
+
+    elif (flag == 7 and optimizationFlag == 1 and basicAlgFlag == 1):
+        IR = ir.run()
+        optimizedIR = optimization(IR)
+        IR = optimizedIR.run()
+        
+        ir_str = ir.getIR()
+        print(ir_str)
+        ig = BasicRegAlloc(ir_str)
+        StReg = SymbolTableRegisters(ir_str,ig)
+
+        # assembly = assembly(IR)
+        assembly = assembly2(IR, ig, StReg)
+        assembly.run()

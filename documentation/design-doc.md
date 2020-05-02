@@ -153,6 +153,10 @@ KEY | | |
         - iteration statements
     - We decide to adopt this approach because using different function to handle the conversion job of different node types makes sense when traversing the tree structure. And one conversion function such as statement() can be re-used in many other functions such as when converting for-loop, we only need to worry about converting for-loop conditions, and pass the statement node under for-loop branch to statement() function. In this way, placing IR at correct location is also guaranteed.   
     
+- Assembly code generation
+    - The code generation is implemented using the IR. We take the IR list as input and scan through each line of the IR. Each line will be determined and passed to corresponding functions that handles the code generation. We utiliz a list structure to store the final output of assembly code, assembly codes will be apended to the list while scanning through each line of IR. Therefore we can keep the order. 
+    - We only support a subset of x86-64 instruction, which are included in assembly.md file. 
+    - For the register allocation, we support two different types of allocation. the details are in register_allocation.md
 
 # Known Errors
 - Our grammar will throw shift/reduce conflict warnings occasionally; we are working on fixing them

@@ -39,22 +39,10 @@ int main()
         //// Test assignment and Arithmetic
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
-<<<<<<< HEAD
-<<<<<<< master
         // a =  b << 3;
         // a =  b >> 3;
         // a =  b + 3;
-=======
-=======
->>>>>>> register_alloc
-        a =  b << 3;
-        a =  b >> 3;
-        a =  b + 3;
-        return a;
-<<<<<<< HEAD
->>>>>>> WIP basic algorithm
-=======
->>>>>>> register_alloc
+        // // return a;
         // a =  b - 3;
         // a = b * 3;
         // a = b / 3;
@@ -78,7 +66,7 @@ int main()
 
         //// Unary 
 
-        int a,b;
+        // int a,b;
         // a = (-a + b) * 2;
         // b = sizeof(a);
 
@@ -87,7 +75,7 @@ int main()
         ///TODO: sizeof not supported;
 
 
-        ////TODO: Type casting not support 
+        // ////TODO: Type casting not support 
         // float f = 10.5;
         // a = f;
         // a = f + b;
@@ -97,11 +85,11 @@ int main()
         // even:
         //         a = 1;
         // int a;
-        //   while ( a > 3 && a < 1 ) {
-        //         // continue;
-        //         // break;
-        //         // float j = j + 2;
-        // }
+          while ( a > 3 && a < 1 ) {
+                // continue;
+                // break;
+                // float j = j + 2;
+        }
         // while and do while loop
         // int a;
         // while ( a + 1 > 3 || a < 1 ) {
@@ -134,14 +122,7 @@ int main()
         // return a = 1 + 2;
         // return 1 + 2 + 3;
 
-<<<<<<< master
         // Samuel Example 1:
-=======
-        //Samuel Example 1:
-<<<<<<< HEAD
->>>>>>> WIP basic algorithm
-=======
->>>>>>> register_alloc
         // int i, j, k;
         // i = 1;
         // j = 3;
@@ -161,13 +142,13 @@ int main()
         // return j;
 
         //test if-statement 
-        if(a > 2){
-          ++b;    
-        } else if (a > b){
-          a = b;
-        } else {
-          a = 1;
-        }
+        // if(a > 2){
+        //   ++b;    
+        // } else if (a > b){
+        //   a = b;
+        // } else {
+        //   a = 1;
+        // }
 
         // return 0;
 }

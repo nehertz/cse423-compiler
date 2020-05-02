@@ -1,3 +1,12 @@
+'''
+Basic Register Allocation:
+This algorithm goes over IR, line-by-line and fetches the live-variables of that line
+and assigns them the registers. The only efficient thing it takes care of is that it
+utilizes the lowest used-registers first and makes it kind of uniform strain on all 
+of the available registers.
+'''
+
+
 import sys
 import re 
 import operator
@@ -72,10 +81,14 @@ class BasicRegAlloc:
                     continue
                 elif(self.assignment.match(line)):
                     l = line.split('=')
-                    self.liveVars[line] = [l[1]]
+                    self.liveVars[line].append(l[1])
         return
     
     def mapVertex2Register(self):
+        '''
+        After all the live-variables stored, we go to line-by-line 
+        and give each variable from that line a register
+        '''
         for key, value in self.funcNameDict.items():
             if (key == '__initiate_first__'):
                 continue
@@ -84,6 +97,9 @@ class BasicRegAlloc:
         return
 
     def insertVertexRegisters(self, line):
+        '''
+        After 
+        '''
         regs = ['%rax','%rcx','%rdx','%rbx','%rsi','%rdi','%r8','%r9','%r10','%r11','%r12','%r13','%r14','%r15']
         
         self.vertexRegisters[line] = []
