@@ -13,8 +13,6 @@ class InterferenceGraph:
         self.logicalExpr = re.compile(r'(\|\|)|(&&)|(\!)')
         self.bitOps = re.compile(r"(<<)|(>>)|(&)|(\|)|(\^)|(~)")
         self.compOps = re.compile(r'(==)|(\!=)|(>=)|(<=)')
-        self.functionCall = re.compile(r'.*=.*\(.*\)')
-        self.assignment = re.compile(r'.*=.*')
         self.st = None
         self.assignmentRvalue = re.compile(r'\d+')
         self.liveVars = {}
@@ -88,7 +86,6 @@ class InterferenceGraph:
                 for line in reversed(val[1:]):
                     if ('ret' in line):
                         self.insertNodeIG('%rax')
-                        self.liveVars[line] = ['%rax']
                         continue
                     if (self.divisionExpr.match(line)):
                         self.insertNodeIG('%rdx')
@@ -98,11 +95,6 @@ class InterferenceGraph:
                         self.insertNodeIG(rvalue1)
                         self.insertNodeIG(rvalue2)
                         self.liveVars[line] = [rvalue1, rvalue2, '%rdx', '%rax', lvalue]
-                    elif (self.functionCall.match(line)):
-                        l = line.split('=')
-                        self.insertNodeIG(l[0])
-                        self.liveVars[line] = [l[0]]
-                        continue
                     elif (self.expr.match(line)):
                         (lvalue, rvalue1, rvalue2) = self.checkLiveness(line)
                         self.insertNodeIG(lvalue)
@@ -130,15 +122,6 @@ class InterferenceGraph:
                         # so no need to assign different registers. 
                         # this will also check if the register is already assigned to this number
                         # and will increase performance by a little bit
-                    elif (self.assignment.match(line)):
-                        # if the assignment is a type of a = b, then 
-                        # the rvalue will be assigned a register 
-                        # Note that l-value should not be a register as You can move
-                        # from register to memory.
-                        l = line.split('=')
-                        self.insertNodeIG(l[1])
-                        self.liveVars[line] = [l[1]]
-
                 for line,nextLine in zip(val[1:], val[2:]):
                     if (line in self.liveVars and nextLine in self.liveVars):
                         self.liveVars[line] = self.checkLiveVarsInNextLine(self.liveVars[line], self.liveVars[nextLine])
@@ -190,8 +173,8 @@ class InterferenceGraph:
             if (key not in self.VertexList):
                 self.VertexList.append(key)
 
-        print('vertex list')
-        print(self.VertexList)
+        # print('vertex list')
+        # print(self.VertexList)
         return
 
     def maxCardinalitySearch(self):
@@ -232,7 +215,6 @@ class InterferenceGraph:
         for elem in self.VertexList:
             if ('%' in elem):
                 continue
-            # check that element has neighbors 
             if (self.interferenceGraph[elem]):
                 for nelem in self.interferenceGraph[elem]:
                     if (self.vertexRegisters[nelem] == ''):
@@ -265,7 +247,7 @@ class InterferenceGraph:
                 min_reg = min(colorsUsage.items(), key = operator.itemgetter(1))[0]
                 self.vertexRegisters[elem] = min_reg
                 colorsUsage[min_reg] += 1       
-        print('vertex registers')
-        print(self.vertexRegisters)
+        # print('vertex registers')
+        # print(self.vertexRegisters)
         return
     
