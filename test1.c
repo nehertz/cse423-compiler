@@ -31,12 +31,12 @@ int main()
         // return a; 
         // float e = 20.2;
         // return a;
-        // int a = 1;
+        int a = 1;
         // int b = 2;
         // a = b;
         
-        // int b;
-        // int c;
+        int b;
+        int c;
         // return aa;
         // int c; 
         // float d;
@@ -45,10 +45,10 @@ int main()
         //// Test assignment and Arithmetic
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
-        // a =  b << 3;
-        // a =  b >> 3;
-        // a =  b + 3;
-        // return a;
+        a =  b << 3;
+        a =  b >> 3;
+        a =  b + 3;
+        return a;
         // a =  b - 3;
         // a = b * 3;
         // a = b / 3;
@@ -65,6 +65,7 @@ int main()
         // a >>= b | 3;
         // a &= b & 3;
         // a |= b ^ 3;
+        // return b;
 
         // Test complex arithmetic expression 
         // a = (a + b) * 2;
@@ -111,12 +112,12 @@ int main()
         // return 1 + 2 + 3;
 
         //Samuel Example 1:
-        int i, j, k;
-        i = 1;
-        j = 3;
-        k = 5;
-        i = i * add3(i,j,k);
-        return i;
+        // int i, j, k;
+        // i = 1;
+        // j = 3;
+        // k = 5;
+        // i = i * add3(i,j,k);
+        // return i;
 
         // Samuel Example 2:
         // int i, j;
