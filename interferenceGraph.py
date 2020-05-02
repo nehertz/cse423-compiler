@@ -119,7 +119,8 @@ class InterferenceGraph:
                         # from register to memory.
                         l = line.split('=')
                         self.insertNodeIG(l[1])
-                        self.liveVars[line] = [l[1]]
+                        self.insertNodeIG(l[0])
+                        self.liveVars[line] = [l[1], l[0]]
 
                 for line,nextLine in zip(val[1:], val[2:]):
                     if (line in self.liveVars and nextLine in self.liveVars):
@@ -169,6 +170,7 @@ class InterferenceGraph:
         for key, _ in self.interferenceGraph.items():
             if (key not in self.VertexList):
                 self.VertexList.append(key)
+        print(self.VertexList)
         return
 
     def maxCardinalitySearch(self):

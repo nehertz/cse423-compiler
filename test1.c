@@ -30,9 +30,9 @@ int main()
         // a = b;
         
         int b;
-        int c;
+        // int c;
         // return aa;
-        // int c; 
+        int c; 
         // float d;
         // int e, f, g;
 
@@ -85,11 +85,11 @@ int main()
         // even:
         //         a = 1;
         // int a;
-          while ( a > 3 && a < 1 ) {
+        //   while ( a > 3 && a < 1 ) {
                 // continue;
                 // break;
                 // float j = j + 2;
-        }
+        // }
         // while and do while loop
         // int a;
         // while ( a + 1 > 3 || a < 1 ) {
@@ -135,20 +135,20 @@ int main()
         // j = 0;
         // for(i = 0; i < 10; ++i)
         // {
-        // if(i%2 == 0){
+        // if(i == 0){
         //         ++j;    
         // }
         // }
         // return j;
 
         //test if-statement 
-        // if(a > 2){
-        //   ++b;    
-        // } else if (a > b){
-        //   a = b;
-        // } else {
-        //   a = 1;
-        // }
+        if(a > 2){
+          ++b;    
+        } else if (a > b){
+          a = b;
+        } else {
+          a = 1;
+        }
 
         // return 0;
 }
