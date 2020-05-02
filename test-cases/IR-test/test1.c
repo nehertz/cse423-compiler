@@ -66,23 +66,24 @@ int main()
         //         a = 1;
          
         // while and do while loop
-        // int a;
-        // while ( a + 1 > 3 || a < 1 ) {
+         int a;
+         while ( a + 1 > 3 || a < 1 ) {
         //         //continue;
         //         // break;
-        //         float j = j + 2;
-        // }
+         //        float j = j + 2;
+         }
 
-        // do {
-        //         int i = i + 1;
-        //         float j = j + 2;
-        // } while (a < 3);
+         do {
+                 int i = i + 1;
+                 float j = j + 2;
+         } while (a < 3);
 
         
         ////test for loop 
-        // for (int i = 1; i < 5; i++){
-        //         i += 10;
-        // }
+        for (int i = 1; i < 5; i++){
+                i += 10;
+         //       continue;
+        }
         // a = a + 1;
         ////test return stmt
         // return add3(a, b, c);
@@ -100,14 +101,19 @@ int main()
         // return i;
 
         //// Samuel Example 2:
-        // int i, j;
-        // j = 0;
-        // for(i = 0; i < 10; ++i)
-        // {
-        //         if(i%2 == 0){
-        //                 ++j;    
-        //         }
-        // }
+        /*
+         int i, j;
+         j = 0;
+         for(i = 0; i < 10; ++i)
+         {
+         
+                 if(i%2 == 0){
+                         ++j;    
+                 }
+                 
+                 
+         }
+         */
         // return j;
 
         // if(i%2 == 0 && i < 3 || (i != 0 && i > 10)){
@@ -115,13 +121,15 @@ int main()
         // }
 
         ////test if-statement 
-        // if(a%2 == 0){
-        //   ++b;    
-        // } else if (a > b){
-        //   a = 2; 
-        // } else {
-        //   a = 1;
-        // }
+        /*
+         if(a%2 == 0){
+           ++b;    
+         } else if (a > b){
+           a = 2; 
+         } else {
+           a = 1;
+         }
+         */
 
         // } else if (a > b){
         //   a = b;

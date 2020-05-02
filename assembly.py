@@ -1,4 +1,4 @@
-from ply_scanner import assignment
+from ply_scanner import assignment, comparison
 from ply_scanner import arithmetic
 import re
 
@@ -64,7 +64,10 @@ class assembly:
 
             # not sure about this part -.- 
             elif ('if' in statement[0]):
-                self.conditional(statement)
+                if ('else' in statement):
+                    self.loop(statement)
+                else:
+                    self.conditional(statement)
             
             # Statement is a label
             elif (re.match(r'L[0-9]+:', statement[0])):
@@ -251,6 +254,77 @@ class assembly:
             self.ass.append(["jle {}".format('_' + jmp_label)])
         elif (operator == '>='):
             self.ass.append(["jge {}".format('_' + jmp_label)])
+
+        return
+
+    def loop(self, statement):
+        needRegAlloc = True
+        # split up ir. important that the comparison expr is the second element in statement
+        if_label = statement[3]
+        jmp_label = if_label
+        else_label = '_' + statement[-1]
+
+        # find comparison operator
+        for operator in comparison:
+            if operator in statement[1]:
+                compare = operator
+                break;
+        operand1, operand2 = statement[1].split(compare)
+        operator = compare
+        
+        # # Get memory locations for operands
+        # operand1_mem = self.getMemLocation(operand1)
+        # if not re.match(r'[0-9]*', operand2):
+        #     # Operand 2 is a variable
+        #     operand2_mem = self.getMemLocation(operand2)
+        # else:
+        #     # Operand 2 is a numconst
+        #     operand2_mem = None
+
+        # Check if at least one variable is in a register; if neither are, insert one into register
+        operands = self.operandCheck([operand1, operand2])
+
+        # Write cmp to ass with correct reg/mem or mem/reg or reg/con
+        if (needRegAlloc):
+            # Assign operand 1 to register
+            self.ass.append([self.setReg.movFromMem2Reg(operand1)])
+            '''
+            # trying to fix '\n' that appears in assembly code
+            assCode1 = self.setReg.movFromMem2Reg(operand1)
+            for assCode_seg in assCode1.split('\n'):
+                self.ass.append([assCode_seg])
+            '''
+            operand1_reg = self.getRegister(operand1)
+
+            if (re.match(r'[0-9]*', operand2)):
+                # cmp <reg>, <con>
+                self.ass.append(["cmp {}, ${}".format(operand1_reg, operand2)])
+            else:
+                # cmp <reg>, <mem>
+                self.ass.append(["cmp {}, {}".format(operand1_reg, self.getMemLocation(operand2))])
+        else:
+            if (operands[0] is not None):
+                # Operand 1 is stored in a register
+                self.ass.append(["cmp {}, {}".format(operands[0], self.getMemLocation(operand2))])
+            else:
+                self.ass.append(["cmp {}, {}".format(self.getMemLocation(operand1), operands[1])])
+
+        # Determine which jump needs to be performed based on operator
+        # Write correct jmp with correct label
+        if (operator == '=='):
+            self.ass.append(["je {}".format('_' + jmp_label)])
+        elif (operator == '!='):
+            self.ass.append(["jne {}".format('_' + jmp_label)])
+        elif (operator == '<'):
+            self.ass.append(["jl {}".format('_' + jmp_label)])
+        elif (operator == '>'):
+            self.ass.append(["jg {}".format('_' + jmp_label)])
+        elif (operator == '<='):
+            self.ass.append(["jle {}".format('_' + jmp_label)])
+        elif (operator == '>='):
+            self.ass.append(["jge {}".format('_' + jmp_label)])
+
+        self.ass.append(['jmp', else_label])
 
         return
 
