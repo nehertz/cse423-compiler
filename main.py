@@ -27,6 +27,8 @@ def printHelp():
     print("-o   :write IR into a file")
     print("-r   :read IR from a file")
     print("-m   :turn on optimization pass")
+    print("-g1  :register allocation using an efficient algorithm")
+    print("-g0  :register allocation using simple, inefficient algorithm")
     print("-h   :print the usage information")
     print("Default   :print option -t")
 
@@ -111,9 +113,9 @@ if __name__ == "__main__":
             optimizationFlag = 1
         if (currentArgument in ("-a", '--assembly')):
             flag = 7
-        if (currentArgument in ("-er", "-register-allocation-efficient")):
+        if (currentArgument in ("-g1", "-register-allocation-efficient")):
             flag = 8
-        if (currentArgument in ("-er0", "register-allocation-inefficient")):
+        if (currentArgument in ("-g0", "register-allocation-inefficient")):
             flag = 9
         if (currentArgument in ("-h", "--help")):
             printHelp()
@@ -220,4 +222,12 @@ if __name__ == "__main__":
         print(ir_str)
         ig = InterferenceGraph(ir_str)
         StReg = SymbolTableRegisters(ir_str,ig)
+        ig.run(StReg)
+
+    elif (flag == 9):
+        ir_str = ir.run()
+        ir_str = ir.getIR()
+        print(ir_str)
+        ig = BasicRegAlloc(ir)
+        StReg = SymbolTableRegisters(ir_str, ig)
         ig.run(StReg)
