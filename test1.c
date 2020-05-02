@@ -1,28 +1,19 @@
-<<<<<<< master
+
 int add3(int a, int b, int c)
 {
-<<<<<<< master
         int e = 1;
-<<<<<<< master
 //   return a + b + c;
-=======
-        return a + b + c;
->>>>>>> fixed bugs
-=======
         
         return 1;
->>>>>>> Function Calls are done
+
 }
-=======
+
 // int add3(int a, int b, int c)
 // {
 //         int e = 1;
 //   return a + b + c;
 // }
-<<<<<<< HEAD
->>>>>>> Fixed some bugs in code gen
-=======
->>>>>>> assembly_assignment
+
 
 int main()
 {     
@@ -64,18 +55,15 @@ int main()
         // a = (a + b) * 2;
 
         //// Unary 
-<<<<<<< master
+
         int a,b;
         // a = (-a + b) * 2;
         // b = sizeof(a);
-=======
+
         // int a,b;
         // b = (-a + b) * 2;
         ///TODO: sizeof not supported;
-<<<<<<< HEAD
->>>>>>> Fixed some bugs in code gen
-=======
->>>>>>> assembly_assignment
+
 
         ////TODO: Type casting not support 
         // float f = 10.5;
@@ -112,15 +100,13 @@ int main()
         // }
         // a = a + 1;
         ////test return stmt
-<<<<<<< HEAD
-<<<<<<< master
+
         // return add(a, b);
-=======
+
         // return add3(a, b, c);
->>>>>>> Fixed some bugs in code gen
-=======
+
         // return add3(a, b, c);
->>>>>>> assembly_assignment
+
         // return 1 + 2 + a +b;
         // return 1+2;
         // return a = 1 + 2;
