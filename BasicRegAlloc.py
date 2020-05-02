@@ -23,8 +23,6 @@ class BasicRegAlloc:
         self.analyzeIR()
         self.mapVertex2Register()
 
-
-
     def create_dictionary_with_funcName(self):
         ''' 
         creates a dictionary with the function names as keys
@@ -83,12 +81,6 @@ class BasicRegAlloc:
                 continue
             for line in value:
                 self.insertVertexRegisters(line)
-                    
-                    # if ('%r' in elem):
-                    #     self.vertexRegisters[elem] = elem
-                    #     self.registersUsage[elem] += 1
-                    #     continue
-                    # self.insertVertexRegisters(elem)
         return
 
     def insertVertexRegisters(self, line):
@@ -98,19 +90,12 @@ class BasicRegAlloc:
 
         for elem in line:
             if ('%r' in elem):
-                # self.vertexRegisters[line] = []
                 self.vertexRegisters[line].append(elem)
                 regs.remove(elem)
                 continue
             min_reg = min(self.registersUsage.items(), key = operator.itemgetter(1))[0]
             self.vertexRegisters[line].append(min_reg)
             self.registersUsage[min_reg] += 1
-        
-        # if (var in self.vertexRegisters):
-            # return 
-        # min_reg = min(self.registersUsage.items(), key = operator.itemgetter(1))[0]
-        # self.vertexRegisters[var] = min_reg 
-        # self.registersUsage[min_reg] += 1
         return
 
     def getVertexRegisters(self, line, var):

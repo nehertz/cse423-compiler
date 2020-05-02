@@ -1,7 +1,6 @@
 import re
 import operator
 import sys
-# from main import StReg
 
 class InterferenceGraph:
     def __init__(self, ir):
@@ -106,23 +105,6 @@ class InterferenceGraph:
                     elif (self.expr.match(line)):
                         (lvalue, rvalue1, rvalue2) = self.checkLiveness(line)
                         self.insertNodeIG(lvalue)
-                        # self.lvalues[lvalue] = 0
-                        # if (self.num.match(rvalue1)):
-                        #     if (self.num.match(rvalue2)):
-                        #         self.liveVars[line] = [lvalue]
-                        #         pass
-                        #     else:
-                        #         self.liveVars[line] = [rvalue2, lvalue]
-                        #         self.insertNodeIG(rvalue2)
-                        # else:
-
-                        #     if (self.num.match(rvalue2)):
-                        #         self.liveVars[line] = [rvalue1, lvalue]
-                        #         self.insertNodeIG(rvalue1)
-                        #     else:
-                        #         self.liveVars[line] = [rvalue1, rvalue2, lvalue]
-                        #         self.insertNodeIG(rvalue1)
-                        #         self.insertNodeIG(rvalue2)
                         self.insertNodeIG(rvalue1)
                         self.insertNodeIG(rvalue2)
                         self.liveVars[line] = [rvalue1, rvalue2, lvalue]
@@ -182,8 +164,6 @@ class InterferenceGraph:
             if (value):
                 for elem in value:
                     self.EdgesList.append((key, elem))
-        # print('edgeslist')
-        # print(self.EdgesList)
         return
     def createVertexList(self):
         for key, _ in self.interferenceGraph.items():
@@ -197,11 +177,8 @@ class InterferenceGraph:
     def maxCardinalitySearch(self):
         # all the vertices are initialized to 0
         weightDict = dict.fromkeys(self.VertexList,0)
-        # print('weightdict')
-        # print(weightDict)
         for _ in range(len(self.VertexList)):
             maxElem = max (weightDict.items(), key = operator.itemgetter(1))[0]
-            # del weightDict[maxElem]
             if (weightDict[maxElem] == -1):
                 break
             weightDict[maxElem] = -1
@@ -211,9 +188,6 @@ class InterferenceGraph:
                 if (value):
                     for elem in value:
                         weightDict[elem] += 1
-        # print(weightDict)
-        # print('simplicial order: ')
-        # print(self.simplicialOrdering)
         return        
 
 
