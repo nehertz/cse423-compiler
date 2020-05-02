@@ -1,3 +1,4 @@
+import sys
 import re 
 import operator
 class BasicRegAlloc:
@@ -15,10 +16,13 @@ class BasicRegAlloc:
         self.registers = ['%rax','%rcx','%rdx','%rbx','%rsi','%rdi','%r8','%r9','%r10','%r11','%r12','%r13','%r14','%r15']
         self.registersUsage = {}
         self.registersUsage = self.registersUsage.fromkeys(self.registers, 0)
+    
+    
     def run(self, stReg):
         self.create_dictionary_with_funcName()
         self.analyzeIR()
         self.mapVertex2Register()
+
 
 
     def create_dictionary_with_funcName(self):
@@ -78,18 +82,41 @@ class BasicRegAlloc:
             if (key == '__initiate_first__'):
                 continue
             for line in value:
-                for elem in self.liveVars[line]:
-                    if ('%r' in elem):
-                        self.vertexRegisters[elem] = elem
-                        self.registersUsage[elem] += 1
-                        continue
-                    self.insertVertexRegisters(elem)
+                self.insertVertexRegisters(line)
+                    
+                    # if ('%r' in elem):
+                    #     self.vertexRegisters[elem] = elem
+                    #     self.registersUsage[elem] += 1
+                    #     continue
+                    # self.insertVertexRegisters(elem)
         return
 
-    def insertVertexRegisters(self, var):
-        if (var in self.vertexRegisters):
-            return 
-        min_reg = min(self.registersUsage.items(), key = operator.itemgetter(1))[0]
-        self.vertexRegisters[var] = min_reg 
-        self.registersUsage[min_reg] += 1
+    def insertVertexRegisters(self, line):
+        regs = ['%rax','%rcx','%rdx','%rbx','%rsi','%rdi','%r8','%r9','%r10','%r11','%r12','%r13','%r14','%r15']
+        
+        self.vertexRegisters[line] = []
+
+        for elem in line:
+            if ('%r' in elem):
+                # self.vertexRegisters[line] = []
+                self.vertexRegisters[line].append(elem)
+                regs.remove(elem)
+                continue
+            min_reg = min(self.registersUsage.items(), key = operator.itemgetter(1))[0]
+            self.vertexRegisters[line].append(min_reg)
+            self.registersUsage[min_reg] += 1
+        
+        # if (var in self.vertexRegisters):
+            # return 
+        # min_reg = min(self.registersUsage.items(), key = operator.itemgetter(1))[0]
+        # self.vertexRegisters[var] = min_reg 
+        # self.registersUsage[min_reg] += 1
         return
+
+    def getVertexRegisters(self, line, var):
+        for elem, reg in zip(line, self.vertexRegisters[line]):
+            if (elem == var):
+                return reg
+        print('Error: register not allocated for ' + str(var))
+        print('statement: ' + line)
+        sys.exit(1)

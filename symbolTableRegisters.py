@@ -23,6 +23,7 @@ class SymbolTableRegisters:
             assCode += 'mov ' + str(self.symboltable_reg[reg]) + ' ' + str(memAddr) + '\n'
             self.symboltable_reg[reg] = ''
         return assCode
+
     # 4(%rsp)
     def insertMemory(self, var, memory_location):
         self.symboltable_mem[var] = memory_location
@@ -50,7 +51,30 @@ class SymbolTableRegisters:
         assCode += '\n'
         self.symboltable_reg[availableReg] = var
         return assCode
-    
+
+    def movFromMem2Reg_2(self,line, var):
+        # updates the symbol table
+        # returns the assembly code
+        # get designed available register for that variable 
+        # (flag, availableReg) = self.ig.get_availableReg(var)
+        availableReg = self.ig.getVertexRegisters(line, var)
+        if (availableReg == None):
+            print("error occurred. No register allocated for this variable")
+            sys.exit(1)
+        # if (flag == False):
+            # it's a memory location - remove unnecessary/temporary registers
+            # pass
+        assCode = ''
+        if (self.symboltable_reg[availableReg] != ''):
+            name_var = self.symboltable_reg[availableReg]
+            assCode += 'mov ' + str(availableReg) + ' ' + str(self.symboltable_mem[name_var])
+            assCode += '\n'
+            self.symboltable_reg[availableReg] = ''
+
+        assCode += 'mov ' + str(self.symboltable_mem[var]) + ' ' + str(availableReg)
+        assCode += '\n'
+        self.symboltable_reg[availableReg] = var
+        return assCode
     def initiate_st_reg(self):
         self.symboltable_reg['%rax'] = ''
         self.symboltable_reg['%rcx'] = ''

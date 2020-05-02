@@ -2,6 +2,7 @@ from ply_scanner import assignment
 from ply_scanner import arithmetic
 from ply_scanner import logical
 import re
+import sys
 
 class assembly2:
     def __init__(self, ir, ig, setReg):
@@ -187,19 +188,19 @@ class assembly2:
     def simpleArithmetic(self, statement):
         ops = statement[3]
         if (ops == '+' or ops == '-' or ops == '|' or ops == '&' or ops == '^'):
-            self.plusAndMinusAndLogic(statement[0], statement[2], statement[4], ops)
+            self.plusAndMinusAndLogic(statement[0], statement[2], statement[4], ops, statement)
         elif (ops == '*'):
-            self.times(statement[0], statement[2], statement[4])
+            self.times(statement[0], statement[2], statement[4], statement)
         elif (ops == '%' or ops == '/'):
-            self.divideAndModulo(statement[0], statement[2], statement[4], ops)
+            self.divideAndModulo(statement[0], statement[2], statement[4], ops, statement)
         elif (ops == '<<' or ops == '>>'):
-            self.shift(statement[0], statement[2], statement[4], ops)
+            self.shift(statement[0], statement[2], statement[4], ops, statement)
         else:
             print('unknow ops\n')
             exit()
 
 
-    def plusAndMinusAndLogic(self, LHS, RHS1, RHS2, ops):
+    def plusAndMinusAndLogic(self, LHS, RHS1, RHS2, ops, statement):
 
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
@@ -223,7 +224,8 @@ class assembly2:
             
             # mov <RHS2> <reg1>
             
-            instruction = self.setReg.movFromMem2Reg(RHS2)
+            # instruction = self.setReg.movFromMem2Reg(RHS2)
+            instruction = self.setReg.movFromMem2Reg_2(statement, RHS2)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
                 self.ass.append([instruction1])
@@ -248,7 +250,7 @@ class assembly2:
         elif (not constFlag1 and constFlag2):
             # mov <RHS1> <reg1>
 
-            instruction = self.setReg.movFromMem2Reg(RHS1)
+            instruction = self.setReg.movFromMem2Reg_2(statement, RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
                 self.ass.append([instruction1])
@@ -274,7 +276,7 @@ class assembly2:
         elif (not constFlag1 and not constFlag2):
 
             # mov <RHS1> <reg1>
-            instruction = self.setReg.movFromMem2Reg(RHS1)
+            instruction = self.setReg.movFromMem2Reg_2(statement, RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
                 self.ass.append([instruction1])
@@ -297,7 +299,7 @@ class assembly2:
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
 
-    def times(self, LHS, RHS1, RHS2):
+    def times(self, LHS, RHS1, RHS2, statement):
         
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
@@ -310,14 +312,15 @@ class assembly2:
         elif (constFlag1 and not constFlag2):
            
             # move RHS1 regs0
-            (flag, availableReg) = self.ig.get_availableReg(str(RHS1))
+            # (flag, availableReg) = self.ig.get_availableReg(str(RHS1))
+            availableReg = self.ig.getVertexRegisters(statement, str(RHS1))
             if (availableReg == None):
                 print("error occurred. Variable not found in interference graph")
                 sys.exit(1)
             self.ass.append(["mov", "$"+str(RHS1) , availableReg])
 
             # mov RHS2 regs
-            instruction = self.setReg.movFromMem2Reg(RHS2)
+            instruction = self.setReg.movFromMem2Reg_2(statement, RHS2)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
                 self.ass.append([instruction1])
@@ -334,14 +337,16 @@ class assembly2:
             # move RHS2 mem
             # location = self.addToMem(RHS2)
             # self.ass.append(["mov", "$"+str(RHS2) , location])
-            (flag, availableReg) = self.ig.get_availableReg(str(RHS2))
+            # (flag, availableReg) = self.ig.get_availableReg(str(RHS2))
+            availableReg = self.ig.getVertexRegisters(statement, str(RHS2))
+
             if (availableReg == None):
                 print("error occurred. Variable not found in interference graph")
                 sys.exit(1)
             self.ass.append(["mov", "$"+str(RHS1) , availableReg])
 
             # mov RHS1 reg1
-            instruction = self.setReg.movFromMem2Reg(RHS1)
+            instruction = self.setReg.movFromMem2Reg_2(statement, RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
                 self.ass.append([instruction1])
@@ -357,7 +362,7 @@ class assembly2:
         elif (not constFlag1 and not constFlag2):
             # mov RHS1 reg1 
             
-            instruction = self.setReg.movFromMem2Reg(RHS1)
+            instruction = self.setReg.movFromMem2Reg_2(statement, RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
                 self.ass.append([instruction1])
@@ -370,7 +375,7 @@ class assembly2:
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
         
 
-    def divideAndModulo(self, LHS, RHS1, RHS2, ops):
+    def divideAndModulo(self, LHS, RHS1, RHS2, ops, statement):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
 
@@ -437,7 +442,7 @@ class assembly2:
                 # remainder in %edx 
                 self.ass.append(["mov", "%rdx", self.getMemLocation(LHS)])
 
-    def shift(self, LHS, RHS1, RHS2, ops):
+    def shift(self, LHS, RHS1, RHS2, ops, statement):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
      
@@ -452,7 +457,9 @@ class assembly2:
         elif (constFlag1 and not constFlag2):
             
             # mov 10 reg 
-            (flag, availableReg) = self.ig.get_availableReg(str(RHS1))
+            # (flag, availableReg) = self.ig.get_availableReg(str(RHS1))
+            availableReg = self.ig.getVertexRegisters(statement, str(RHS1))
+
             if (availableReg == None):
                 print("error occurred. Variable not found in interference graph")
                 sys.exit(1)
@@ -470,7 +477,7 @@ class assembly2:
         elif (not constFlag1 and constFlag2):
 
             # mov b reg 
-            instruction = self.setReg.movFromMem2Reg(RHS1)
+            instruction = self.setReg.movFromMem2Reg_2(statement, RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
                 self.ass.append([instruction1])
@@ -489,7 +496,7 @@ class assembly2:
         elif (not constFlag1 and not constFlag2):
             
              # mov b reg 
-            instruction = self.setReg.movFromMem2Reg(RHS1)
+            instruction = self.setReg.movFromMem2Reg_2(statement, RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
                 self.ass.append([instruction1])
