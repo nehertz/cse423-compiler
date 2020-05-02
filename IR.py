@@ -1073,7 +1073,7 @@ class IR:
             place2 = self.labelPlace[expr2]
             placeIFtrue = self.enterLoopLabel
             placeIFfalse = self.endLoopLabel
-            dic = [place, placeIFtrue, placeIFfalse]
+            dic = [place, place2, placeIFfalse]
             self.labelPlace[expr1] = dic
             dic = [place2, placeIFtrue, placeIFfalse]
             self.labelPlace[expr2] = dic
