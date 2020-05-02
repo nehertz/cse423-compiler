@@ -77,12 +77,19 @@ class assembly2:
                 self.funcCall(statement, 0)    
 
             # simply creates the goto and label code
-            elif ('goto' in statement):
+            elif (re.match(r'goto L[0-9]+', statement[0])):
                 self.goto(statement)
 
-            # not sure about this part -.- 
-            elif ('if' in statement):
-                self.conditional(statement)
+             # not sure about this part -.- 
+            elif ('if' in statement[0]):
+                if ('else' in statement):
+                    self.loop(statement)
+                else:
+                    self.conditional(statement)
+            
+            # Statement is a label
+            elif (re.match(r'L[0-9]+:', statement[0])):
+                self.label(statement)
             
             elif ('ret' in statement or 'ret' in statement[0]):
                 self.returnStmt(statement, mainFlag)
@@ -269,7 +276,7 @@ class assembly2:
                 self.ass.append(["and", "$"+str(RHS2) , reges])
             elif (ops == '^'):
                 self.ass.append(["xor", "$"+str(RHS2) , reges])
-             # mov <reg1>, <LHS>
+            # mov <reg1>, <LHS>
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
         # RHS1 = var && RHS2 = var 
@@ -662,5 +669,91 @@ class assembly2:
                 # print(list)
                 print('\t', str1.join(list))
 
+    def conditional(self, statement):
 
-    
+        needRegAlloc = True
+        # Split statement into list of statements; split by 'if' and 'goto' (re.split(r'if|goto'))
+        expr, jmp_label = list(filter(None, re.split(r'if | goto |:', statement[0])))
+        operand1, operator, operand2 = expr.split(' ')
+        
+        # # Get memory locations for operands
+        # operand1_mem = self.getMemLocation(operand1)
+        # if not re.match(r'[0-9]*', operand2):
+        #     # Operand 2 is a variable
+        #     operand2_mem = self.getMemLocation(operand2)
+        # else:
+        #     # Operand 2 is a numconst
+        #     operand2_mem = None
+
+        # Check if at least one variable is in a register; if neither are, insert one into register
+        operands = self.operandCheck([operand1, operand2])
+
+        # Write cmp to ass with correct reg/mem or mem/reg or reg/con
+        if (needRegAlloc):
+            # Assign operand 1 to register
+            self.ass.append([self.setReg.movFromMem2Reg(operand1)])
+            operand1_reg = self.getRegister(operand1)
+
+            if (re.match(r'[0-9]*', operand2)):
+                # cmp <reg>, <con>
+                self.ass.append(["cmp {}, ${}".format(operand1_reg, operand2)])
+            else:
+                # cmp <reg>, <mem>
+                self.ass.append(["cmp {}, {}".format(operand1_reg, self.getMemLocation(operand2))])
+        else:
+            if (operands[0] is not None):
+                # Operand 1 is stored in a register
+                self.ass.append(["cmp {}, {}".format(operands[0], self.getMemLocation(operand2))])
+            else:
+                self.ass.append(["cmp {}, {}".format(self.getMemLocation(operand1), operands[1])])
+
+        # Determine which jump needs to be performed based on operator
+        # Write correct jmp with correct label
+        if (operator == '=='):
+            self.ass.append(["je {}".format('_' + jmp_label)])
+        elif (operator == '!='):
+            self.ass.append(["jne {}".format('_' + jmp_label)])
+        elif (operator == '<'):
+            self.ass.append(["jl {}".format('_' + jmp_label)])
+        elif (operator == '>'):
+            self.ass.append(["jg {}".format('_' + jmp_label)])
+        elif (operator == '<='):
+            self.ass.append(["jle {}".format('_' + jmp_label)])
+        elif (operator == '>='):
+            self.ass.append(["jge {}".format('_' + jmp_label)])
+
+        return
+
+    # Takes a variable and returns the register where it is stored
+    # If it exists
+    def getRegister(self, var):
+        for k, v in self.setReg.symboltable_reg.items():
+            if (v == var):
+                # Register located
+                return k
+
+        return None
+    def goto(self, statement):
+        label = list(filter(None, re.split(r'goto |:', statement[0])))[0]
+
+        self.ass.append(["jmp {}".format(label)])
+
+        return
+
+    def label(self, label):
+        self.ass.append(['_' + label[0]])
+        return
+    # Check if operands are located in registers
+    # Useful for checking if an operand needs to be moved to a reg
+    # For cases when there is no mem-mem instr available
+    def operandCheck(self, operands):
+        regs = []
+        for op in operands:
+            if (op in self.setReg.symboltable_reg.values()):
+                # Operand 1 is stored in a register
+                regs.append(self.getRegister(op))
+            else:
+                # Operand 1 is not stored in a register  
+                regs.append(None)
+
+        return regs

@@ -8,7 +8,8 @@ Assembly TO-Do List:
  - func-call - Yash
 To Research:  Register allocation algorithm
 We're doing 64-bit registers at&t syntax
-
+- Symbol Table memory fetcher: 
+    - 
 
 Notes:
 - Three parts to the back end:
@@ -95,4 +96,3 @@ Notes:
     - `jge <label>` (jump if greater than or equal)
     - `jl <label>` (jump if less than)
     - `jle <label>` (jump if less than or equal)
-
