@@ -271,7 +271,7 @@ class IR:
                         self.enqueue(tempVar)
                         flag = 0
                 if (flag):        
-                    tempVar = 't_' + str(self.temporaryVarible)
+                    tempVar = 't' + str(self.temporaryVarible)
                     ir = [tempVar, '=', operand1, operator, operand2]
                     if addToIR:
                         self.IRS.append(ir)
@@ -303,7 +303,7 @@ class IR:
                 # Handle function call
                 
                 ir = " ".join(self.funcCall(node, node.name, 0, 1))
-                tempVar = 't_' + str(self.temporaryVarible)
+                tempVar = 't' + str(self.temporaryVarible)
                 ir = [tempVar, '=', ir]
                 self.enqueue(tempVar)
                 if addToIR:
@@ -360,90 +360,6 @@ class IR:
             return operand2
         else:
             return statements
-        #     # print(self.queue)
-        #     # print(node.name)
-        #     if(node.name not in operators.keys() and 'func' not in node.name and node.name != 'args' and node.name != 'cast'):
-        #         self.enqueue(node.name)
-        #     elif(node.name not in assignment and node.name in alc):
-        #         operand2 = self.dequeue()
-        #         operand1 = self.dequeue()
-        #         operator = node.name
-        #         tempVar = 't_' + str(self.temporaryVarible)
-        #         self.temporaryVarible += 1
-        #         ir = [tempVar, '=', operand1, operator, operand2]
-        #         if addToIR:
-        #             self.IRS.append(ir)
-        #         else:
-        #             statements.append(ir)
-        #         self.enqueue(tempVar)
-        #     elif(node.name == '++' or node.name == '--'):
-        #         operand1 = self.dequeue()
-        #         operator = node.name[0]
-        #         ir = [operand1, '=', operand1, operator, '1']
-        #         if addToIR:
-        #             self.IRS.append(ir)
-        #         else:
-        #             statements.append(ir)
-        #         self.enqueue(operand1)
-        #     elif('func' in node.name):
-        #         ir = " ".join(self.funcCall(node, node.name, 0, 1))
-        #         tempVar = 't_' + str(self.temporaryVarible)
-        #         self.temporaryVarible += 1
-        #         ir = [tempVar, '=', ir]
-        #         if addToIR:
-        #             self.IRS.append(ir)
-        #         else:
-        #             statements.append(ir)
-        #         self.enqueue(tempVar)
-        #     elif(node.name == 'cast'):
-        #         operand = self.dequeue() 
-        #         typeSpec = self.dequeue()
-        #         ir = '(' + str(typeSpec) + ')' +  str(operand)
-        #         self.enqueue(ir)
-        #     elif(node.name in assignment):
-        #         # Handle assignment operators
-        #         if(node.name == '='):
-        #             operand1 = self.dequeue()
-        #             operand2 = self.dequeue()
-        #             if (operand2 in self.enumInstance):
-        #                 dict = self.enumInstance.get(operand2)
-        #                 if ('enumExpr' in operand1):
-        #                     value = dict.get(operand1[1])
-        #                     value = self.simpleArithmetic(int(value), operand1[2], int(operand1[3]))
-        #                 else :
-        #                     value = dict.get(operand1)
-        #                 ir = [operand2, '=', str(value)]
-        #                 if addToIR:
-        #                     self.IRS.append(ir)
-        #                 else:
-        #                     statements.append(ir)
-        #             else:
-        #                 ir = [operand2, '=', operand1]
-        #                 if addToIR:
-        #                     self.IRS.append(ir)
-        #                 else:
-        #                     statements.append(ir)
-        #         else:
-        #             # e,g : if we have +=, operator1 is '+', operator2 is '='
-        #             if (len(node.name) == 2):
-        #                 operator1 = node.name[0]
-        #                 operator2 = node.name[1]
-        #             # >>= and <<= , operator1 is '>>' or '<<', operator2 is '='
-        #             elif(len(node.name) == 3):
-        #                 operator1 = node.name[0] + node.name[1]
-        #                 operator2 = node.name[2]
-        #             operand1 = self.dequeue()
-        #             operand2 = self.dequeue()
-        #             ir = [operand2, operator2, operand2, operator1, operand1]
-        #             if addToIR:
-        #                 self.IRS.append(ir)
-        #             else:
-        #                 statements.append(ir)
-
-        # if addToIR:
-        #     return operand2
-        # else:
-        #     return statements
 
     # simpleExpr converts experssion which does not have assigment
     # updated 3/30/20: now supports logical and comparison ops and unary ops
@@ -462,13 +378,13 @@ class IR:
                 if (node.name in unary):
                     operand1 = self.dequeue()
                     operator = node.name
-                    tempVar = 't_' + str(self.temporaryVarible)
+                    tempVar = 't' + str(self.temporaryVarible)
                     ir = [tempVar, '=', operator + operand1]
                 else:
                     operand2 = self.dequeue()
                     operand1 = self.dequeue()
                     operator = node.name
-                    tempVar = 't_' + str(self.temporaryVarible)
+                    tempVar = 't' + str(self.temporaryVarible)
                     ir = [tempVar, '=', operand1, operator, operand2]
                 if addToIR:
                     self.IRS.append(ir)
@@ -625,11 +541,11 @@ class IR:
 
         return exprs
 
-    # NOT SUPPORTED: negation of logical operators
     # Parse through condition of conditional statement and create IR for each
     # expression
     # Includes backpatching when logical operators are encountered to ensure
     # correct jumping between simple expressions
+    # NOT SUPPORTED: negation of logical operators
     def condParse(self, cond, block):
         # Clear the queue
         self.queue = []
@@ -647,8 +563,7 @@ class IR:
         if cond is not None:
             firstLabel = 'L' + str(self.label) + ':'
             for node in reversed(self.getSubtree(cond)):
-                # print(node.name)
-                # print(self.queue)
+                print(self.queue)
                 if node.name not in alc:
                     # Node is a variable
                     if (node.parent.name in logical or node.parent.name in ["if", "else-if", "else"]):
@@ -662,7 +577,7 @@ class IR:
                         stmts[l2] = 'goto _'
                     else:
                         # Node is a variable in an arithmetic or comparison expression
-                        self.enqueue((self.createLabel(node, 'condLabel'), node.name, [], []))
+                        self.enqueue(('L' + str(self.label) + ':', node.name, [], []))
                 elif node.name in arithmetic + comparison:
                     # Node is a non-logical operator
                     # E -> id1 relop id2
@@ -675,6 +590,7 @@ class IR:
 
                     if (node.name == '~'):
                         oper = self.dequeue()
+                        print("dequeuing {}".format(oper))
                         expr = '{} {}'.format(node.name, oper[1])
                         l1 = self.createLabel(node, 'condLabel')
                         l2 = self.createLabel(node, 'condLabel')
@@ -682,9 +598,22 @@ class IR:
                         stmts[l1] = 'if {} goto _'.format(expr)
                         self.enqueue([l1, expr, self.makeList(l1), self.makeList(l2)])
                         stmts[l2] = 'goto _'
+
                     else:
+                        if (node.name in arithmetic):
+                            self.dequeue()
+                            self.dequeue()
+                            prev_queue = self.queue
+                            tmp = self.simpleExpr(node)
+                            self.queue = prev_queue
+                            self.enqueue(['L' + str(self.label) + ':', tmp, [], []])
+                            print(self.queue)
+                            continue
+
                         oper2 = self.dequeue()
+                        print("dequeuing {}".format(oper2))
                         oper1 = self.dequeue()
+                        print("dequeuing {}".format(oper1))
                         expr = '{} {} {}'.format(oper1[1], node.name, oper2[1])
                         l1 = self.createLabel(node, 'condLabel')
                         l2 = self.createLabel(node, 'condLabel')
@@ -692,6 +621,7 @@ class IR:
                         stmts[l1] = 'if {} goto _'.format(expr)
                         self.enqueue([l1, expr, self.makeList(l1), self.makeList(l2)])
                         stmts[l2] = 'goto _'
+
                 else:
                     # Node is a logical operator
                     if (node.name == '!'):
@@ -725,7 +655,7 @@ class IR:
                         e2 = self.dequeue()
                         e2addr, e2Truelist, e2Falselist = e2[0], e2[2], e2[3]
                         eTruelist, eFalselist = [], []
-                        l = self.createLabel(node, 'condLabel')
+                        # l = self.createLabel(node, 'condLabel')
 
                         # 1. backpatch(E1.truelist, e2.addr)
                         stmts = self.backpatch(stmts, e1Truelist, str(e2addr))
@@ -735,7 +665,7 @@ class IR:
                         eFalselist = self.merge(e1Falselist, e2Falselist)
 
                         # self.enqueue([self.instr, [e1addr, e2addr], eTruelist, eFalselist])
-                        self.enqueue([l, [e1addr, e2addr], eTruelist, eFalselist])
+                        self.enqueue(['L' + str(self.label) + ':', [e1addr, e2addr], eTruelist, eFalselist])
                     else:
                         # E -> E1 || E2
 
@@ -744,7 +674,7 @@ class IR:
                         e2 = self.dequeue()
                         e2addr, e2Truelist, e2Falselist = e2[0], e2[2], e2[3]
                         eTruelist, eFalselist = [], []
-                        l = self.createLabel(node, 'condLabel')
+                        # l = self.createLabel(node, 'condLabel')
 
                         # 1. backpatch(E1.falselist, e2.addr)
                         stmts = self.backpatch(stmts, e1Falselist, str(e2addr))
@@ -754,7 +684,7 @@ class IR:
                         eFalselist = e2Falselist
                         
                         # self.enqueue([self.instr, [e1addr, e2addr], eTruelist, eFalselist])
-                        self.enqueue([l, [e1addr, e2addr], eTruelist, eFalselist])
+                        self.enqueue(['L' + str(self.label) + ':', [e1addr, e2addr], eTruelist, eFalselist])
 
         # Negate expressions
         for a in negAddrs:
@@ -980,7 +910,7 @@ class IR:
                 operand2 = queue.pop(0)
                 operand1 = queue.pop(0)
                 operator = item
-                tempVar = 't_' + str(self.temporaryVarible)
+                tempVar = 't' + str(self.temporaryVarible)
                 queue.append(tempVar)
             elif (item in comparison):
                 op1 = queue.pop(0)
@@ -1005,7 +935,7 @@ class IR:
                 operand2 = queue.pop(0)
                 operand1 = queue.pop(0)
                 operator = item
-                tempVar = 't_' + str(self.temporaryVarible)
+                tempVar = 't' + str(self.temporaryVarible)
                 ir = [tempVar, '=', operand1, operator, operand2]
                 self.IRS.append(ir)
                 queue.append(tempVar)
