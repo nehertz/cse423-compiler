@@ -610,12 +610,15 @@ class IR:
         else:
             self.IRS.append(ir)
 
+    # Creates a list with element i
     def makeList(self, i):
         return [i]
 
+    # Sorts and merges two lists
     def merge(self, p1, p2):
         return sorted(p1 + p2)
 
+    # Fills in label i for each jump in list p
     def backpatch(self, exprs, p, i):
         for k in p:
             exprs[k] = exprs[k].replace('_', i)
@@ -623,6 +626,10 @@ class IR:
         return exprs
 
     # NOT SUPPORTED: negation of logical operators
+    # Parse through condition of conditional statement and create IR for each
+    # expression
+    # Includes backpatching when logical operators are encountered to ensure
+    # correct jumping between simple expressions
     def condParse(self, cond, block):
         # Clear the queue
         self.queue = []
@@ -761,6 +768,7 @@ class IR:
         else:
             return stmts
 
+    # Translate conditional statements into IR
     # TODO: Add toggling for adding to IR after implementing adding to IR
     def condStmt(self, nodes, addToIR=True):
         output = []

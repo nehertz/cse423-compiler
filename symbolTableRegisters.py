@@ -1,3 +1,8 @@
+'''
+Symbol Table for Registers. 
+Includes two mapping: Registers -> Variable_name; variable_name -> Memory Location
+'''
+
 import re
 import sys
 
@@ -7,11 +12,15 @@ class SymbolTableRegisters:
         self.symboltable_mem = {}
         self.initiate_st_reg()
         # variable names as keys and their memory location as addresses. 
-        self.initiate_st_reg()
         self.number = re.compile(r'\d+')
         self.ig = ig
     
     def movFromReg2Mem(self, reg):
+        '''
+        Writes the code that moves register-value to appropriate memory location.
+        Makes use of the two dictionaries. 
+        Registers -> Variable_name; variable_name -> Memory Location
+        '''
         # updates the symbol table
         # returns the assembly code
         assCode = ''
@@ -25,15 +34,22 @@ class SymbolTableRegisters:
             self.symboltable_reg[reg] = ''
         return assCode
 
-    # 4(%rsp)
+    
     def insertMemory(self, var, memory_location):
+        '''
+        Keeps the dictionary of variable name and variable's location on the stack.
+        The stack address must be in respect to either %rbp or %rsp
+        '''
         self.symboltable_mem[var] = memory_location
         return
 
     def movFromMem2Reg(self, var):
-        # updates the symbol table
-        # returns the assembly code
-        # get designed available register for that variable 
+        '''
+        Checks if the variable is assigned a register from the interference graph algorithm
+        If not, returns an error.
+        If yes, then checks if the register is free, if not then moves the item to the appropriate
+        memory location. Returns assembly code 
+        '''
         
         if (self.ig.get_availableReg(var) == None):
             print("error occurred. Variable not found in interference graph")
@@ -59,6 +75,10 @@ class SymbolTableRegisters:
         return assCode
 
     def movFromMem2Reg_2(self,line, var):
+        '''
+
+        '''
+
         # updates the symbol table
         # returns the assembly code
         # get designed available register for that variable 
@@ -82,29 +102,29 @@ class SymbolTableRegisters:
         self.symboltable_reg[availableReg] = var
         return assCode
 
-    def movFromMem2Reg_2(self,line, var):
-        # updates the symbol table
-        # returns the assembly code
-        # get designed available register for that variable 
-        # (flag, availableReg) = self.ig.get_availableReg(var)
-        availableReg = self.ig.getVertexRegisters(line, var)
-        if (availableReg == None):
-            print("error occurred. No register allocated for this variable")
-            sys.exit(1)
-        # if (flag == False):
-            # it's a memory location - remove unnecessary/temporary registers
-            # pass
-        assCode = ''
-        if (self.symboltable_reg[availableReg] != ''):
-            name_var = self.symboltable_reg[availableReg]
-            assCode += 'mov ' + str(availableReg) + ' ' + str(self.symboltable_mem[name_var])
-            assCode += '\n'
-            self.symboltable_reg[availableReg] = ''
+    # def movFromMem2Reg_2(self,line, var):
+    #     # updates the symbol table
+    #     # returns the assembly code
+    #     # get designed available register for that variable 
+    #     # (flag, availableReg) = self.ig.get_availableReg(var)
+    #     availableReg = self.ig.getVertexRegisters(line, var)
+    #     if (availableReg == None):
+    #         print("error occurred. No register allocated for this variable")
+    #         sys.exit(1)
+    #     # if (flag == False):
+    #         # it's a memory location - remove unnecessary/temporary registers
+    #         # pass
+    #     assCode = ''
+    #     if (self.symboltable_reg[availableReg] != ''):
+    #         name_var = self.symboltable_reg[availableReg]
+    #         assCode += 'mov ' + str(availableReg) + ' ' + str(self.symboltable_mem[name_var])
+    #         assCode += '\n'
+    #         self.symboltable_reg[availableReg] = ''
 
-        assCode += 'mov ' + str(self.symboltable_mem[var]) + ' ' + str(availableReg)
-        assCode += '\n'
-        self.symboltable_reg[availableReg] = var
-        return assCode
+    #     assCode += 'mov ' + str(self.symboltable_mem[var]) + ' ' + str(availableReg)
+    #     assCode += '\n'
+    #     self.symboltable_reg[availableReg] = var
+    #     return assCode
     def initiate_st_reg(self):
         self.symboltable_reg['%rax'] = ''
         self.symboltable_reg['%rcx'] = ''
