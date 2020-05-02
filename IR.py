@@ -1159,6 +1159,120 @@ class IR:
                 newLabel = [placeExpr2_1, self.enterLoopLabel, self.endLoopLabel]
                 self.labelPlace[expr2] = newLabel
 
+<<<<<<< HEAD
+=======
+    # ifStmt function creates the inital labels for if statement 
+    # store the label for 'if', 'else if', and 'else' nodes
+    # those labels are important for deciding the jump location 
+    def ifstmt(self, nodes):
+        self.ifLabel = []
+        self.elifLabel = []
+        self.elseLabel = []
+        self.conditionLabel = []
+        
+        for node in nodes.children:
+            if (node.name == 'if'):
+                label = self.createLabel(None, 'condiiton')
+                list = [label, node]
+                self.ifLabel.append(list)
+
+            elif (node.name == 'elseif'):
+                label = self.createLabel(None, 'condiiton')
+                list = [label, node]
+                self.elifLabel.append(list)
+
+            elif (node.name == 'else'):
+                label = self.createLabel(None, 'condiiton')
+                list = [label, node]
+                self.elseLabel.append(list)
+
+        for node in nodes.children:
+                condLabel = self.createLabel(None, 'condiiton')
+                self.conditionLabel.append(condLabel)
+
+        self.exitIFLabel = self.createLabel(None, 'condiiton')
+        list = ['goto', self.conditionLabel[0]]
+        self.IRS.append(list)
+
+        enterLabel = self.ifLabel[0][0]
+        self.enterIFlabel = enterLabel
+        self.IRS.append([enterLabel])
+        self.placeStmt(self.ifLabel[0][1])
+        
+        if(len(self.elifLabel) != 0):
+            for label in self.elifLabel:
+                self.IRS.append([label[0]])
+                self.placeStmt(label[1])
+        if(len(self.elseLabel) != 0):
+            for label in self.elseLabel:
+                self.IRS.append([label[0]])
+                self.placeStmt(label[1])
+                list = ['goto', self.exitIFLabel]   
+                self.IRS.append(list)
+        i = 0
+        for node in nodes.children:
+            if (node.name != 'else'):
+                for n in node.children:
+                    if(n.name == 'condition'):
+                        self.IRS.append([self.conditionLabel[i]])
+                        self.ifConditional(n, i, node.name)
+            else:
+                self.IRS.append([self.conditionLabel[i]])
+                gotoTrue = str(self.elseLabel[0][0])
+                list = ['goto', gotoTrue]   
+                self.IRS.append(list)
+            i += 1    
+        self.IRS.append([self.exitIFLabel])   
+
+    # The function scanns the if statement nodes, and recognizes the boolean expression 
+    # in the if conditionals. when no logic ops are in side the conditionals, the function
+    # passes node to simpleIF function.  
+    def ifConditional(self, nodes, order, parent):
+        for node in nodes.children:
+            if(node.name in comparison):
+                self.simpleIF(node,order, parent)
+            elif(node.name in logical):
+                self.complexIF(node,order, parent)
+    
+    # The function converts IF statement with simple boolean expression 
+    # which means the boolean expresion only contains comparsion ops, 
+    # logical ops can not be converted. 
+    def simpleIF(self, nodes,order, parent):
+        opand = []
+        list = []
+        for node in nodes.children:
+            if (node.name not in comparison and node.name != '!' and node.name not in arithmetic):
+                opand.append(node.name)
+            elif (node.name in arithmetic):
+                temp = self.simpleExpr(node)
+                opand.append(temp)
+            elif (node.name == '!'):
+                opand.append(node.name + str(node.children[0]).replace(';', '').strip())
+           
+        expr = opand[0] + nodes.name + opand[1]
+
+        if (parent == 'if'):
+            gotoTrue = str(self.ifLabel[0][0])
+            if (len(self.conditionLabel) > 1):
+                gotoFalse = self.conditionLabel[order + 1]
+            else :
+                gotoFalse = self.exitIFLabel
+            list = ['if', expr, 'goto', gotoTrue, 'else', 'goto', gotoFalse]
+
+        elif (parent == 'elseif'):
+            gotoTrue = str(self.elifLabel[order-1][0])
+            if(order + 1 < len(self.conditionLabel)):
+                gotoFalse = self.conditionLabel[order + 1]
+            else:
+                gotoFalse = self.exitIFLabel
+            list = ['if', expr, 'goto', gotoTrue, 'else', 'goto', gotoFalse]   
+        self.IRS.append(list)
+
+
+    def complexIF(self, nodes, order, parent):
+        pass
+    
+>>>>>>> assembly_assignment
     # helper function that breaks down the given expr 
     # the give expr should be boolean expression with logical ops
     # the function returns left hand side or right hand side of the expr 

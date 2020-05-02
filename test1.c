@@ -19,7 +19,10 @@ int add3(int a, int b, int c)
 //         int e = 1;
 //   return a + b + c;
 // }
+<<<<<<< HEAD
 >>>>>>> Fixed some bugs in code gen
+=======
+>>>>>>> assembly_assignment
 
 int main()
 {     
@@ -69,7 +72,10 @@ int main()
         // int a,b;
         // b = (-a + b) * 2;
         ///TODO: sizeof not supported;
+<<<<<<< HEAD
 >>>>>>> Fixed some bugs in code gen
+=======
+>>>>>>> assembly_assignment
 
         ////TODO: Type casting not support 
         // float f = 10.5;
@@ -106,11 +112,15 @@ int main()
         // }
         // a = a + 1;
         ////test return stmt
+<<<<<<< HEAD
 <<<<<<< master
         // return add(a, b);
 =======
         // return add3(a, b, c);
 >>>>>>> Fixed some bugs in code gen
+=======
+        // return add3(a, b, c);
+>>>>>>> assembly_assignment
         // return 1 + 2 + a +b;
         // return 1+2;
         // return a = 1 + 2;
