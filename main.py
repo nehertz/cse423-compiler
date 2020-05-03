@@ -28,8 +28,8 @@ def printHelp():
     print("-o   :write IR into a file")
     print("-r   :read IR from a file")
     print("-m   :turn on optimization pass")
-    print("-g1  :register allocation using an efficient algorithm")
-    print("-g0  :register allocation using simple, inefficient algorithm")
+    print("-g  :register allocation using an efficient algorithm")
+    print("-b  :register allocation using simple, inefficient algorithm")
     print("-h   :print the usage information")
     print("Default   :print option -t")
 
