@@ -611,9 +611,12 @@ class assembly:
 
     # Translate goto statment from IR to assembly
     def goto(self, statement):
-        label = list(filter(None, re.split(r'goto |:', statement[0])))[0]
+        if (len(statement) == 2):
+            label = statement[1]
+        else:
+            label = list(filter(None, re.split(r'goto |:', statement[0])))[0]
 
-        self.ass.append(["jmp {}".format(label)])
+        self.ass.append(["jmp {}".format('_' + label)])
 
         return
 

@@ -563,7 +563,6 @@ class IR:
         if cond is not None:
             firstLabel = 'L' + str(self.label) + ':'
             for node in reversed(self.getSubtree(cond)):
-                print(self.queue)
                 if node.name not in alc:
                     # Node is a variable
                     if (node.parent.name in logical or node.parent.name in ["if", "else-if", "else"]):
@@ -590,7 +589,6 @@ class IR:
 
                     if (node.name == '~'):
                         oper = self.dequeue()
-                        print("dequeuing {}".format(oper))
                         expr = '{} {}'.format(node.name, oper[1])
                         l1 = self.createLabel(node, 'condLabel')
                         l2 = self.createLabel(node, 'condLabel')
@@ -607,13 +605,10 @@ class IR:
                             tmp = self.simpleExpr(node)
                             self.queue = prev_queue
                             self.enqueue(['L' + str(self.label) + ':', tmp, [], []])
-                            print(self.queue)
                             continue
 
                         oper2 = self.dequeue()
-                        print("dequeuing {}".format(oper2))
                         oper1 = self.dequeue()
-                        print("dequeuing {}".format(oper1))
                         expr = '{} {} {}'.format(oper1[1], node.name, oper2[1])
                         l1 = self.createLabel(node, 'condLabel')
                         l2 = self.createLabel(node, 'condLabel')
