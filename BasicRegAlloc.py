@@ -115,7 +115,10 @@ class BasicRegAlloc:
         return
 
     def getVertexRegisters(self, line, var):
-        for elem, reg in zip(line, self.vertexRegisters[line]):
+        # for e
+        line2 = ''.join(elem for elem in line)     
+        
+        for elem, reg in zip(line, self.vertexRegisters[line2]):
             if (elem == var):
                 return reg
         print('Error: register not allocated for ' + str(var))

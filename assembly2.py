@@ -5,7 +5,7 @@ import re
 import sys
 
 class assembly2:
-    def __init__(self, ir, ig, setReg):
+    def __init__(self, ir, ig, setReg, ir_str):
         self.IR = ir
         self.ass = []
         self.ig = ig
@@ -14,15 +14,17 @@ class assembly2:
         self.stackSize = 8
         self.floatPatten = re.compile(r"[0-9]+\.[0-9]+")
         self.intPatten = re.compile(r"^[-+]?\d+$")
-
+        self.ir_str = ir_str
     def run(self):
         lineNumber = 0
         funcScope = []
+        funcScope2 = []
         flag = 0
         name = ""
         paramCount = 0
         self.ig.run(self.setReg)
-        for line in self.IR:
+
+        for line, statement in zip(self.IR, self.ir_str.split('\n')):
             # translate function name to assembly 
             if ('(' in line and ')' in line and self.IR[lineNumber+1][0] == '{'):
                 name, paramCount = self.funcName(line)
@@ -33,10 +35,12 @@ class assembly2:
                 continue
             elif ('}' in line):
                 flag = 0
-                self.funcBody(funcScope, name, paramCount)
+                self.funcBody(funcScope, name, paramCount, funcScope2)
                 funcScope = []
+                funcScope2 = []
             elif (flag):
                 funcScope.append(line)
+                funcScope2.append(statement)
             lineNumber += 1
         self.printAssembly()
     
@@ -49,7 +53,7 @@ class assembly2:
                paramCount.append(item)
         return "_" + line[0], paramCount
 
-    def funcBody(self, body, name, paramCount):
+    def funcBody(self, body, name, paramCount, funcScope2):
 
         self.symbolTable = {}
         self.stackSize = 8
@@ -66,11 +70,11 @@ class assembly2:
             mainFlag = 0 
 
         # scanning through the body, 
-        for statement in body:        
+        for statement, statement2 in zip(body, funcScope2):        
                
              # translate assignment statement 
             if (len(statement) >= 3 and statement[1] in assignment):
-                self.assignment(statement)
+                self.assignment(statement, statement2)
                 
             # translates the function call. 
             elif ('(' in statement[0] and 'ret' not in statement[0]):
@@ -155,7 +159,7 @@ class assembly2:
             return self.symbolTable[var]
     
 
-    def assignment(self, statement):
+    def assignment(self, statement, statement2):
         # Assignment should handles simple assignment like a = 1
         # and assignment with arithmetic, a = 1 + b
         # One special case: function call in arithmetic. 
@@ -163,7 +167,7 @@ class assembly2:
             self.simpleAssign(statement[0], statement[2])
 
         elif (statement[3] in arithmetic):
-            self.simpleArithmetic(statement)
+            self.simpleArithmetic(statement, statement2)
 
     def simpleAssign(self, LHS, RHS):
         floatPatten = re.compile(r"[0-9]+\.[0-9]+")
@@ -192,16 +196,16 @@ class assembly2:
             self.ass.append(["mov", "%rax", self.getMemLocation(LHS)])
         return
     
-    def simpleArithmetic(self, statement):
+    def simpleArithmetic(self, statement, statement2):
         ops = statement[3]
         if (ops == '+' or ops == '-' or ops == '|' or ops == '&' or ops == '^'):
-            self.plusAndMinusAndLogic(statement[0], statement[2], statement[4], ops, statement)
+            self.plusAndMinusAndLogic(statement[0], statement[2], statement[4], ops, statement2)
         elif (ops == '*'):
-            self.times(statement[0], statement[2], statement[4], statement)
+            self.times(statement[0], statement[2], statement[4], statement2)
         elif (ops == '%' or ops == '/'):
-            self.divideAndModulo(statement[0], statement[2], statement[4], ops, statement)
+            self.divideAndModulo(statement[0], statement[2], statement[4], ops, statement2)
         elif (ops == '<<' or ops == '>>'):
-            self.shift(statement[0], statement[2], statement[4], ops, statement)
+            self.shift(statement[0], statement[2], statement[4], ops, statement2)
         else:
             print('unknow ops\n')
             exit()

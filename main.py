@@ -256,7 +256,7 @@ if __name__ == "__main__":
         StReg = SymbolTableRegisters(ir_str,ig)
 
         # assembly = assembly(IR)
-        assembly = assembly2(IR, ig, StReg)
+        assembly = assembly2(IR, ig, StReg, ir_str)
         assembly.run()
 
         
@@ -268,7 +268,7 @@ if __name__ == "__main__":
         ig= BasicRegAlloc(ir_str)
         StReg = SymbolTableRegisters(ir_str,ig)
 
-        assembly = assembly2(IR, ig, StReg)
+        assembly = assembly2(IR, ig, StReg, ir_str)
         assembly.run()
 
     
