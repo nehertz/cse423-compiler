@@ -33,15 +33,15 @@ KEY | | |
 - [X] Assignment
 - [X] Boolean expressions
 - [X] Goto statements
-- [/] If/else control flow: One-line loops/conditionals aren't currently supported, if-conditionals with logic ops are not supported.  
-- [X] Unary operators (unary minus (`-`), NOT (`!`), `sizeof()`)
+- [X] If/else control flow: One-line loops/conditionals aren't currently supported, if-conditionals with logic ops are not supported.  
+- [/] Unary operators (unary minus (`-`), NOT (`!`), `sizeof()`)
 - [X] Return statements
 - [X] Break statements
 - [X] While/do-while loops: One-line loops/conditionals aren't currently supported
 
 **Optional:**
 - [X] Floats
-- [/] Characters
+- [--] Characters
 - [X] ++/--/-=/+=/*=//=
 - [X] For loops: One-line loops/conditionals aren't currently supported
 - [X] Binary operators
@@ -50,12 +50,12 @@ KEY | | |
 **Not expected, but may be attempted:**
 - [--] Pointers
 - [--] Arrays
-- [/] Strings: Strings are being scanned but are not parsed due to our lack of pointer support
-- [/] Preprocessor statements: Only currently support `#include <file.h>` and `#include "file.h"`
+- [--] Strings: Strings are being scanned but are not parsed due to our lack of pointer support
+- [--] Preprocessor statements: Only currently support `#include <file.h>` and `#include "file.h"`
 - [--] Struct/union: Structs/unions can be defined but accessing elements of a struct/union is not supported
 - [--] Enum 
-- [X] Casting/type promotion : Supported after type_checking. But not in the C program.
-- [X] Type specs
+- [--] Casting/type promotion : Supported after type_checking. But not in the C program.
+- [--] Type specs
 
 # Design Discussion
 - Command line user input (in main):

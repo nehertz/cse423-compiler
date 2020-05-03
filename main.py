@@ -28,8 +28,12 @@ def printHelp():
     print("-o   :write IR into a file")
     print("-r   :read IR from a file")
     print("-m   :turn on optimization pass")
-    print("-g  :register allocation using an efficient algorithm")
-    print("-b  :register allocation using simple, inefficient algorithm")
+    print("-a   :print assembly with efficient register allocation algorithm ")
+    print("-b   :print assembly with inefficient register allocation algorithm ")
+    print("-a -m : print the assembly code with optimization turn on ")
+    print("-b -m : print the assembly code with optimization turn on ")
+    print("-i -m : print the IR with optimization turn on ")
+    print("-r -a : read the IR from a file, and print the assembly code ")
     print("-h   :print the usage information")
     print("Default   :print option -t")
 
@@ -90,7 +94,7 @@ if __name__ == "__main__":
         sys.exit()
 
     unixOptions = "htpsiormagb"
-    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR", "write-to-file", "read-from-file", "optimization-pass", "assembly", "register-allocation-first"]
+    gnuOptions = ["help", "tokenize", "parse-tree", "symbol-table", "IR", "write-to-file", "read-from-file", "optimization-pass", "assembly","assembly2", "register-allocation-first"]
 
     try:
         arguments, values = getopt.getopt(listArgs, unixOptions, gnuOptions)
@@ -117,10 +121,12 @@ if __name__ == "__main__":
             optimizationFlag = 1
         if (currentArgument in ("-a", '--assembly')):
             flag = 7
-        if (currentArgument in ("-g", "-register-allocation-efficient")):
+        if (currentArgument in ("-b", "--assembly2")):
             flag = 8
-        if (currentArgument in ("-b", "register-allocation-inefficient")):
-            flag = 9
+        # if (currentArgument in ("-g", "-register-allocation-efficient")):
+        #     flag = 8
+        # if (currentArgument in ("-b", "register-allocation-inefficient")):
+        #     flag = 9
         if (currentArgument in ("-h", "--help")):
             printHelp()
             sys.exit()
@@ -237,46 +243,32 @@ if __name__ == "__main__":
         assembly = assembly(IR, ig, StReg)
         assembly.run()
 
-    elif (flag == 8):
-        ir_str = ir.run()
-        ir_str = ir.getIR()
-        print(ir_str)
-        ig = InterferenceGraph(ir_str)
-        StReg = SymbolTableRegisters(ir_str,ig)
-        ig.run(StReg)
 
-    elif (flag == 9):
-        basicAlgFlag = 1
-        ir_str = ir.run()
-        ir_str = ir.getIR()
-        print(ir_str)
-        ig = BasicRegAlloc(ir_str)
-        StReg = SymbolTableRegisters(ir_str, ig)
-        ig.run(StReg)
-    
-    # Print the assembly when the optimization flag is off      
-    elif (flag == 7 and optimizationFlag == 0 and basicAlgFlag == 1):
-        IR = ir.run()
-        # ir.printIR()
-
-        ir_str = ir.getIR()
-        print(ir_str)
-        ig= BasicRegAlloc(ir_str)
-        StReg = SymbolTableRegisters(ir_str,ig)
-
-        assembly = assembly2(IR, ig, StReg)
-        assembly.run()
-
-    elif (flag == 7 and optimizationFlag == 1 and basicAlgFlag == 1):
+      # Print the assembly when the optimization flag is on
+    elif (flag == 8 and optimizationFlag == 1):
         IR = ir.run()
         optimizedIR = optimization(IR)
         IR = optimizedIR.run()
         
         ir_str = ir.getIR()
         print(ir_str)
-        ig = BasicRegAlloc(ir_str)
+        ig= BasicRegAlloc(ir_str)
         StReg = SymbolTableRegisters(ir_str,ig)
 
         # assembly = assembly(IR)
         assembly = assembly2(IR, ig, StReg)
         assembly.run()
+
+        
+    # Print the assembly when the optimization flag is off      
+    elif (flag == 8 and optimizationFlag == 0):
+        IR = ir.run()
+        ir_str = ir.getIR()
+        
+        ig= BasicRegAlloc(ir_str)
+        StReg = SymbolTableRegisters(ir_str,ig)
+
+        assembly = assembly2(IR, ig, StReg)
+        assembly.run()
+
+    

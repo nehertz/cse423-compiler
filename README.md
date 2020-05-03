@@ -18,7 +18,6 @@ pip3 install -r documentation/requirements.txt
 python3 main.py -options filename
 ```
 * options: 
-* -h : print the usage information
 * -t : print the sequence of tokens and labels 
 * -p : print parse tree 
 * -s : print symbol table
@@ -26,7 +25,14 @@ python3 main.py -options filename
 * -o : write IR into a file
 * -r : read IR from a file
 * -m : turn on the optimization pass
-* -a : output assembly
+* -a : print assembly code with efficient register allocation algorithm 
+* -b : print assembly code with inefficient register allocation algorithm 
+* -a -m : print the efficient assembly code with optimization turn on 
+* -b -m : print the inefficient assembly code with optimization turn on 
+* -i -m : print the IR with optimization turn on 
+* -r -a : read the IR from a file, and print the assembly code
+* -h : print the usage information
+
 
 # test1.c in the main directory contains all the test cases we used. 
 
@@ -49,8 +55,16 @@ python3 main.py -r -a filename
 To print the optimized IR: 
 python3 main.py -i -m filename
 ```
+
 ```
 To print the optimized assembly: 
 python3 main.py -a -m filename
+or
+python3 main.py -b -m filename
+
+Note: Turning on -a option, the assembly code generation will utilize
+an effcient register allocatoin algorithm. Turning on -b option, an ineffcient algorithm will be used.
 ```
+
+
 

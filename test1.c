@@ -41,7 +41,7 @@ int main()
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
         // a =  b << 3;
         // a =  b >> 3;
-        // a =  b + 3;
+        a =  b + 3;
         // return a;
         // a =  b - 3;
         // a = b * 3;
@@ -111,8 +111,6 @@ int main()
         // }
         // a = a + 1;
         ////test return stmt
-
-        // return add(a, b);
 
         // return add3(a, b, c);
 
