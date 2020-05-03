@@ -1,12 +1,12 @@
 
-int add3(int a, int b, int c)
-{
-        int e = 1;
-//   return a + b + c;
+// int add3(int a, int b, int c)
+// {
+//         int e = 1;
+// //   return a + b + c;
         
-        return 1;
+//         return 1;
 
-}
+// }
 
 // int add3(int a, int b, int c)
 // {
@@ -25,14 +25,9 @@ int main()
         // int b = 30;
         // float e = 20.2;
         // return a;
-        int a = 1;
-        int b = 2;
+        // int a = 1;
+        // int b = 2;
         // a = b;
-        
-        // int b;
-        int c;
-        // return aa;
-        // int c; 
         // float d;
         // int e, f, g;
 
@@ -63,22 +58,6 @@ int main()
 
         // Test complex arithmetic expression 
         // a = (a + b) * 2;
-
-        //// Unary 
-
-        // int a,b;
-        // a = (-a + b) * 2;
-        // b = sizeof(a);
-
-        // int a,b;
-        // b = (-a + b) * 2;
-        ///TODO: sizeof not supported;
-
-
-        // ////TODO: Type casting not support 
-        // float f = 10.5;
-        // a = f;
-        // a = f + b;
 
         // // Goto stmt 
         // goto even;
@@ -142,13 +121,13 @@ int main()
 
 
         //test if-statement 
-        if(a > 2){
-          ++b;    
-        } else if (a > b){
-          a = b;
-        } else {
-          a = 1;
-        }
+        // if(a > 2){
+        //   ++b;    
+        // } else if (a > b){
+        //   a = b;
+        // } else {
+        //   a = 1;
+        // }
 
         // return 0;
 }

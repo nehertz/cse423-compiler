@@ -170,7 +170,7 @@ class InterferenceGraph:
         for key, _ in self.interferenceGraph.items():
             if (key not in self.VertexList):
                 self.VertexList.append(key)
-        print(self.VertexList)
+        # print(self.VertexList)
         return
         
 
@@ -239,7 +239,7 @@ class InterferenceGraph:
                 min_reg = min(colorsUsage.items(), key = operator.itemgetter(1))[0]
                 self.vertexRegisters[elem] = min_reg
                 colorsUsage[min_reg] += 1       
-        print('vertex registers')
-        print(self.vertexRegisters)
+        # print('vertex registers')
+        # print(self.vertexRegisters)
         return
     

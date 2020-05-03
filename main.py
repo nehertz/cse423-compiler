@@ -30,6 +30,7 @@ def printHelp():
     print("-m   :turn on optimization pass")
     print("-a   :print assembly with efficient register allocation algorithm ")
     print("-b   :print assembly with inefficient register allocation algorithm ")
+    print("\t some test-cases are problematic when using the -b option(inefficient allocation algorithm)")
     print("-a -m : print the assembly code with optimization turn on ")
     print("-b -m : print the assembly code with optimization turn on ")
     print("-i -m : print the IR with optimization turn on ")

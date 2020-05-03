@@ -33,7 +33,7 @@ KEY | | |
 - [X] Assignment
 - [X] Boolean expressions
 - [X] Goto statements
-- [X] If/else control flow: One-line loops/conditionals aren't currently supported, if-conditionals with logic ops are not supported.  
+- [X] If/else control flow: One-line loops/conditionals aren't currently supported, 
 - [/] Unary operators (unary minus (`-`), NOT (`!`), `sizeof()`)
 - [X] Return statements
 - [X] Break statements

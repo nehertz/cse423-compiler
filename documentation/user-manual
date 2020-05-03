@@ -28,6 +28,7 @@ python3 main.py -options filename
 * -m : turn on the optimization pass
 * -a : print assembly code with efficient register allocation algorithm 
 * -b : print assembly code with inefficient register allocation algorithm 
+       some test-cases are problematic when using the -b option(inefficient allocation algorithm)
 * -a -m : print the efficient assembly code with optimization turn on 
 * -b -m : print the inefficient assembly code with optimization turn on 
 * -i -m : print the IR with optimization turn on 
