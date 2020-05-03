@@ -39,10 +39,10 @@ int main()
         //// Test assignment and Arithmetic
         ////assignment = ['=' ,'*=', '/=', '%=', '+=', '-=', '<<=',  '>>=', '&=', '|=', '^=']
         ////arithmetic = ['<<', '>>', '+', '-', '*', '/', '%', '|', '&', '~', '^'] 
-        a =  b << 3;
-        a =  b >> 3;
-        a =  b + 3;
-        // return a;
+        // a =  b << 3;
+        // a =  b >> 3;
+        // a =  b + 3;
+        // // return a;
         // a =  b - 3;
         // a = b * 3;
         // a = b / 3;
@@ -142,13 +142,13 @@ int main()
 
 
         //test if-statement 
-        // if(a > 2){
-        //   ++b;    
-        // } else if (a > b){
-        //   a = b;
-        // } else {
-        //   a = 1;
-        // }
+        if(a > 2){
+          ++b;    
+        } else if (a > b){
+          a = b;
+        } else {
+          a = 1;
+        }
 
         // return 0;
 }

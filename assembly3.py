@@ -1,17 +1,14 @@
-from ply_scanner import assignment, comparison
-from ply_scanner import arithmetic
-from ply_scanner import logical
-
 '''
 Class that handles the translation from the 
 linear 3-address intermediate representation 
 to x86-64 assembly code.
 '''
+from ply_scanner import assignment, comparison
+from ply_scanner import arithmetic
 from ply_scanner import logical
 import re
-import sys
 
-class assembly2:
+class assembly3:
     def __init__(self, ir, ig, setReg, ir_str):
         self.IR = ir
         self.ass = []
@@ -19,9 +16,11 @@ class assembly2:
         self.setReg = setReg
         self.symbolTable = {}
         self.stackSize = 8
-        self.floatPatten = re.compile(r"[0-9]+\.[0-9]+")
-        self.intPatten = re.compile(r"^[-+]?\d+$")
         self.ir_str = ir_str
+    
+    # this function splits the input IR to different functions
+    # each function's body is stored in a list and passed to
+    # other function to translate 
     def run(self):
         lineNumber = 0
         funcScope = []
@@ -31,7 +30,7 @@ class assembly2:
         paramCount = 0
         self.ig.run(self.setReg)
 
-        for line, statement in zip(self.IR, self.ir_str.split('\n')):
+        for line, stmt in zip(self.IR, self.ir_str.split('\n')):
             # translate function name to assembly 
             if ('(' in line and ')' in line and self.IR[lineNumber+1][0] == '{'):
                 name, paramCount = self.funcName(line)
@@ -47,10 +46,13 @@ class assembly2:
                 funcScope2 = []
             elif (flag):
                 funcScope.append(line)
-                funcScope2.append(statement)
+                funcScope2.append(stmt)
             lineNumber += 1
         self.printAssembly()
     
+    # funcName function appends the funcation name to 
+    # the final assembly code list, the function name 
+    # will start with '_' 
     def funcName(self, line):
         # creates function label, creates assembly code to handel args if exist. 
         self.ass.append(["_" + line[0]])
@@ -93,12 +95,12 @@ class assembly2:
 
             # simply creates the goto and label code
             elif (re.match(r'goto', statement[0])):
-                self.goto(statement)
+                self.goto(statement, statement2)
 
-             # not sure about this part -.- 
+            # handle if/else, else will be from loops
             elif ('if' in statement[0]):
                 if ('else' in statement):
-                    self.loop(statement)
+                    self.loop(statement, statement2)
                 else:
                     self.conditional(statement, statement2)
             
@@ -113,7 +115,8 @@ class assembly2:
         if (flag):
             self.returnStmt(None, mainFlag)
 
-    # initialize the stack, create initial space on the stack for local variables
+    # initialize the stack pointers
+    # create initial space on the stack for local variables
     def stackInitial(self, body, paramCount):
         
         tempCode = []
@@ -161,7 +164,8 @@ class assembly2:
         for itme in tempCode:
             self.ass.append(itme)
 
-    # Takes variable name as input, returns its corresponding mem location
+    # the function Takes variable name as input,
+    # returns its corresponding mem location
     # return will be something like -4(%ebp)
     def getMemLocation(self, var):
         if(var not in self.symbolTable):
@@ -169,24 +173,33 @@ class assembly2:
         else:
             return self.symbolTable[var]
     
+    # Takes a variable and returns the register where it is stored
+    # If it exists
+    def getRegister(self, var):
+        for k, v in self.setReg.symboltable_reg.items():
+            if (v == var):
+                # Register located
+                return k
 
+        return None
+
+    # Assignment funciton handles simple assignment like a = 1
+    # and assignment with arithmetic, a = 1 + b
     def assignment(self, statement, statement2):
-        # Assignment should handles simple assignment like a = 1
-        # and assignment with arithmetic, a = 1 + b
-        # One special case: function call in arithmetic. 
         if (len(statement) == 3 ):
             self.simpleAssign(statement[0], statement[2])
-
         elif (statement[3] in arithmetic):
             self.simpleArithmetic(statement, statement2)
-
+        
+    # SimpleAssign function converts assignment expressions 
+    # which does not involve arithmetric operations 
     def simpleAssign(self, LHS, RHS):
         floatPatten = re.compile(r"[0-9]+\.[0-9]+")
         intPatten = re.compile(r"^[-+]?\d+$")
         # assignment like a = 2 will be translate to 'mov $2 a_location'
         if (intPatten.match(RHS) or floatPatten.match(RHS)):
             RHS = "$" + str(RHS)
-            self.ass.append(["mov ", RHS, self.getMemLocation(LHS)])
+            self.ass.append(["mov", RHS, self.getMemLocation(LHS)])
         # assignment like a = add3(i, j)
         elif ("(" in RHS):
             RHS_list = RHS.split(" ")
@@ -196,10 +209,6 @@ class assembly2:
             self.ass.append([instructions.split("\n")[0]])
             self.ass.append([instructions.split("\n")[1]])
             self.ass.append([instructions.split("\n")[2]])
-        # assignment like a = b will be tranlate to:
-        # mov b_location %eax
-        # mov %eax a_location
-        # mov $0 %eax 
         else:
             #TODO self.setReg.movFromMem2Reg(str(RHS))
             #TODO The following 3 lines of code will be replaced with Yash's algorithm
@@ -207,6 +216,7 @@ class assembly2:
             self.ass.append(["mov", "%rax", self.getMemLocation(LHS)])
         return
     
+    # SimpleArithmetric converts arithmetric expression to assembly code
     def simpleArithmetic(self, statement, statement2):
         ops = statement[3]
         if (ops == '+' or ops == '-' or ops == '|' or ops == '&' or ops == '^'):
@@ -214,16 +224,17 @@ class assembly2:
         elif (ops == '*'):
             self.times(statement[0], statement[2], statement[4], statement2)
         elif (ops == '%' or ops == '/'):
-            self.divideAndModulo(statement[0], statement[2], statement[4], ops, statement2)
+            self.divideAndModulo(statement[0], statement[2], statement[4], ops)
         elif (ops == '<<' or ops == '>>'):
             self.shift(statement[0], statement[2], statement[4], ops, statement2)
         else:
             print('unknow ops\n')
             exit()
 
-
+    # Converts plus, minus and logic operation. 
+    # The expression will be divided into Left Hand
+    # Right Hand Side 1 and Right Hand Side 2
     def plusAndMinusAndLogic(self, LHS, RHS1, RHS2, ops, statement):
-
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
         
@@ -246,7 +257,6 @@ class assembly2:
             
             # mov <RHS2> <reg1>
             
-            # instruction = self.setReg.movFromMem2Reg(RHS2)
             instruction = self.setReg.movFromMem2Reg_2(statement, RHS2)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
@@ -291,7 +301,7 @@ class assembly2:
                 self.ass.append(["and", "$"+str(RHS2) , reges])
             elif (ops == '^'):
                 self.ass.append(["xor", "$"+str(RHS2) , reges])
-            # mov <reg1>, <LHS>
+             # mov <reg1>, <LHS>
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
         # RHS1 = var && RHS2 = var 
@@ -320,9 +330,8 @@ class assembly2:
             # mov <reg1>, <LHS>
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
-
+    # The functions converts multiplication expression into assembly code 
     def times(self, LHS, RHS1, RHS2, statement):
-        
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
 
@@ -334,15 +343,14 @@ class assembly2:
         elif (constFlag1 and not constFlag2):
            
             # move RHS1 regs0
-            # (flag, availableReg) = self.ig.get_availableReg(str(RHS1))
-            availableReg = self.ig.getVertexRegisters(statement, str(RHS1))
+            (flag, availableReg) = self.ig.getVertexRegisters(statement, str(RHS1))
             if (availableReg == None):
                 print("error occurred. Variable not found in interference graph")
                 sys.exit(1)
             self.ass.append(["mov", "$"+str(RHS1) , availableReg])
 
             # mov RHS2 regs
-            instruction = self.setReg.movFromMem2Reg_2(statement, RHS2)
+            instruction = self.setReg.movFromMem2Re_2(statement, RHS2)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
                 self.ass.append([instruction1])
@@ -355,13 +363,10 @@ class assembly2:
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
         elif (not constFlag1 and constFlag2):
-            
             # move RHS2 mem
             # location = self.addToMem(RHS2)
             # self.ass.append(["mov", "$"+str(RHS2) , location])
-            # (flag, availableReg) = self.ig.get_availableReg(str(RHS2))
-            availableReg = self.ig.getVertexRegisters(statement, str(RHS2))
-
+            (flag, availableReg) = self.ig.getVertexRegisters(statementstr(RHS2))
             if (availableReg == None):
                 print("error occurred. Variable not found in interference graph")
                 sys.exit(1)
@@ -380,10 +385,8 @@ class assembly2:
             # mov reg1 LHS 
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
-
         elif (not constFlag1 and not constFlag2):
             # mov RHS1 reg1 
-            
             instruction = self.setReg.movFromMem2Reg_2(statement, RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
             if(instruction2 != None):
@@ -396,8 +399,8 @@ class assembly2:
             # mov reg1 LHS
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
         
-
-    def divideAndModulo(self, LHS, RHS1, RHS2, ops, statement):
+    # The functions converts division operation into assembly code 
+    def divideAndModulo(self, LHS, RHS1, RHS2, ops):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
 
@@ -411,7 +414,6 @@ class assembly2:
         
         # 500/b
         elif (constFlag1 and not constFlag2):
-    
             # mov RSH1 %eax
             self.ass.append(["mov", "$"+str(RHS1) , "%rax"])
             # get most significant 32bits of reg1 store it in mem1
@@ -423,10 +425,8 @@ class assembly2:
                 # remainder in %edx 
                 self.ass.append(["mov", "%rdx", self.getMemLocation(LHS)])
             
-
         # b/500
         elif (not constFlag1 and constFlag2):
-
             # mov b rdx and eax 
             self.ass.append(["mov", self.getMemLocation(RHS1) , "%rax"])
             self.ass.append(["mov", "%rax" , "%rdx"])
@@ -446,7 +446,6 @@ class assembly2:
             
         # b/a
         elif (not constFlag1 and not constFlag2):
-            
             # mov b rdx and eax 
             self.ass.append(["mov", self.getMemLocation(RHS1) , "%rax"])
             self.ass.append(["mov", "%rax" , "%rdx"])
@@ -464,11 +463,10 @@ class assembly2:
                 # remainder in %edx 
                 self.ass.append(["mov", "%rdx", self.getMemLocation(LHS)])
 
-    def shift(self, LHS, RHS1, RHS2, ops, statement):
+     # The functions converts shift operation into assembly code 
+    def shift(self, LHS, RHS1, RHS2, ops,statement):
         result = '0'
         constFlag1, constFlag2, RHS1, RHS2 = self.determineConstant(RHS1, RHS2)
-     
-
         if (constFlag1 and constFlag2):
             if(ops == "<<"):
                 result = RHS1 << RHS2
@@ -477,11 +475,8 @@ class assembly2:
             self.ass.append(["mov", "$"+str(result) , self.getMemLocation(LHS)])
         # a = 10 << b
         elif (constFlag1 and not constFlag2):
-            
             # mov 10 reg 
-            # (flag, availableReg) = self.ig.get_availableReg(str(RHS1))
-            availableReg = self.ig.getVertexRegisters(statement, str(RHS1))
-
+            (flag, availableReg) = self.ig.getVertexRegisters(statement,str(RHS1))
             if (availableReg == None):
                 print("error occurred. Variable not found in interference graph")
                 sys.exit(1)
@@ -497,7 +492,6 @@ class assembly2:
             self.ass.append(["mov", availableReg , self.getMemLocation(LHS)])
         # a = b << 10
         elif (not constFlag1 and constFlag2):
-
             # mov b reg 
             instruction = self.setReg.movFromMem2Reg_2(statement, RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
@@ -516,7 +510,6 @@ class assembly2:
             
         # a = b << a
         elif (not constFlag1 and not constFlag2):
-            
              # mov b reg 
             instruction = self.setReg.movFromMem2Reg_2(statement, RHS1)
             instruction1, instruction2, reges = self.splitMovFromMem2RegReturns(instruction)
@@ -535,7 +528,9 @@ class assembly2:
             # mov reg LHS
             self.ass.append(["mov", reges , self.getMemLocation(LHS)])
 
-   
+    # Helper function that create an addtional space on stack
+    # input will be variable name 
+    # returns the stack offset 
     def addToMem(self, var):
         stackLocation = "-" + str(self.stackSize) + "(%ebp)"
         dict = {var : stackLocation}
@@ -544,6 +539,7 @@ class assembly2:
         self.setReg.insertMemory(str(var), stackLocation)
         return stackLocation
 
+    # Helper function that determines if inputs are number or string
     def determineConstant(self, RHS1, RHS2):
         constFlag1 = 0
         constFlag2 = 0
@@ -563,9 +559,9 @@ class assembly2:
         elif (floatPatten.match(RHS2)):
             RHS2 = float(RHS2)
             constFlag2 = 1
-
         return constFlag1, constFlag2, RHS1, RHS2
 
+    # Small helper function that helps with spliting an instrunction
     def splitMovFromMem2RegReturns(self, instruciton):
         list = instruciton.split('\n')
         
@@ -579,11 +575,11 @@ class assembly2:
             reges = list[0].split(" ")[2]
             return list[0], None, reges
 
-
+    # Converts return statement into assembly code
+    # and also do some house keeping when the function returns 
     def returnStmt(self, statement, flag):
         floatPatten = re.compile(r"[0-9]+\.[0-9]+")
         intPatten = re.compile(r"^[-+]?\d+$")
-        
         if (statement != None):
             if (len(statement) <= 2):
                 args = statement[1]
@@ -612,77 +608,91 @@ class assembly2:
 
         # Deallocate local variables
         self.ass.append(["mov", "%rbp" ,"%rsp"])
-        
+    
         # Restore the caller's base pointer value
         self.ass.append(["pop", "%rbp"])
         self.ass.append(["ret"])
 
+    # Translate goto statment from IR to assembly
+    def goto(self, statement, statement2):
+        if (len(statement) == 2):
+            label = statement[1]
+        else:
+            label = list(filter(None, re.split(r'goto |:', statement[0])))[0]
 
-    def funcCall(self, statement, flag):
-       
-        # stores parameter inverse order 
-        parameterList = []
-        funcName = statement[0].replace('(', '').strip()
-        # the caller saved registers : EAX, ECX, EDX
-        instructions = self.setReg.callerSavedReg()
-        self.ass.append([instructions.split("\n")[0]])
-        self.ass.append([instructions.split("\n")[1]])
-        self.ass.append([instructions.split("\n")[2]])
-       
-        # Push funcCall parameters to stack in inverse order
-        
-        parameterList = self.pushParameters(statement, funcName)
+        self.ass.append(["jmp {}".format('_' + label)])
 
-        # invoke the call instruction, return value stored in EAX 
-       
-        self.ass.append(["call", "_" + funcName])
+        return
 
-        # after the return, pop parameters from stack
-        self.popParameters(parameterList)
+    # Translate label from IR to Assembly
+    def label(self, label, statement2):
+        self.ass.append(['_' + label[0]])
+        return
 
-        # pop EAX, ECX, EDX
-        if(not flag):
-            instructions = self.setReg.afterFunctionCall()
-            self.ass.append([instructions.split("\n")[0]])
-            self.ass.append([instructions.split("\n")[1]])
-            self.ass.append([instructions.split("\n")[2]])
-
-    def pushParameters(self, statement, funcName):
-        parameterList = []
-        for item in statement:
-            if ("(" not in item and ")" not in item and "," not in item and item != funcName):
-                parameterList.append(item)
-        temp = parameterList
-        
-        for item in parameterList[::-1]:
-            self.ass.append(["push", self.getMemLocation(item)])
-        return temp
-    
-    def popParameters(self, list):
-        for item in list:
-            self.ass.append(["pop", self.getMemLocation(item)])
-
-    def funCallinExpr(self, RHS):
-        RHS_list = RHS.split(" ")
-        self.funcCall(RHS_list, 1)
-        self.ass.append(["mov", "%rax" , self.getMemLocation(RHS)])
-        instructions = self.setReg.afterFunctionCall()
-        self.ass.append([instructions.split("\n")[0]])
-        self.ass.append([instructions.split("\n")[1]])
-        self.ass.append([instructions.split("\n")[2]])
-
-
-    def printAssembly(self):
-        str1 = " "
-        indentFlag = 0
-        for list in self.ass:
-            if(len(list) == 1 and list[0][0] == '_'):
-                print(list[0])
+    # Check if operands are located in registers
+    # Useful for checking if an operand needs to be moved to a reg
+    # For cases when there is no mem-mem instr available
+    def operandCheck(self, operands):
+        regs = []
+        for op in operands:
+            if (op in self.setReg.symboltable_reg.values()):
+                # Operand 1 is stored in a register
+                regs.append(self.getRegister(op))
             else:
-                # print(list)
-                print('\t', str1.join(list))
+                # Operand 1 is not stored in a register  
+                regs.append(None)
 
-    def loop(self, statement):
+        return regs
+
+    # Translate conditional statments from IR to Assembly
+    def conditional(self, statement, statement2):
+        needRegAlloc = True
+        # Split statement into list of statements; split by 'if' and 'goto' (re.split(r'if|goto'))
+        expr, jmp_label = list(filter(None, re.split(r'if | goto |:', statement[0])))
+        operand1, operator, operand2 = expr.split(' ')
+        
+        # Check if at least one variable is in a register; if neither are, insert one into register
+        operands = self.operandCheck([operand1, operand2])
+
+        # Write cmp to ass with correct reg/mem or mem/reg or reg/con
+        if (needRegAlloc):
+            # Assign operand 1 to register
+            tmp = self.setReg.movFromMem2Reg_2(statement2, operand1)
+            self.ass.append([tmp])
+            operand1_reg = self.getRegister(operand1)
+
+            if (re.match(r'[0-9]*', operand2)):
+                # cmp <reg>, <con>
+                self.ass.append(["cmp {}, ${}".format(operand1_reg, operand2)])
+            else:
+                # cmp <reg>, <mem>
+                self.ass.append(["cmp {}, {}".format(operand1_reg, self.getMemLocation(operand2))])
+        else:
+            if (operands[0] is not None):
+                # Operand 1 is stored in a register
+                self.ass.append(["cmp {}, {}".format(operands[0], self.getMemLocation(operand2))])
+            else:
+                self.ass.append(["cmp {}, {}".format(self.getMemLocation(operand1), operands[1])])
+
+        # Determine which jump needs to be performed based on operator
+        # Write correct jmp with correct label
+        if (operator == '=='):
+            self.ass.append(["je {}".format('_' + jmp_label)])
+        elif (operator == '!='):
+            self.ass.append(["jne {}".format('_' + jmp_label)])
+        elif (operator == '<'):
+            self.ass.append(["jl {}".format('_' + jmp_label)])
+        elif (operator == '>'):
+            self.ass.append(["jg {}".format('_' + jmp_label)])
+        elif (operator == '<='):
+            self.ass.append(["jle {}".format('_' + jmp_label)])
+        elif (operator == '>='):
+            self.ass.append(["jge {}".format('_' + jmp_label)])
+
+        return
+
+    # Converts loops from IR to assembly
+    def loop(self, statement, statement2):
         needRegAlloc = True
         # split up ir. 
         # NOTE: comparison expr should be the second element in statement
@@ -704,7 +714,7 @@ class assembly2:
         # Write cmp to ass with correct reg/mem or mem/reg or reg/con
         if (needRegAlloc):
             # Assign operand 1 to register
-            self.ass.append([self.setReg.movFromMem2Reg_2(operand1)])
+            self.ass.append([self.setReg.movFromMem2Reg_2(statement2, operand1)])
             
             operand1_reg = self.getRegister(operand1)
 
@@ -740,91 +750,69 @@ class assembly2:
 
         return
 
-    def conditional(self, statement, statement2):
+    # converts function call to aseembly
+    # this will push registers that are caller saved
+    # push parameters and invoke the call instruction 
+    def funcCall(self, statement, flag):
+        # stores parameter inverse order 
+        parameterList = []
+        funcName = statement[0].replace('(', '').strip()
+        # the caller saved registers : EAX, ECX, EDX
+        instructions = self.setReg.callerSavedReg()
+        self.ass.append([instructions.split("\n")[0]])
+        self.ass.append([instructions.split("\n")[1]])
+        self.ass.append([instructions.split("\n")[2]])
+       
+        # Push funcCall parameters to stack in inverse order
+        parameterList = self.pushParameters(statement, funcName)
 
-        needRegAlloc = True
-        # Split statement into list of statements; split by 'if' and 'goto' (re.split(r'if|goto'))
-        expr, jmp_label = list(filter(None, re.split(r'if | goto |:', statement[0])))
-        operand1, operator, operand2 = expr.split(' ')
+        # invoke the call instruction, return value stored in EAX 
+        self.ass.append(["call", "_" + funcName])
+
+        # after the return, pop parameters from stack
+        self.popParameters(parameterList)
+
+        # pop EAX, ECX, EDX
+        if(not flag):
+            instructions = self.setReg.afterFunctionCall()
+            self.ass.append([instructions.split("\n")[0]])
+            self.ass.append([instructions.split("\n")[1]])
+            self.ass.append([instructions.split("\n")[2]])
+
+    # Helper function used in funCall, used to push the function call
+    # parameters to the stack
+    def pushParameters(self, statement, funcName):
+        parameterList = []
+        for item in statement:
+            if ("(" not in item and ")" not in item and "," not in item and item != funcName):
+                parameterList.append(item)
+        temp = parameterList
         
-        # # Get memory locations for operands
-        # operand1_mem = self.getMemLocation(operand1)
-        # if not re.match(r'[0-9]*', operand2):
-        #     # Operand 2 is a variable
-        #     operand2_mem = self.getMemLocation(operand2)
-        # else:
-        #     # Operand 2 is a numconst
-        #     operand2_mem = None
+        for item in parameterList[::-1]:
+            self.ass.append(["push", self.getMemLocation(item)])
+        return temp
+    
+    # Helper function that generate pop instruction 
+    def popParameters(self, list):
+        for item in list:
+            self.ass.append(["pop", self.getMemLocation(item)])
 
-        # Check if at least one variable is in a register; if neither are, insert one into register
-        operands = self.operandCheck([operand1, operand2])
+    # Helper function that append some instructions to the code
+    def funCallinExpr(self, RHS):
+        RHS_list = RHS.split(" ")
+        self.funcCall(RHS_list, 1)
+        self.ass.append(["mov", "%rax" , self.getMemLocation(RHS)])
+        instructions = self.setReg.afterFunctionCall()
+        self.ass.append([instructions.split("\n")[0]])
+        self.ass.append([instructions.split("\n")[1]])
+        self.ass.append([instructions.split("\n")[2]])
 
-        # Write cmp to ass with correct reg/mem or mem/reg or reg/con
-        if (needRegAlloc):
-            # Assign operand 1 to register
-            self.ass.append([self.setReg.movFromMem2Reg_2(operand1)])
-            operand1_reg = self.getRegister(operand1)
-
-            if (re.match(r'[0-9]*', operand2)):
-                # cmp <reg>, <con>
-                self.ass.append(["cmp {}, ${}".format(operand1_reg, operand2)])
+    # printing function 
+    def printAssembly(self):
+        str1 = " "
+        indentFlag = 0
+        for list in self.ass:
+            if(len(list) == 1 and list[0][0] == '_'):
+                print(list[0])
             else:
-                # cmp <reg>, <mem>
-                self.ass.append(["cmp {}, {}".format(operand1_reg, self.getMemLocation(operand2))])
-        else:
-            if (operands[0] is not None):
-                # Operand 1 is stored in a register
-                self.ass.append(["cmp {}, {}".format(operands[0], self.getMemLocation(operand2))])
-            else:
-                self.ass.append(["cmp {}, {}".format(self.getMemLocation(operand1), operands[1])])
-
-        # Determine which jump needs to be performed based on operator
-        # Write correct jmp with correct label
-        if (operator == '=='):
-            self.ass.append(["je {}".format('_' + jmp_label)])
-        elif (operator == '!='):
-            self.ass.append(["jne {}".format('_' + jmp_label)])
-        elif (operator == '<'):
-            self.ass.append(["jl {}".format('_' + jmp_label)])
-        elif (operator == '>'):
-            self.ass.append(["jg {}".format('_' + jmp_label)])
-        elif (operator == '<='):
-            self.ass.append(["jle {}".format('_' + jmp_label)])
-        elif (operator == '>='):
-            self.ass.append(["jge {}".format('_' + jmp_label)])
-
-        return
-
-    # Takes a variable and returns the register where it is stored
-    # If it exists
-    def getRegister(self, var):
-        for k, v in self.setReg.symboltable_reg.items():
-            if (v == var):
-                # Register located
-                return k
-
-        return None
-    def goto(self, statement):
-        label = list(filter(None, re.split(r'goto |:', statement[0])))[0]
-
-        self.ass.append(["jmp {}".format(label)])
-
-        return
-
-    def label(self, label):
-        self.ass.append(['_' + label[0]])
-        return
-    # Check if operands are located in registers
-    # Useful for checking if an operand needs to be moved to a reg
-    # For cases when there is no mem-mem instr available
-    def operandCheck(self, operands):
-        regs = []
-        for op in operands:
-            if (op in self.setReg.symboltable_reg.values()):
-                # Operand 1 is stored in a register
-                regs.append(self.getRegister(op))
-            else:
-                # Operand 1 is not stored in a register  
-                regs.append(None)
-
-        return regs
+                print('\t', str1.join(list))

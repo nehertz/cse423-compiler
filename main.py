@@ -13,7 +13,7 @@ from typeChecking import TypeChecking
 from IR import IR
 from optimization import optimization
 from assembly import assembly
-from assembly2 import assembly2
+from assembly3 import assembly3
 from symbolTableRegisters import SymbolTableRegisters
 from interferenceGraph import *
 from BasicRegAlloc import *
@@ -256,7 +256,7 @@ if __name__ == "__main__":
         StReg = SymbolTableRegisters(ir_str,ig)
 
         # assembly = assembly(IR)
-        assembly = assembly2(IR, ig, StReg, ir_str)
+        assembly = assembly3(IR, ig, StReg, ir_str)
         assembly.run()
 
         
@@ -268,7 +268,7 @@ if __name__ == "__main__":
         ig= BasicRegAlloc(ir_str)
         StReg = SymbolTableRegisters(ir_str,ig)
 
-        assembly = assembly2(IR, ig, StReg, ir_str)
+        assembly = assembly3(IR, ig, StReg, ir_str)
         assembly.run()
 
     
