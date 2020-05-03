@@ -85,12 +85,12 @@ int main()
         // even:
         //         a = 1;
         // int a;
-        while ( a > 3 && a < 1 ) {
-                // continue;
-                // break;
-                // float j = j + 2;
-                a = 1;
-        }
+        // while ( a > 3 && a < 1 ) {
+        //         // continue;
+        //         // break;
+        //         // float j = j + 2;
+        //         a = 1;
+        // }
         // while and do while loop
         // int a;
         // while ( a + 1 > 3 || a < 1 ) {

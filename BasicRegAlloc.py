@@ -62,13 +62,13 @@ class BasicRegAlloc:
                 continue
             for line in scope:
                 if ('ret' in line):
-                    self.liveVars[line] = '%rax'
+                    self.liveVars[line] = ['%rax']
                     continue
                 elif (self.divisionExpr.match(line)):
                     l = line.split('=')
                     self.lvalues[line] = l[0]
                     l = re.split(r'[(\+)|(-)|(\*)|(\/)|(\%)|(\|\|)|(&&)|(\^)|(\|)|(&)|(\!)|(<<)|(>>)]', l[1])
-                    self.liveVars = [l[0], l[1], '%rax', '%rdx']
+                    self.liveVars[line] = [l[0], l[1], '%rax', '%rdx', self.lvalues[line]]
                     continue
                 elif(self.functionCall.match(line)):
                     l = line.split('=')
@@ -77,11 +77,11 @@ class BasicRegAlloc:
                     l = line.split('=')
                     self.lvalues[line] = l[0]
                     l = re.split(r'[(\+)|(-)|(\*)|(\/)|(\%)|(\|\|)|(&&)|(\^)|(\|)|(&)|(\!)|(<<)|(>>)]', l[1])
-                    self.liveVars = [l[0], l[1]]
+                    self.liveVars[line] = [l[0], l[1], self.lvalues[line]]
                     continue
                 elif(self.assignment.match(line)):
                     l = line.split('=')
-                    self.liveVars[line].append(l[1])
+                    self.liveVars[line] = [l[1], l[0]]
         return
     
     def mapVertex2Register(self):

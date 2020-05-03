@@ -40,3 +40,7 @@ Resource: https://www.cs.cmu.edu/~fp/courses/15411-f14/lectures/03-regalloc.pdf
 Basic Register Allocation Algorithm:
 
     - Basic register allocation is simple, but very inefficient and therefore shouldn't really be used. 
+    - This algorithm traverses on the IR line-by-line and computes the live-variable similar to the previous algorithm, but it doesn't make an interference graph. 
+    - What is keeps is a list of variables. 
+    - Provides registers based upon line-by-line iteration.
+    - As the assembly code traverses the IR, it asks for available registers and frees them after execution. So lots of mov instructions need to be executed before and after each instructions, so this is wasting time and resources.
